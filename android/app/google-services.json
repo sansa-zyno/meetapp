@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "762756180589",
+    "project_id": "meeter-dc151",
+    "storage_bucket": "meeter-dc151.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762756180589:android:1b7da3a8986d15f1636d64",
+        "android_client_info": {
+          "package_name": "com.zynotech.meeter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "762756180589-p54vjaatprp3tdddbq92qk0bdj51p2t9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.zynotech.meeter",
+            "certificate_hash": "26dd6eb220166c75562251a4836aeb9cc9e13420"
+          }
+        },
+        {
+          "client_id": "762756180589-uhn7k7203mq4atu7im283gr5eap0gbv1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAydG24mYWY83VjkGcEbrXPqS2X9pOndBU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "762756180589-uhn7k7203mq4atu7im283gr5eap0gbv1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
