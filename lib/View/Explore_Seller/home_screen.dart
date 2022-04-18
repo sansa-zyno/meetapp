@@ -28,9 +28,13 @@ class _HomeScreenState extends State<HomeScreen> {
   List<List<MeetupData>>? nearest;
   late RequestBloc bloc;
 
-  getNearestMeetups(List<List<MeetupData>> a) async {
-    nearest = await FirebaseApi().getNearestMeeterCollection(a);
-    setState(() {});
+  getNearestMeetups(List<List<MeetupData>> list) async {
+    applicationBloc = Provider.of<ApplicationBloc>(context, listen: false);
+    if (applicationBloc.currentLocation != null) {
+      nearest = await FirebaseApi()
+          .getNearestMeeterCollection(list, applicationBloc.currentLocation);
+      setState(() {});
+    }
   }
 
   @override

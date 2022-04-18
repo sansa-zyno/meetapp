@@ -27,9 +27,13 @@ class _HomeBuyerScreenState extends State<HomeBuyerScreen> {
   List<List<DemandData>>? nearest;
   late RequestBloc bloc;
 
-  getNearestDemands(List<List<DemandData>> a) async {
-    nearest = await FirebaseApi().getNearestDemandCollection(a);
-    setState(() {});
+  getNearestDemands(List<List<DemandData>> list) async {
+    applicationBloc = Provider.of<ApplicationBloc>(context, listen: false);
+    if (applicationBloc.currentLocation != null) {
+      nearest = await FirebaseApi()
+          .getNearestDemandCollection(list, applicationBloc.currentLocation);
+      setState(() {});
+    }
   }
 
   @override
@@ -48,7 +52,6 @@ class _HomeBuyerScreenState extends State<HomeBuyerScreen> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width / 100;
     var h = MediaQuery.of(context).size.height / 100;
-    applicationBloc = Provider.of<ApplicationBloc>(context, listen: false);
     final demand = Provider.of<List<Demand>>(context);
     bloc = Provider.of<RequestBloc>(context);
     return Scaffold(

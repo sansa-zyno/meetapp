@@ -7,9 +7,6 @@ class OurUser {
   String? country;
   String? avatarUrl;
   String? userType;
-  bool? about;
-  bool? interests;
-  bool? isSelling;
   String? bannerImage;
   String? verified;
   String? age;

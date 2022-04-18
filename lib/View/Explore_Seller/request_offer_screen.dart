@@ -377,100 +377,99 @@ class _RequestOfferState extends State<RequestOffer> {
                   width: w * 55,
                   height: 56,
                   child: GradientButton(
-                    title: "Send Request",
-                    fontSize: w * 4,
-                    clrs: [
-                      Colors.blue,
-                      Colors.blue,
-                    ],
-                    onpressed: () async {
-                      if (_startTime.hour == DateTime.now().hour &&
-                          _startTime.minute == DateTime.now().minute) {
-                        if (duration != null) {
-                          int totalMin = _startTime.hour < 12
-                              ? (_startTime.hour * 60 +
-                                  _startTime.minute +
-                                  int.parse(duration))
-                              : ((_startTime.hour - 12) * 60 +
-                                  _startTime.minute +
-                                  int.parse(duration));
-                          await FirebaseFirestore.instance
-                              .collection('requests')
-                              .doc(widget.sellerDetails.uid)
-                              .set({"r": "r"});
-                          await FirebaseFirestore.instance
-                              .collection('requests')
-                              .doc(widget.sellerDetails.uid)
-                              .collection('request')
-                              .add({
-                            "type": "service",
-                            "accepted": null,
-                            "modified": null,
-                            "acceptedBy": "",
-                            "modifiedBy": "",
-                            "declinedBy": "",
-                            "ts": Timestamp.now(),
-                            "title": widget.doc.meetup_title,
-                            "desc": widget.doc.meetup_description,
-                            "question": questionController.text,
-                            "price": widget.doc.meetup_price,
-                            "seller_location": widget.doc.meetup_location,
-                            "seller_image": widget.doc.meetup_seller_image,
-                            "seller_id": widget.doc.meetup_seller_uid,
-                            "seller_name": widget.doc.meetup_seller_name,
-                            "date":
-                                "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
-                            "time":
-                                "${_startTime.hour == 0 ? 12 : _startTime.hour <= 12 ? _startTime.hour : _startTime.hour - 12}:${_startTime.minute.floor() < 10 ? "0" : ""}${_startTime.minute.floor()}${_startTime.period.index == 0 ? "AM" : "PM"} - ${totalMin ~/ 60 == 0 ? 12 : totalMin ~/ 60 <= 12 ? totalMin ~/ 60 : (totalMin ~/ 60) - 12}:${totalMin % 60}${_startTime.period.index == 0 ? totalMin ~/ 60 >= 12 ? "PM" : "AM" : totalMin ~/ 60 >= 12 ? "AM" : "PM"}",
-                            "duration": int.parse(duration),
-                            "startTime": {
-                              "hour": _startTime.hour,
-                              "min": _startTime.minute
-                            },
-                            "location": _value == 1 ? "Physical" : "Virtual",
-                            "buyer_name":
-                                _currentUser.getCurrentUser.displayName,
-                            "buyer_image":
-                                _currentUser.getCurrentUser.avatarUrl,
-                            "buyer_id": _currentUser.getCurrentUser.uid,
-                            "meeters": [
-                              widget.doc.meetup_seller_uid,
-                              _currentUser.getCurrentUser.uid
-                            ]
-                          });
-                          AchievementView(
-                            context,
-                            color: Colors.green,
-                            icon: Icon(
-                              FontAwesomeIcons.check,
-                              color: Colors.white,
-                            ),
-                            title: "Success!",
-                            elevation: 20,
-                            subTitle: "Request sent successfully",
-                            isCircle: true,
-                          ).show();
-                          Navigator.pop(context);
+                      title: "Send Request",
+                      fontSize: w * 4,
+                      clrs: [
+                        Colors.blue,
+                        Colors.blue,
+                      ],
+                      onpressed: () async {
+                        if (_startTime.hour >= DateTime.now().hour &&
+                            _startTime.minute >= DateTime.now().minute) {
+                          if (duration != null) {
+                            int totalMin = _startTime.hour < 12
+                                ? (_startTime.hour * 60 +
+                                    _startTime.minute +
+                                    int.parse(duration))
+                                : ((_startTime.hour - 12) * 60 +
+                                    _startTime.minute +
+                                    int.parse(duration));
+                            await FirebaseFirestore.instance
+                                .collection('requests')
+                                .doc(widget.sellerDetails.uid)
+                                .set({"r": "r"});
+                            await FirebaseFirestore.instance
+                                .collection('requests')
+                                .doc(widget.sellerDetails.uid)
+                                .collection('request')
+                                .add({
+                              "type": "service",
+                              "accepted": null,
+                              "modified": null,
+                              "acceptedBy": "",
+                              "modifiedBy": "",
+                              "declinedBy": "",
+                              "ts": Timestamp.now(),
+                              "title": widget.doc.meetup_title,
+                              "desc": widget.doc.meetup_description,
+                              "question": questionController.text,
+                              "price": widget.doc.meetup_price,
+                              "seller_location": widget.doc.meetup_location,
+                              "seller_image": widget.doc.meetup_seller_image,
+                              "seller_id": widget.doc.meetup_seller_uid,
+                              "seller_name": widget.doc.meetup_seller_name,
+                              "date":
+                                  "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
+                              "time":
+                                  "${_startTime.hour == 0 ? 12 : _startTime.hour <= 12 ? _startTime.hour : _startTime.hour - 12}:${_startTime.minute.floor() < 10 ? "0" : ""}${_startTime.minute.floor()}${_startTime.period.index == 0 ? "AM" : "PM"} - ${totalMin ~/ 60 == 0 ? 12 : totalMin ~/ 60 <= 12 ? totalMin ~/ 60 : (totalMin ~/ 60) - 12}:${totalMin % 60}${_startTime.period.index == 0 ? totalMin ~/ 60 >= 12 ? "PM" : "AM" : totalMin ~/ 60 >= 12 ? "AM" : "PM"}",
+                              "duration": int.parse(duration),
+                              "startTime": {
+                                "hour": _startTime.hour,
+                                "min": _startTime.minute
+                              },
+                              "location": _value == 1 ? "Physical" : "Virtual",
+                              "buyer_name":
+                                  _currentUser.getCurrentUser.displayName,
+                              "buyer_image":
+                                  _currentUser.getCurrentUser.avatarUrl,
+                              "buyer_id": _currentUser.getCurrentUser.uid,
+                              "meeters": [
+                                widget.doc.meetup_seller_uid,
+                                _currentUser.getCurrentUser.uid
+                              ]
+                            });
+                            AchievementView(
+                              context,
+                              color: Colors.green,
+                              icon: Icon(
+                                FontAwesomeIcons.check,
+                                color: Colors.white,
+                              ),
+                              title: "Success!",
+                              elevation: 20,
+                              subTitle: "Request sent successfully",
+                              isCircle: true,
+                            ).show();
+                            Navigator.pop(context);
+                          } else {
+                            _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text(
+                                'Choose duration',
+                                textAlign: TextAlign.center,
+                              ),
+                            ));
+                          }
                         } else {
                           _scacffoldKey.currentState!.showSnackBar(SnackBar(
                             backgroundColor: Colors.red,
                             content: Text(
-                              'Choose duration',
+                              'Invalid time',
                               textAlign: TextAlign.center,
                             ),
                           ));
                         }
-                      } else {
-                        _scacffoldKey.currentState!.showSnackBar(SnackBar(
-                          backgroundColor: Colors.red,
-                          content: Text(
-                            'Invalid time',
-                            textAlign: TextAlign.center,
-                          ),
-                        ));
-                      }
-                    },
-                  ),
+                      }),
                 ),
                 SizedBox(height: 20),
               ],

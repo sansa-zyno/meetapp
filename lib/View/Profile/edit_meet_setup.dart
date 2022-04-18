@@ -31,14 +31,16 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
   String postId = Uuid().v4();
   late double _distanceToField;
   late TextfieldTagsController _controller;
+  final _formKey = GlobalKey<FormState>();
+  final _scacffoldKey = GlobalKey<ScaffoldState>();
 
-  List<String> tags = [];
+  List tags = [];
 
   late UserController _currentUser;
 
   bool value = false;
 
-  late File _image;
+  File? _image;
   String _bannerImage = '';
 
   Future getImage() async {
@@ -86,339 +88,357 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
     _distanceToField = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      key: _scacffoldKey,
       body: Stack(
         children: [
           SingleChildScrollView(
             physics: BouncingScrollPhysics(),
             child: Container(
               color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  SizedBox(
-                    height: 180,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 30),
-                    child: PoppinsText(
-                      text: "Upload a banner picture for your meet-up",
-                      fontSize: 12,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    SizedBox(
+                      height: 180,
                     ),
-                  ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                  GestureDetector(
-                    child: _image == null
-                        ? Container(
-                            padding: EdgeInsets.symmetric(horizontal: 20),
-                            height: 150,
-                            width: MediaQuery.of(context).size.width * 0.80,
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Color(0xff00AEFF), width: 1),
-                                borderRadius: BorderRadius.circular(20)),
-                            child: Image.network(
-                              _bannerImage,
-                              fit: BoxFit.fill,
-                            ))
-                        : ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 0),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      child: PoppinsText(
+                        text: "Upload a banner picture for your meet-up",
+                        fontSize: 12,
+                      ),
+                    ),
+                    SizedBox(
+                      height: h * 4.2217,
+                    ),
+                    GestureDetector(
+                      child: _image == null
+                          ? Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
                               height: 150,
                               width: MediaQuery.of(context).size.width * 0.80,
                               decoration: BoxDecoration(
                                   border: Border.all(
                                       color: Color(0xff00AEFF), width: 1),
                                   borderRadius: BorderRadius.circular(20)),
-                              child: Image.file(
-                                _image,
-                                fit: BoxFit.cover,
+                              child: Image.network(
+                                _bannerImage,
+                                fit: BoxFit.fill,
+                              ))
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 0),
+                                height: 150,
+                                width: MediaQuery.of(context).size.width * 0.80,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Color(0xff00AEFF), width: 1),
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: Image.file(
+                                  _image!,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
-                          ),
-                    onTap: () {
-                      getImage();
-                    },
-                  ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
+                      onTap: () {
+                        getImage();
+                      },
+                    ),
+                    SizedBox(
+                      height: h * 4.2217,
+                    ),
 
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            height: 55,
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            child: RoundedTextField(
-                              hint: "Enter the title of your meet up",
-                              type: TextInputType.text,
-                              obsecureText: false,
-                              icon: Icon(
-                                Icons.badge,
-                                color: Color(0xff00AEFF),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Container(
+                              height: 55,
+                              width: MediaQuery.of(context).size.width * 0.85,
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  hintText: "Enter the title of your meet up",
+                                  labelText: "Meetup Title",
+                                ),
+                                controller: meetTitle,
+                                validator: (value) {
+                                  if (value == "") {
+                                    return "This field must not be empty.";
+                                  }
+                                  if (value!.length > 30) {
+                                    return "Title cannot be more than 30 characters long.";
+                                  }
+                                  return null;
+                                },
                               ),
-                              iconColor: Colors.cyan,
-                              label: "Meetup Title",
-                              controller: meetTitle,
-                              onChange: (text) {},
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            child: TextField(
-                              controller: meetDescription,
-                              keyboardType: TextInputType.multiline,
-                              maxLines: 5,
-                              decoration: new InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xff00AEFF), width: 2.0),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30),
+                    SizedBox(
+                      height: h * 4.2217,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.85,
+                              child: TextField(
+                                controller: meetDescription,
+                                keyboardType: TextInputType.multiline,
+                                maxLines: 5,
+                                decoration: new InputDecoration(
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xff00AEFF), width: 2.0),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(30),
+                                      ),
                                     ),
-                                  ),
-                                  disabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey, width: 1.0),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30),
+                                    disabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.grey, width: 1.0),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(30),
+                                      ),
                                     ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xff00AEFF), width: 1.0),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Color(0xff00AEFF), width: 1.0),
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(30),
+                                      ),
                                     ),
-                                  ),
-                                  hintText: 'Enter Meet up description',
-                                  labelText: "Meetup Description",
-                                  labelStyle: TextStyle(
-                                    fontFamily: "Nunito",
-                                  ),
-                                  hintStyle: TextStyle(fontFamily: "Nunito")),
+                                    hintText: 'Enter Meet up description',
+                                    labelText: "Meetup Description",
+                                    labelStyle: TextStyle(
+                                      fontFamily: "Nunito",
+                                    ),
+                                    hintStyle: TextStyle(fontFamily: "Nunito")),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
 
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            height: 55,
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            child: RoundedTextField(
-                              hint: "Price per 30 minutes",
-                              type: TextInputType.number,
-                              obsecureText: false,
-                              icon: Icon(Icons.settings_voice,
-                                  color: Color(0xff00AEFF)),
-                              iconColor: Colors.cyan,
-                              label: "Price",
-                              controller: priceController,
-                              onChange: (text) {},
-                            ),
-                          ),
-                        ),
-                      ],
+                    SizedBox(
+                      height: h * 4.2217,
                     ),
-                  ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            height: 55,
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            child: RoundedTextField(
-                              hint: "Enter Location",
-                              type: TextInputType.text,
-                              obsecureText: false,
-                              icon: Icon(
-                                Icons.location_pin,
-                                color: Color(0xff00AEFF),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Container(
+                              height: 55,
+                              width: MediaQuery.of(context).size.width * 0.85,
+                              child: RoundedTextField(
+                                hint: "Price per 30 minutes",
+                                type: TextInputType.number,
+                                obsecureText: false,
+                                icon: Icon(Icons.settings_voice,
+                                    color: Color(0xff00AEFF)),
+                                iconColor: Colors.cyan,
+                                label: "Price",
+                                controller: priceController,
+                                onChange: (text) {},
                               ),
-                              iconColor: Colors.cyan,
-                              label: "Preferred Location",
-                              controller: location,
-                              onChange: (text) {},
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  // SizedBox(
-                  //   height: h * 4.2217,
-                  // ),
-                  ListTile(
-                    onTap: () {
-                      setState(() {
-                        this.value = !value;
-                      });
-                    },
-                    leading: Checkbox(
-                      value: value,
-                      onChanged: (value) {
+                    SizedBox(
+                      height: h * 4.2217,
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Container(
+                              height: 55,
+                              width: MediaQuery.of(context).size.width * 0.85,
+                              child: RoundedTextField(
+                                hint: "Enter Location",
+                                type: TextInputType.text,
+                                obsecureText: false,
+                                icon: Icon(
+                                  Icons.location_pin,
+                                  color: Color(0xff00AEFF),
+                                ),
+                                iconColor: Colors.cyan,
+                                label: "Preferred Location",
+                                controller: location,
+                                onChange: (text) {},
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // SizedBox(
+                    //   height: h * 4.2217,
+                    // ),
+                    ListTile(
+                      onTap: () {
                         setState(() {
-                          this.value = value!;
+                          this.value = !value;
                         });
                       },
+                      leading: Checkbox(
+                        value: value,
+                        onChanged: (value) {
+                          setState(() {
+                            this.value = value!;
+                          });
+                        },
+                      ),
+                      title: Text(
+                        'Available for online meet-up',
+                        style: TextStyle(fontFamily: "poppins", fontSize: 14),
+                      ),
                     ),
-                    title: Text(
-                      'Available for online meet-up',
-                      style: TextStyle(fontFamily: "poppins", fontSize: 14),
-                    ),
-                  ),
-                  // SizedBox(
-                  //   height: h * 4.2217,
-                  // ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.85,
-                    child: TextFieldTags(
-                      initialTags: tags,
-                      inputfieldBuilder:
-                          (context, tec, fn, error, onChanged, onSubmitted) {
-                        return ((context, sc, tags, onTagDelete) {
-                          return Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: TextField(
-                              controller: tec,
-                              focusNode: fn,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                border: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 74, 137, 92),
-                                    width: 3.0,
+                    // SizedBox(
+                    //   height: h * 4.2217,
+                    // ),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: TextFieldTags(
+                        initialTags: tags.map((e) => e.toString()).toList(),
+                        inputfieldBuilder:
+                            (context, tec, fn, error, onChanged, onSubmitted) {
+                          return ((context, sc, tags, onTagDelete) {
+                            return Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: TextField(
+                                controller: tec,
+                                focusNode: fn,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  border: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 74, 137, 92),
+                                      width: 3.0,
+                                    ),
                                   ),
-                                ),
-                                focusedBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color.fromARGB(255, 74, 137, 92),
-                                    width: 3.0,
+                                  focusedBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 74, 137, 92),
+                                      width: 3.0,
+                                    ),
                                   ),
-                                ),
-                                helperText: 'Enter language...',
-                                helperStyle: const TextStyle(
-                                  color: Color.fromARGB(255, 74, 137, 92),
-                                ),
-                                hintText: "Enter tag...",
-                                errorText: error,
-                                prefixIconConstraints: BoxConstraints(
-                                    maxWidth: _distanceToField * 0.74),
-                                prefixIcon: tags.isNotEmpty
-                                    ? SingleChildScrollView(
-                                        controller: sc,
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                            children: tags.map((String tag) {
-                                          return Container(
-                                            decoration: const BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(20.0),
-                                              ),
-                                              color: Color.fromARGB(
-                                                  255, 74, 137, 92),
-                                            ),
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 5.0),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10.0,
-                                                vertical: 5.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                InkWell(
-                                                  child: Text(
-                                                    '#$tag',
-                                                    style: const TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                  onTap: () {},
+                                  helperText: 'Enter language...',
+                                  helperStyle: const TextStyle(
+                                    color: Color.fromARGB(255, 74, 137, 92),
+                                  ),
+                                  hintText: "Enter tag...",
+                                  errorText: error,
+                                  prefixIconConstraints: BoxConstraints(
+                                      maxWidth: _distanceToField * 0.74),
+                                  prefixIcon: tags.isNotEmpty
+                                      ? SingleChildScrollView(
+                                          controller: sc,
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                              children: tags.map((String tag) {
+                                            return Container(
+                                              decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(20.0),
                                                 ),
-                                                const SizedBox(width: 4.0),
-                                                InkWell(
-                                                  child: const Icon(
-                                                    Icons.cancel,
-                                                    size: 14.0,
-                                                    color: Color.fromARGB(
-                                                        255, 233, 233, 233),
+                                                color: Color.fromARGB(
+                                                    255, 74, 137, 92),
+                                              ),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10.0,
+                                                      vertical: 5.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  InkWell(
+                                                    child: Text(
+                                                      '#$tag',
+                                                      style: const TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    onTap: () {},
                                                   ),
-                                                  onTap: () {
-                                                    onTagDelete(tag);
-                                                  },
-                                                )
-                                              ],
-                                            ),
-                                          );
-                                        }).toList()),
-                                      )
-                                    : null,
+                                                  const SizedBox(width: 4.0),
+                                                  InkWell(
+                                                    child: const Icon(
+                                                      Icons.cancel,
+                                                      size: 14.0,
+                                                      color: Color.fromARGB(
+                                                          255, 233, 233, 233),
+                                                    ),
+                                                    onTap: () {
+                                                      onTagDelete(tag);
+                                                    },
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          }).toList()),
+                                        )
+                                      : null,
+                                ),
+                                onChanged: onChanged,
+                                onSubmitted: onSubmitted,
                               ),
-                              onChanged: onChanged,
-                              onSubmitted: onSubmitted,
-                            ),
-                          );
-                        });
-                      },
+                            );
+                          });
+                        },
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                  Container(
-                    width: 270,
-                    height: 50,
-                    child: GradientButton(
-                      title: "Update",
-                      fontSize: 12,
-                      clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
-                      onpressed: () async {
-                        await updateDataToDb();
-                        Navigator.pop(context);
-                      },
+                    SizedBox(
+                      height: h * 4.2217,
                     ),
-                  ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                ],
+                    Container(
+                      width: 270,
+                      height: 50,
+                      child: GradientButton(
+                        title: "Update",
+                        fontSize: 12,
+                        clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
+                        onpressed: () async {
+                          if (_bannerImage != "" &&
+                              _formKey.currentState!.validate()) {
+                            await updateDataToDb();
+                            Navigator.pop(context);
+                          } else {
+                            _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text(
+                                  'Please enter appropriate values for the fields'),
+                            ));
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: h * 4.2217,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -506,10 +526,16 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
         .collection('meeter')
         .doc(widget.doc.id)
         .update({
-      "meetup_title": meetTitle.text,
-      "meetup_description": meetDescription.text,
-      "meetup_price": int.parse(priceController.text),
-      "meetup_location": location.text,
+      "meetup_title":
+          meetTitle.text != "" ? meetTitle.text : widget.doc["meetup_title"],
+      "meetup_description": meetDescription.text != ""
+          ? meetDescription.text
+          : widget.doc["meetup_description"],
+      "meetup_price": priceController.text != ""
+          ? int.parse(priceController.text)
+          : widget.doc["meetup_price"],
+      "meetup_location":
+          location.text != "" ? location.text : widget.doc["demand_location"],
       "meetup_available_online": value,
       "meetup_seller_uid": _currentUser.getCurrentUser.uid,
       "meetup_seller_name": _currentUser.getCurrentUser.displayName,

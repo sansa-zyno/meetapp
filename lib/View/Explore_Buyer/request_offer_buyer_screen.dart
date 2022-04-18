@@ -372,8 +372,8 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                       Colors.green,
                     ],
                     onpressed: () async {
-                      if (_startTime.hour == DateTime.now().hour &&
-                          _startTime.minute == DateTime.now().minute) {
+                      if (_startTime.hour >= DateTime.now().hour &&
+                          _startTime.minute >= DateTime.now().minute) {
                         if (duration != null) {
                           int totalMin = _startTime.hour < 12
                               ? (_startTime.hour * 60 +

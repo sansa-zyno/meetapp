@@ -29,7 +29,10 @@ class _UpcomingMeetingsState extends State<UpcomingMeetings> {
             element['seller_id'] == FirebaseAuth.instance.currentUser!.uid ||
             element['buyer_id'] == FirebaseAuth.instance.currentUser!.uid)
         .where((element) => element['accepted'] == true)
-        .toList();
+        .where((element) {
+      List meeters = element["meeters"];
+      return meeters.contains(FirebaseAuth.instance.currentUser!.uid);
+    }).toList();
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,

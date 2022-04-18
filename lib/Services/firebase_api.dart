@@ -33,8 +33,7 @@ class FirebaseApi {
   }
 
   Future<List<List<MeetupData>>> getNearestMeeterCollection(
-      List<List<MeetupData>> z) async {
-    Position pos = await GeoLocatorService().getLocation();
+      List<List<MeetupData>> z, Position pos) async {
     List<MeetupData> y = z.expand((x) => x).toList();
     List<MeetupData> lmeetups = [];
     List<List<MeetupData>> llmeetups = [];
@@ -75,8 +74,7 @@ class FirebaseApi {
   }
 
   Future<List<List<DemandData>>> getNearestDemandCollection(
-      List<List<DemandData>> z) async {
-    Position pos = await GeoLocatorService().getLocation();
+      List<List<DemandData>> z, Position pos) async {
     List<DemandData> y = z.expand((x) => x).toList();
     List<DemandData> ldemands = [];
     List<List<DemandData>> lldemands = [];

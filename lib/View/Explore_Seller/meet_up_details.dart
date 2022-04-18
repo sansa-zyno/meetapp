@@ -28,6 +28,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
   late OurUser sellerDetails;
   String deleter = "";
   UserController userController = UserController();
+  final _scacffoldKey = GlobalKey<ScaffoldState>();
 
   getChatRoomIdByUsernames(String a, String b) {
     if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
@@ -87,6 +88,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserController>(context);
     return Scaffold(
+      key: _scacffoldKey,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -306,12 +308,41 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       widget.request["accepted"] == true
                                   ? GestureDetector(
                                       onTap: () {
-                                        Navigator.of(context).pushReplacement(
-                                            MaterialPageRoute(
-                                                builder: (ctx) =>
-                                                    EditRequestOffer(
-                                                        doc: widget.request,
-                                                        clr: widget.clr)));
+                                        String date = widget.request['date'];
+                                        int duration =
+                                            widget.request['duration'];
+                                        int startHour =
+                                            widget.request['startTime']['hour'];
+                                        int startMin =
+                                            widget.request['startTime']['min'];
+                                        int timeInMin = (startHour * 60) +
+                                            startMin +
+                                            duration;
+                                        String endTime =
+                                            "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
+                                        String formattedString =
+                                            "$date $endTime";
+                                        DateTime dateTime =
+                                            DateTime.parse(formattedString);
+                                        if (dateTime
+                                                .difference(DateTime.now()) >
+                                            Duration(hours: 24)) {
+                                          Navigator.of(context).pushReplacement(
+                                              MaterialPageRoute(
+                                                  builder: (ctx) =>
+                                                      EditRequestOffer(
+                                                          doc: widget.request,
+                                                          clr: widget.clr)));
+                                        } else {
+                                          _scacffoldKey.currentState!
+                                              .showSnackBar(SnackBar(
+                                            backgroundColor: Colors.red,
+                                            content: Text(
+                                              'Not available from 24 hours before the meeting',
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ));
+                                        }
                                       },
                                       child: Container(
                                         width: 120,

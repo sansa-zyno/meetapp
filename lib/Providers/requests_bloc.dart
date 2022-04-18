@@ -14,7 +14,7 @@ class RequestBloc with ChangeNotifier {
   }
 
   getStreamData() {
-    infoStream ??= Stream<List<int>>.periodic(Duration(seconds: 5), (x) {
+    infoStream ??= Stream<List<int>>.periodic(const Duration(seconds: 5), (x) {
       //for listening sake but List not used
       getRequests(requestUids);
       return [0, 1];

@@ -38,7 +38,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
 
   bool value = false;
 
-  late File _image;
+  File? _image;
   String _bannerImage = '';
 
   Future getImage() async {
@@ -96,22 +96,33 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                       height: h * 4.2217,
                     ),
                     GestureDetector(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 0),
-                          height: 150,
-                          width: MediaQuery.of(context).size.width * 0.80,
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Color(0xff00AEFF), width: 1),
-                              borderRadius: BorderRadius.circular(20)),
-                          child: Image.file(
-                            _image,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+                      child: _image == null
+                          ? Container(
+                              padding: EdgeInsets.symmetric(horizontal: 20),
+                              height: 150,
+                              width: MediaQuery.of(context).size.width * 0.80,
+                              decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Color(0xff00AEFF), width: 1),
+                                  borderRadius: BorderRadius.circular(20)),
+                              child: Image.asset("assets/images/image.png"),
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 0),
+                                height: 150,
+                                width: MediaQuery.of(context).size.width * 0.80,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Color(0xff00AEFF), width: 1),
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: Image.file(
+                                  _image!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
                       onTap: () {
                         getImage();
                       },
@@ -138,6 +149,9 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                                 validator: (value) {
                                   if (value == "") {
                                     return "This field must not be empty.";
+                                  }
+                                  if (value!.length > 30) {
+                                    return "Title cannot be more than 30 characters long.";
                                   }
                                   return null;
                                 },
@@ -370,10 +384,9 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                         fontSize: 12,
                         clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
                         onpressed: () async {
-                          if (_bannerImage != null &&
-                              _formKey.currentState!.validate() &&
-                              value != null) {
-                            await updateDataToDb();
+                          if (_bannerImage != "" &&
+                              _formKey.currentState!.validate()) {
+                            await uploadDataToDb();
                             Navigator.pop(context);
                           } else {
                             _scacffoldKey.currentState!.showSnackBar(SnackBar(
@@ -470,7 +483,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
     );
   }
 
-  updateDataToDb() async {
+  uploadDataToDb() async {
     await FirebaseFirestore.instance
         .collection("demands")
         .doc(_currentUser.getCurrentUser.uid)
@@ -494,7 +507,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
       "demand_bannerImage": _bannerImage,
       "demand_tags": tags,
       "lat": applicationBloc.currentLocation.latitude,
-      "long": applicationBloc.currentLocation.longitude,
+      "long": applicationBloc.currentLocation.longitude
     });
   }
 

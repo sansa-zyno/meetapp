@@ -360,9 +360,9 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                     await SharedPreferences.getInstance();
                                 _prefs.setString(
                                     'userName', nameController.text);
-                                UserController _currentUser =
-                                    Provider.of<UserController>(context,
-                                        listen: false);
+                                _currentUser = Provider.of<UserController>(
+                                    context,
+                                    listen: false);
                                 await _currentUser.getCurrentUserInfo();
                                 Navigator.pop(context);
                               } else {
@@ -467,32 +467,13 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                                         _currentUser
                                                             .getCurrentUser
                                                             .uid) {
-                                                  QuerySnapshot r =
-                                                      await FirebaseFirestore
-                                                          .instance
-                                                          .collection(
-                                                              "requests")
-                                                          .doc(element[
-                                                              'seller_id'])
-                                                          .collection("request")
-                                                          .where("meeters",
-                                                              arrayContains:
-                                                                  _currentUser
-                                                                      .getCurrentUser
-                                                                      .uid)
-                                                          .get();
-                                                  for (int i = 0;
-                                                      i < r.docs.length;
-                                                      i++) {
-                                                    await FirebaseFirestore
-                                                        .instance
-                                                        .collection('requests')
-                                                        .doc(element[
-                                                            'seller_id'])
-                                                        .collection("request")
-                                                        .doc(r.docs[i].id)
-                                                        .delete();
-                                                  }
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collection('requests')
+                                                      .doc(element['seller_id'])
+                                                      .collection("request")
+                                                      .doc(element.id)
+                                                      .delete();
                                                 }
                                               });
 
@@ -501,9 +482,7 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                                   .doc(_currentUser
                                                       .getCurrentUser.uid)
                                                   .delete();
-                                            } catch (e) {
-                                              print("errorrr");
-                                            }
+                                            } catch (e) {}
 
                                             try {
                                               QuerySnapshot f =

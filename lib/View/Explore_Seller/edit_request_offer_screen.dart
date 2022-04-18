@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:meeter/Providers/user_controller.dart';
 import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
 import 'package:meeter/Widgets/HWidgets/offer_appbar.dart';
 import 'package:meeter/Widgets/HWidgets/offer_appbar_buyer.dart';
@@ -24,7 +25,7 @@ class EditRequestOffer extends StatefulWidget {
 
 class _EditRequestOfferState extends State<EditRequestOffer> {
   late StreamSubscription locationSubscription;
-  //LocationProvider userLoc;
+  late UserController _currentUser;
   final Completer<GoogleMapController> _mapController = Completer();
   DatePickerController datePickerController = DatePickerController();
   late TextEditingController questionController;
@@ -96,6 +97,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width / 100;
     var h = MediaQuery.of(context).size.height / 100;
+    _currentUser = Provider.of<UserController>(context);
     final applicationBloc = Provider.of<ApplicationBloc>(context);
     return Scaffold(
       key: _scacffoldKey,
@@ -378,8 +380,8 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                     fontSize: w * 4,
                     clrs: [widget.clr, widget.clr],
                     onpressed: () async {
-                      if (_startTime.hour == DateTime.now().hour &&
-                          _startTime.minute == DateTime.now().minute) {
+                      if (_startTime.hour >= DateTime.now().hour &&
+                          _startTime.minute >= DateTime.now().minute) {
                         if (duration != null) {
                           int totalMin = _startTime.hour < 12
                               ? (_startTime.hour * 60 +

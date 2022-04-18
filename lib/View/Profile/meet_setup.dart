@@ -153,6 +153,9 @@ class _MeetSetupState extends State<MeetSetup> {
                                   if (value == "") {
                                     return "This field must not be empty.";
                                   }
+                                  if (value!.length >= 30) {
+                                    return "Title cannot be more than 30 characters long.";
+                                  }
                                   return null;
                                 },
                               ),
@@ -381,7 +384,7 @@ class _MeetSetupState extends State<MeetSetup> {
                         onpressed: () async {
                           if (_bannerImage != "" &&
                               _formKey.currentState!.validate()) {
-                            await updateDataToDb();
+                            await uploadDataToDb();
                             Navigator.push(
                               context,
                               PageTransition(
@@ -486,7 +489,7 @@ class _MeetSetupState extends State<MeetSetup> {
     );
   }
 
-  updateDataToDb() async {
+  uploadDataToDb() async {
     await FirebaseFirestore.instance
         .collection("meeters")
         .doc(_currentUser.getCurrentUser.uid)
@@ -510,7 +513,7 @@ class _MeetSetupState extends State<MeetSetup> {
       "meetup_bannerImage": _bannerImage,
       "meetup_tags": tags,
       "lat": applicationBloc.currentLocation.latitude,
-      "long": applicationBloc.currentLocation.longitude,
+      "long": applicationBloc.currentLocation.longitude
     });
   }
 

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +12,6 @@ import 'package:meeter/Services/firebase_api.dart';
 import 'package:provider/provider.dart';
 import 'View/Auth/getting_Started.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/Providers/requests_bloc.dart';
@@ -37,12 +37,6 @@ class Meeter extends StatefulWidget {
 }
 
 class _MeeterState extends State<Meeter> {
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -76,16 +70,49 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late FirebaseAuth _auth;
   late UserController _userController;
+  late List<QueryDocumentSnapshot> requests;
+  Stream? infoStream;
 
   saveUsertoSharedPref(String displayName) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
     _prefs.setString('userName', displayName);
   }
 
-  Future<String> getUserFromSharedPref() async {
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String userName = _prefs.getString('userName')!;
-    return userName;
+  onLoad() async {
+    _userController = Provider.of<UserController>(context, listen: false);
+    OurUser user = await _userController.getCurrentUserInfo();
+    saveUsertoSharedPref(user.displayName!);
+  }
+
+  deleteUpcomingAfterTimeElapse() async {
+    RequestBloc bloc = Provider.of<RequestBloc>(context, listen: false);
+    requests = bloc.requests
+        .where((element) =>
+            element['seller_id'] == _auth.currentUser!.uid ||
+            element['buyer_id'] == _auth.currentUser!.uid)
+        .where((element) => element['accepted'] == true)
+        .toList();
+    requests.forEach((element) {
+      String date = element['date'];
+      int duration = element['duration'];
+      int startHour = element['startTime']['hour'];
+      int startMin = element['startTime']['min'];
+      int timeInMin = (startHour * 60) + startMin + duration;
+      String endTime =
+          "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
+      String formattedString = "$date $endTime";
+      DateTime dateTime = DateTime.parse(formattedString);
+      if (dateTime.compareTo(DateTime.now()) >= 0) {
+        Future.delayed(const Duration(hours: 1), () async {
+          await FirebaseFirestore.instance
+              .collection("requests")
+              .doc(element['seller_id'])
+              .collection("request")
+              .doc(element.id)
+              .delete();
+        });
+      }
+    });
   }
 
   @override
@@ -93,23 +120,33 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     _auth = FirebaseAuth.instance;
     if (_auth.currentUser != null) {
-      SchedulerBinding.instance!.addPostFrameCallback((_) async {
-        _userController = Provider.of<UserController>(context, listen: false);
-        OurUser user = await _userController.getCurrentUserInfo();
-        saveUsertoSharedPref(user.displayName!);
+      onLoad();
+      infoStream ??=
+          Stream<List<int>>.periodic(const Duration(seconds: 5), (x) {
+        //for listening sake but List not used
+        deleteUpcomingAfterTimeElapse();
+        return [0, 1];
       });
+      infoStream!.listen((event) {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    _userController = Provider.of<UserController>(context);
     return StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (ctx, snapshot) => snapshot.hasData
-            ? FutureBuilder(
-                future: getUserFromSharedPref(),
-                builder: (ctx, snap) =>
-                    snap.hasData ? BottomNavBar() : ProfileSetup())
-            : GettingStarted());
+        builder: (ctx, snapshot) {
+          if (snapshot.hasData) {
+            if (_userController.getCurrentUser.displayName == null ||
+                _userController.getCurrentUser.avatarUrl == null) {
+              return ProfileSetup();
+            } else {
+              return BottomNavBar();
+            }
+          } else {
+            return GettingStarted();
+          }
+        });
   }
 }

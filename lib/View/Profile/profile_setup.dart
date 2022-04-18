@@ -86,11 +86,13 @@ class _ProfileSetupState extends State<ProfileSetup> {
                             snapshot.data as DocumentSnapshot?;
                         if (snapshot.hasData) {
                           if (doc != null) {
-                            Map<String, dynamic> data =
-                                doc.data() as Map<String, dynamic>;
-                            if (data.containsKey("avatarUrl")) {
-                              _currentUser.getCurrentUser.avatarUrl =
-                                  data["avatarUrl"];
+                            Map<String, dynamic>? data =
+                                doc.data() as Map<String, dynamic>?;
+                            if (data != null) {
+                              if (data.containsKey("avatarUrl")) {
+                                _currentUser.getCurrentUser.avatarUrl =
+                                    data["avatarUrl"];
+                              }
                             }
                           }
                         }
@@ -342,12 +344,13 @@ class _ProfileSetupState extends State<ProfileSetup> {
                             snapshot.data as DocumentSnapshot?;
                         if (snapshot.hasData) {
                           if (doc != null) {
-                            Map<String, dynamic> data =
-                                doc.data() as Map<String, dynamic>;
-
-                            if (data.containsKey("bannerImage")) {
-                              _currentUser.getCurrentUser.bannerImage =
-                                  data["bannerImage"];
+                            Map<String, dynamic>? data =
+                                doc.data() as Map<String, dynamic>?;
+                            if (data != null) {
+                              if (data.containsKey("bannerImage")) {
+                                _currentUser.getCurrentUser.bannerImage =
+                                    data["bannerImage"];
+                              }
                             }
                           }
                         }
