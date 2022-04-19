@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
+import 'package:get/get.dart';
 import 'package:meeter/Model/demand.dart';
 import 'package:meeter/Model/meetup.dart';
 import 'package:meeter/Providers/user_controller.dart';
@@ -10,6 +11,7 @@ import 'package:meeter/View/Profile/profile_setup.dart';
 import 'package:meeter/Widgets/HWidgets/nav_main_seller.dart';
 import 'package:meeter/Services/firebase_api.dart';
 import 'package:provider/provider.dart';
+import 'Controllers/timer_controller.dart';
 import 'View/Auth/getting_Started.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,6 +23,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FlutterStatusbarcolor.setStatusBarColor(Colors.white);
+  Get.put(TimerController());
+  // SystemChrome.setEnabledSystemUIMode(
+      // SystemUiMode.manual,
+      // overlays: [
+      //   SystemUiOverlay.bottom,
+      //   SystemUiOverlay.top
+      // ]);
   runApp(
     AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(

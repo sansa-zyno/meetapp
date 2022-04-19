@@ -1,6 +1,7 @@
 import 'package:achievement_view/achievement_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:meeter/Constants/get_token.dart';
 import 'package:meeter/Services/database.dart';
 import 'package:meeter/Widgets/MeeterAppBar/meeterAppBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -227,7 +228,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                                       builder: (BuildContext
                                                               context) =>
                                                           AlertDialog(
-                                                            title: Text(
+                                                            title: const Text(
                                                                 'Are you sure to cancel meeting ?'),
                                                             actions: [
                                                               FlatButton(
@@ -437,11 +438,14 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                               widget.request["accepted"] == null ||
                                       widget.request["accepted"] == true
                                   ? GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                                builder: (ctx) =>
-                                                    Timer(widget.request)));
+                                          MaterialPageRoute(
+                                            builder: (ctx) => Timer(
+                                              widget.request
+                                            ),
+                                          ),
+                                        );
                                       },
                                       child: Container(
                                         width: 120,
