@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
 class TimerController extends GetxController{
@@ -42,11 +43,19 @@ class TimerController extends GetxController{
     log('time is: ${minutes.value}:${seconds.value}');
   }
 
-  void meetingMode() {
+  void meetingMode([String sellerId = "", String buyerId = ""]) async {
     isMeetingRunning.value = !isMeetingRunning.value;
     if (isMeetingRunning.value) {
       log("inside if(isRecordingAudio.value)");
       startTimer();
+      await FirebaseFirestore.instance.collection("requests")
+          .doc(sellerId).collection("request")
+          .where("buyer_id", isEqualTo: buyerId).limit(1)
+          .get().then((value) async {
+        await FirebaseFirestore.instance.collection("requests")
+            .doc(sellerId).collection("request")
+            .doc(value.docs.first.id).update({"started": true});
+      });
       // buildTime();
     } else {
       log("the time is:: ${minutes.value}:${seconds.value}");

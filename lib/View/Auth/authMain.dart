@@ -43,7 +43,7 @@ class _AuthMainState extends State<AuthMain> {
         AchievementView(
           context,
           color: Colors.red,
-          icon: Icon(
+          icon: const Icon(
             FontAwesomeIcons.bug,
             color: Colors.white,
           ),

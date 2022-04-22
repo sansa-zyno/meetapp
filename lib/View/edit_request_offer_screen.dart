@@ -13,7 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:meeter/Providers/application_bloc.dart';
 import 'package:meeter/Model/place.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:meeter/View/Explore_Seller/meet_up_details.dart';
+import 'package:meeter/View/meet_up_details.dart';
 
 class EditRequestOffer extends StatefulWidget {
   final DocumentSnapshot doc;

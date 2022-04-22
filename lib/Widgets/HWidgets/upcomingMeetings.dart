@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/View/Dashboard/activity.dart';
 import 'package:meeter/View/Dashboard/activity_buyer.dart';
-import 'package:meeter/View/Explore_Seller/meet_up_details.dart';
+import 'package:meeter/View/meet_up_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class UpcomingMeetings extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:meeter/View/Explore_Seller/meet_up_details.dart';
+import 'package:meeter/View/meet_up_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/View/chat_screen.dart';
