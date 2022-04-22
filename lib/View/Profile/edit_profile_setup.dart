@@ -363,8 +363,11 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                 _currentUser = Provider.of<UserController>(
                                     context,
                                     listen: false);
-                                await _currentUser.getCurrentUserInfo();
-                                Navigator.pop(context);
+                                Future.delayed(const Duration(seconds: 3),
+                                    () async {
+                                  await _currentUser.getCurrentUserInfo();
+                                  Navigator.pop(context);
+                                });
                               } else {
                                 _scacffoldKey.currentState!
                                     .showSnackBar(SnackBar(
@@ -597,20 +600,8 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
     UserController().updateDisplay(nameController.text);
     UserController().updateAge(ageController.text);
     UserController().updateOccupation(occupationController.text);
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(_currentUser.getCurrentUser.uid ??
-            FirebaseAuth.instance.currentUser!.uid)
-        .update({
-      "bio": bioController.text,
-    });
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(_currentUser.getCurrentUser.uid ??
-            FirebaseAuth.instance.currentUser!.uid)
-        .update({
-      "country": countryController.text,
-    });
+    UserController().updateBio(bioController.text);
+    UserController().updateCountry(countryController.text);
 
     for (int i = 0; i < langSelector.length; i++) {
       if (langDynamicSelector[i].getcurrentLanguage != null &&

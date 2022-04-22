@@ -1,9 +1,9 @@
 import 'package:geolocator/geolocator.dart';
 
 class GeoLocatorService {
-  LocationPermission? permission;
-
   Future<Position> getLocation() async {
+    LocationPermission permission;
+
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();

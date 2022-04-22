@@ -47,6 +47,7 @@ class About extends StatelessWidget {
                   child: ReadMoreText(
                     _currentUser.getCurrentUser.bio!,
                     trimLines: 2,
+                    style: TextStyle(color: Colors.black),
                     colorClickableText: Colors.pink,
                     trimMode: TrimMode.Line,
                     trimCollapsedText: 'Show more',

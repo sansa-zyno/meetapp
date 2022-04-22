@@ -16,18 +16,6 @@ class UserController with ChangeNotifier {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
-  Future<bool> updateDisplay(String name) async {
-    try {
-      await _firestore
-          .collection("users")
-          .doc(auth.currentUser!.uid)
-          .update({"displayName": name});
-    } catch (e) {
-      return false;
-    }
-    return true;
-  }
-
   bool isUploading = false;
   late File file;
   ImagePicker img = ImagePicker();
@@ -112,11 +100,23 @@ class UserController with ChangeNotifier {
     return true;
   }
 
+  Future<bool> updateDisplay(String name) async {
+    try {
+      await _firestore
+          .collection("users")
+          .doc(auth.currentUser!.uid)
+          .update({"displayName": name});
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
   Future<bool> updateBio(String bio) async {
     try {
       await _firestore
           .collection("users")
-          .doc(_currentUser.uid)
+          .doc(auth.currentUser!.uid)
           .update({"bio": bio});
     } catch (e) {
       return false;
@@ -152,7 +152,7 @@ class UserController with ChangeNotifier {
     try {
       await _firestore
           .collection("users")
-          .doc(_currentUser.uid)
+          .doc(auth.currentUser!.uid)
           .update({"country": country});
     } catch (e) {
       return false;

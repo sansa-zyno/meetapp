@@ -323,11 +323,8 @@ class _RequestOfferState extends State<RequestOffer> {
                                     mapType: MapType.normal,
                                     myLocationEnabled: true,
                                     initialCameraPosition: CameraPosition(
-                                      target: LatLng(
-                                          applicationBloc
-                                              .currentLocation.latitude,
-                                          applicationBloc
-                                              .currentLocation.longitude),
+                                      target: LatLng(37.43296265331129,
+                                          -122.08832357078792),
                                       zoom: 14,
                                     ),
                                     onMapCreated:
