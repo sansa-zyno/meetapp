@@ -62,7 +62,7 @@ class _MeeterState extends State<Meeter> {
             create: (_) => FirebaseApi().getDemandUids(),
             lazy: false)
       ],
-      child: MaterialApp(
+      child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Meeter',
         home: MyHomePage(),
