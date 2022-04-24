@@ -49,7 +49,7 @@ class _MeeterState extends State<Meeter> {
         ChangeNotifierProvider(create: (_) => UserController()),
         ChangeNotifierProvider(create: (_) => ApplicationBloc(), lazy: false),
       ],
-      child: MaterialApp(
+      child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Meeter',
         home: MyHomePage(),

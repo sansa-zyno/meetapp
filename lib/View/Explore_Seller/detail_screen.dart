@@ -50,7 +50,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return Scaffold(
       body: Stack(children: [
         SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: const BouncingScrollPhysics(),
           child: Column(
             children: [
               DetailsData(
