@@ -1,11 +1,10 @@
 import 'package:http/http.dart' as http;
 import 'package:meeter/Model/place.dart';
 import 'dart:convert' as convert;
-
 import 'package:meeter/Model/place_search.dart';
 
 class PlacesService {
-  final key = 'AIzaSyBAcamSXNIDYqnQBtOU_86gn6A6VSmK9x4';
+  final key = 'AIzaSyBo7pNUoTsV74MEuiOKkHNnl9wW5VGetAw';
 
   Future<List<PlaceSearch>> getAutocomplete(String search) async {
     var url =
@@ -13,6 +12,7 @@ class PlacesService {
     var response = await http.get(Uri.parse(url));
     var json = convert.jsonDecode(response.body);
     var jsonResults = json['predictions'] as List;
+    print(jsonResults);
     return jsonResults.map((place) => PlaceSearch.fromJson(place)).toList();
   }
 

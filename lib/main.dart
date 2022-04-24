@@ -25,11 +25,11 @@ void main() async {
   FlutterStatusbarcolor.setStatusBarColor(Colors.white);
   Get.put(TimerController());
   // SystemChrome.setEnabledSystemUIMode(
-      // SystemUiMode.manual,
-      // overlays: [
-      //   SystemUiOverlay.bottom,
-      //   SystemUiOverlay.top
-      // ]);
+  // SystemUiMode.manual,
+  // overlays: [
+  //   SystemUiOverlay.bottom,
+  //   SystemUiOverlay.top
+  // ]);
   runApp(
     AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(

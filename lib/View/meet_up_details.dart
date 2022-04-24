@@ -441,9 +441,8 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       onTap: () async {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
-                                            builder: (ctx) => Timer(
-                                              widget.request
-                                            ),
+                                            builder: (ctx) =>
+                                                Timer(widget.request),
                                           ),
                                         );
                                       },
