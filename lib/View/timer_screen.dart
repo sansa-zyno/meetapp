@@ -121,6 +121,7 @@ class _TimerState extends State<Timer> {
                             timerController.isStartAnswered.value = false;
                             timerController.isPauseAnswered.value = false;
                             //+ the above line is working and fetching the user alright
+
                               try {
                                 // if (!timerController.isMeetingRunning.value
                                 // && UserController().auth.currentUser?.uid == widget.request["seller_id"]

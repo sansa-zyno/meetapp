@@ -322,6 +322,7 @@ class TimerController extends GetxController {
           name = "You";
           pronoun = "You";
         }
+
         Get.defaultDialog(
             barrierDismissible: false,
             title: "Attention!",
