@@ -9,6 +9,9 @@ import 'package:meeter/Widgets/TextWidgets/poppins_text.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePreview extends StatefulWidget {
+  final Color clr;
+  ProfilePreview({required this.clr});
+
   @override
   _ProfilePreviewState createState() => _ProfilePreviewState();
 }
@@ -136,7 +139,7 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                         height: 50,
                         child: GradientButton(
                           title: "Connection",
-                          clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
+                          clrs: [widget.clr, widget.clr],
                           fontSize: 12,
                           letterSpacing: 0,
                           onpressed: () {
@@ -162,7 +165,7 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                           title: "Achievement",
                           textClr: Color(0xff00AEFF),
                           clrs: [Colors.white, Colors.white],
-                          border: Border.all(color: Colors.blueAccent),
+                          border: Border.all(color: widget.clr),
                           onpressed: () {
                             about = false;
                             service = false;
@@ -313,7 +316,11 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                   ),
                 ],
               ),
-              about == true ? About() : Container(),
+              about == true
+                  ? About(
+                      clr: widget.clr,
+                    )
+                  : Container(),
               service == true ? Services() : Container(),
               demand == true ? Demands() : Container()
             ],

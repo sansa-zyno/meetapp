@@ -4,7 +4,7 @@ import 'package:meeter/Widgets/MeeterAppBar/meeterAppBar.dart';
 import 'package:meeter/Widgets/HWidgets/more_list.dart';
 
 class MoreScreen extends StatefulWidget {
-  final List<List<MeetupData>> meetersCollections;
+  final List<MeetupData> meetersCollections;
   MoreScreen(this.meetersCollections);
   @override
   _MoreScreenState createState() => _MoreScreenState();
@@ -22,7 +22,7 @@ class _MoreScreenState extends State<MoreScreen> {
               children: [
                 SizedBox(height: 100),
                 MoreLists(
-                  meetersCollections: widget.meetersCollections,
+                  meetersCollection: widget.meetersCollections,
                 ),
               ],
             ),

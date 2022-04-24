@@ -4,16 +4,14 @@ import 'package:meeter/View/Explore_Seller/detail_screen.dart';
 
 class MoreLists extends StatelessWidget {
   final String? picture;
-  final List<List<MeetupData>>? meetersCollections;
+  final List<MeetupData> meetersCollection;
 
-  MoreLists({this.picture, this.meetersCollections});
+  MoreLists({this.picture, required this.meetersCollection});
 
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width / 100;
     var h = MediaQuery.of(context).size.height / 100;
-    List<MeetupData> meetersCollection =
-        meetersCollections!.expand((x) => x).toList();
     return Column(
       children: <Widget>[
         GridView.builder(

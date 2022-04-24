@@ -4,19 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_statusbarcolor_ns/flutter_statusbarcolor_ns.dart';
 import 'package:get/get.dart';
-import 'package:meeter/Model/demand.dart';
-import 'package:meeter/Model/meetup.dart';
 import 'package:meeter/Providers/user_controller.dart';
 import 'package:meeter/View/Profile/profile_setup.dart';
 import 'package:meeter/Widgets/HWidgets/nav_main_seller.dart';
-import 'package:meeter/Services/firebase_api.dart';
 import 'package:provider/provider.dart';
 import 'Controllers/timer_controller.dart';
 import 'View/Auth/getting_Started.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meeter/Model/user.dart';
-import 'package:meeter/Providers/requests_bloc.dart';
 import 'package:meeter/Providers/application_bloc.dart';
 
 void main() async {
@@ -52,15 +48,6 @@ class _MeeterState extends State<Meeter> {
       providers: [
         ChangeNotifierProvider(create: (_) => UserController()),
         ChangeNotifierProvider(create: (_) => ApplicationBloc(), lazy: false),
-        ChangeNotifierProvider(create: (_) => RequestBloc(), lazy: false),
-        StreamProvider<List<Meetup>>(
-            initialData: [],
-            create: (_) => FirebaseApi().getMeeterUids(),
-            lazy: false),
-        StreamProvider<List<Demand>>(
-            initialData: [],
-            create: (_) => FirebaseApi().getDemandUids(),
-            lazy: false)
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -79,7 +66,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late FirebaseAuth _auth;
   late UserController _userController;
-  late List<QueryDocumentSnapshot> requests;
+  List<QueryDocumentSnapshot>? requests;
   Stream? infoStream;
 
   saveUsertoSharedPref(String displayName) async {
@@ -94,14 +81,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   deleteUpcomingAfterTimeElapse() async {
-    RequestBloc bloc = Provider.of<RequestBloc>(context, listen: false);
-    requests = bloc.requests
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collectionGroup("request").get();
+    requests = snapshot.docs
         .where((element) =>
             element['seller_id'] == _auth.currentUser!.uid ||
             element['buyer_id'] == _auth.currentUser!.uid)
         .where((element) => element['accepted'] == true)
         .toList();
-    requests.forEach((element) {
+    requests!.forEach((element) {
       String date = element['date'];
       int duration = element['duration'];
       int startHour = element['startTime']['hour'];

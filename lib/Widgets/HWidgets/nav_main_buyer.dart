@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:meeter/Providers/requests_bloc.dart';
 import 'package:meeter/View/Dashboard/activity_buyer.dart';
 import 'package:meeter/View/Explore_Buyer/home_buyer_screen.dart';
 import 'package:meeter/View/Discover/seller_discover.dart';
@@ -8,7 +8,6 @@ import 'package:spincircle_bottom_bar/modals.dart';
 import 'package:spincircle_bottom_bar/spincircle_bottom_bar.dart';
 import 'package:meeter/View/Profile/meet_setup.dart';
 import 'package:meeter/View/Profile/demand_setup.dart';
-import 'package:provider/provider.dart';
 
 class BuyerBottomNavBar extends StatefulWidget {
   @override
@@ -17,19 +16,36 @@ class BuyerBottomNavBar extends StatefulWidget {
 
 class _BuyerBottomNavBarState extends State<BuyerBottomNavBar> {
   int currentIndex = 0;
-  late RequestBloc bloc;
+  List<QueryDocumentSnapshot>? requests;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    FirebaseFirestore.instance
+        .collectionGroup('request')
+        .orderBy("ts")
+        .snapshots()
+        .listen((event) {
+      requests = event.docs;
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of<RequestBloc>(context);
     final screen = [
       HomeBuyerScreen(),
       SellerDiscover(),
       BuyerActivityScreen(
-          requests: bloc.requests
-              .where((element) => element['type'] == 'demand')
-              .toList()),
-      ProfilePreview(),
+          requests: requests != null
+              ? requests!
+                  .where((element) => element['type'] == 'demand')
+                  .toList()
+              : []),
+      ProfilePreview(
+        clr: Color(0xff4CAF50),
+      ),
     ];
     return Scaffold(
       extendBody: true,

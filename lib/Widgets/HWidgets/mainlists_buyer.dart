@@ -6,10 +6,11 @@ import 'package:meeter/View/Explore_Buyer/more_buyer_screen.dart';
 class MainListsBuyer extends StatelessWidget {
   final Color? clr;
   final Color? clr1;
-  final List<List<DemandData>>? demandsCollections;
+  final List<DemandData> demandsCollection;
   final String? mainText;
 
-  MainListsBuyer({this.demandsCollections, this.mainText, this.clr, this.clr1});
+  MainListsBuyer(
+      {required this.demandsCollection, this.mainText, this.clr, this.clr1});
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +50,7 @@ class MainListsBuyer extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                MoreBuyerScreen(demandsCollections!),
+                                MoreBuyerScreen(demandsCollection),
                           ),
                         );
                       },
@@ -67,93 +68,82 @@ class MainListsBuyer extends StatelessWidget {
           ),
           SizedBox(height: h * 0.3),
           Container(
-            height: 156,
-            child: ListView.builder(
+              height: 156,
+              child: ListView.builder(
                 shrinkWrap: true,
-                itemCount: demandsCollections!.length,
+                itemCount: demandsCollection.length,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
-                  List<DemandData> demandsCollection =
-                      demandsCollections![index];
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: demandsCollection.take(6).toList().length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: h * 2.4, vertical: w * 1.1),
-                        child: GestureDetector(
-                          child: Container(
-                            height: 156,
-                            width: 130,
-                            alignment: Alignment.centerLeft,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: clr!),
-                                borderRadius: BorderRadius.circular(15.0),
-                                color: Colors.white),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  height: 90,
-                                  width: double.infinity,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(15.0),
-                                      topRight: Radius.circular(15.0),
-                                    ),
-                                    child: Image.network(
-                                      demandsCollection[index]
-                                          .demand_bannerImage!,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
+                  return Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: h * 2.4, vertical: w * 1.1),
+                    child: GestureDetector(
+                      child: Container(
+                        height: 156,
+                        width: 130,
+                        alignment: Alignment.centerLeft,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: clr!),
+                            borderRadius: BorderRadius.circular(15.0),
+                            color: Colors.white),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 90,
+                              width: double.infinity,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15.0),
+                                  topRight: Radius.circular(15.0),
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: h * 0.7, vertical: w * 0.3),
-                                    child: Text(
-                                      demandsCollection[index].demand_title!,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
+                                child: Image.network(
+                                  demandsCollection[index].demand_bannerImage!,
+                                  fit: BoxFit.cover,
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: h * 0.7, vertical: w * 0.3),
-                                    child: Text(
-                                      demandsCollection[index]
-                                          .demand_description!,
-                                      style: TextStyle(
-                                        color: Colors.green,
-                                        fontSize: 12,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (ctx) => DetailsBuyerScreen(
-                                    demandsCollection[index])));
-                          },
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: h * 0.7, vertical: w * 0.3),
+                                child: Text(
+                                  demandsCollection[index].demand_title!,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: h * 0.7, vertical: w * 0.3),
+                                child: Text(
+                                  demandsCollection[index].demand_description!,
+                                  style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 12,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      );
-                    },
+                      ),
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (ctx) =>
+                                DetailsBuyerScreen(demandsCollection[index])));
+                      },
+                    ),
                   );
-                }),
-          ),
+                },
+              ))
         ],
       ),
     );

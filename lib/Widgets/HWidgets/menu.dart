@@ -209,8 +209,15 @@ class _MenuState extends State<Menu> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (ctx) => ProfilePreview()));
+                widget.clr == Colors.blue
+                    ? Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => ProfilePreview(
+                              clr: Color(0xff00AEFF),
+                            )))
+                    : Navigator.of(context).push(MaterialPageRoute(
+                        builder: (ctx) => ProfilePreview(
+                              clr: Color(0xff4CAF50),
+                            )));
               },
               child: Row(
                 children: [

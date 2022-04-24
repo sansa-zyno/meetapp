@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:meeter/Model/place.dart';
 import 'package:meeter/Services/geolocator_service.dart';
 import 'package:meeter/services/places_service.dart';
 
@@ -13,10 +11,9 @@ class ApplicationBloc with ChangeNotifier {
   TextEditingController searchController1 = TextEditingController();
   TextEditingController searchController2 = TextEditingController();
 
-  late Position currentLocation;
+  Position? currentLocation;
   List? searchResults;
   StreamController? selectedLocation = StreamController.broadcast();
-  late List<Place> placeResults;
 
   ApplicationBloc() {
     setCurrentLocation();

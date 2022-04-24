@@ -137,7 +137,7 @@ class _UpcomingMeetingsState extends State<UpcomingMeetings> {
                                 style: TextStyle(
                                   decoration: TextDecoration.underline,
                                   color: Colors.grey,
-                                  fontSize: 12,
+                                  fontSize: 14,
                                 ),
                               ),
                               onTap: () {

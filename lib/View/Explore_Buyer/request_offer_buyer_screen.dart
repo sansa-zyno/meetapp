@@ -311,11 +311,14 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                                     mapType: MapType.normal,
                                     myLocationEnabled: true,
                                     initialCameraPosition: CameraPosition(
-                                      target: LatLng(
-                                          applicationBloc
-                                              .currentLocation.latitude,
-                                          applicationBloc
-                                              .currentLocation.longitude),
+                                      target: applicationBloc.currentLocation !=
+                                              null
+                                          ? LatLng(
+                                              applicationBloc
+                                                  .currentLocation!.latitude,
+                                              applicationBloc
+                                                  .currentLocation!.longitude)
+                                          : LatLng(0, 0),
                                       zoom: 14,
                                     ),
                                     onMapCreated:

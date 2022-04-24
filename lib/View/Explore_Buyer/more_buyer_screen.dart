@@ -4,7 +4,7 @@ import 'package:meeter/Widgets/MeeterAppBar/meeterAppBar_buyer.dart';
 import 'package:meeter/Widgets/HWidgets/more_lists_buyer.dart';
 
 class MoreBuyerScreen extends StatefulWidget {
-  final List<List<DemandData>> demands;
+  final List<DemandData> demands;
   MoreBuyerScreen(this.demands);
   @override
   _MoreBuyerScreenState createState() => _MoreBuyerScreenState();
@@ -22,7 +22,7 @@ class _MoreBuyerScreenState extends State<MoreBuyerScreen> {
               children: [
                 SizedBox(height: 100),
                 MoreListsBuyer(
-                  demandsCollections: widget.demands,
+                  demandsCollection: widget.demands,
                 ),
               ],
             ),

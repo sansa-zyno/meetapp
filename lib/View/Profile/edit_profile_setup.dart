@@ -12,7 +12,6 @@ import 'package:achievement_view/achievement_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:meeter/Widgets/TextWidgets/poppins_text.dart';
 import 'package:meeter/View/Auth/getting_Started.dart';
-import 'package:meeter/Providers/requests_bloc.dart';
 
 class EditProfileSetup extends StatefulWidget {
   _EditProfileSetupState createState() => _EditProfileSetupState();
@@ -33,7 +32,6 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
   String gender = "Male";
   late DateTime dateTime;
   late List langDynamicSelector;
-  late RequestBloc bloc;
 
   List<String> count = [
     "First",
@@ -132,7 +130,6 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
     final w = MediaQuery.of(context).size.width / 100;
     final h = MediaQuery.of(context).size.height / 100;
     _currentUser = Provider.of<UserController>(context);
-    bloc = Provider.of<RequestBloc>(context, listen: false);
     return Scaffold(
       key: _scacffoldKey,
       body: Stack(
@@ -460,8 +457,14 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                             } catch (e) {}
 
                                             try {
-                                              bloc.requests
-                                                  .forEach((element) async {
+                                              QuerySnapshot r =
+                                                  await FirebaseFirestore
+                                                      .instance
+                                                      .collectionGroup(
+                                                          'request')
+                                                      .get();
+
+                                              r.docs.forEach((element) async {
                                                 if (element['seller_id'] ==
                                                         _currentUser
                                                             .getCurrentUser

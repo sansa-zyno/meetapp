@@ -512,8 +512,12 @@ class _MeetSetupState extends State<MeetSetup> {
       "meetup_seller_image": _currentUser.getCurrentUser.avatarUrl,
       "meetup_bannerImage": _bannerImage,
       "meetup_tags": tags,
-      "lat": applicationBloc.currentLocation.latitude,
-      "long": applicationBloc.currentLocation.longitude
+      "lat": applicationBloc.currentLocation != null
+          ? applicationBloc.currentLocation!.latitude
+          : 0.0,
+      "long": applicationBloc.currentLocation != null
+          ? applicationBloc.currentLocation!.longitude
+          : 0.0
     });
   }
 

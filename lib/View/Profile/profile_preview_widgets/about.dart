@@ -8,6 +8,8 @@ import 'package:readmore/readmore.dart';
 import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
 
 class About extends StatelessWidget {
+  final Color clr;
+  About({required this.clr});
   late UserController _currentUser;
 
   List<String> count = [
@@ -249,7 +251,7 @@ class About extends StatelessWidget {
             height: 50,
             child: GradientButton(
               title: "Edit Profile",
-              clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
+              clrs: [clr, clr],
               onpressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (ctx) => EditProfileSetup()));

@@ -1,12 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:meeter/Providers/requests_bloc.dart';
 import 'package:meeter/View/Dashboard/activity.dart';
 import 'package:meeter/View/Discover/discover.dart';
 import 'package:meeter/View/Explore_Seller/home_screen.dart';
 import 'package:meeter/View/Profile/meet_setup.dart';
 import 'package:meeter/View/Profile/demand_setup.dart';
 import 'package:meeter/View/Profile/profile_preview.dart';
-import 'package:provider/provider.dart';
 import 'package:spincircle_bottom_bar/modals.dart';
 import 'package:spincircle_bottom_bar/spincircle_bottom_bar.dart';
 
@@ -17,19 +16,36 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int currentIndex = 0;
-  late RequestBloc bloc;
+  List<QueryDocumentSnapshot>? requests;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    FirebaseFirestore.instance
+        .collectionGroup('request')
+        .orderBy("ts")
+        .snapshots()
+        .listen((event) {
+      requests = event.docs;
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    bloc = Provider.of<RequestBloc>(context);
     final screen = [
       HomeScreen(),
       Discover(),
       ActivityScreen(
-          requests: bloc.requests
-              .where((element) => element['type'] == 'service')
-              .toList()),
-      ProfilePreview(),
+          requests: requests != null
+              ? requests!
+                  .where((element) => element['type'] == 'service')
+                  .toList()
+              : []),
+      ProfilePreview(
+        clr: Color(0xff00AEFF),
+      ),
     ];
 
     return Scaffold(
