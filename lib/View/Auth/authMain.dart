@@ -55,70 +55,72 @@ class _AuthMainState extends State<AuthMain> {
       }
     } catch (e) {}
 
-    try {
-      QuerySnapshot snap = await FirebaseFirestore.instance
-          .collection("users")
-          .where("uid", isEqualTo: uid)
-          .get();
-      if (snap.docs.isNotEmpty) {
-        if (snap.docs[0]['displayName'] != null &&
-            snap.docs[0]['avatarUrl'] != null) {
-          UserController _currentUser =
-              Provider.of<UserController>(context, listen: false);
-          _currentUser.getCurrentUserInfo();
-          SharedPreferences _prefs = await SharedPreferences.getInstance();
-          _prefs.setString('userName', snap.docs[0]['displayName']);
-          Navigator.pushAndRemoveUntil(
-              context,
-              PageTransition(
-                type: PageTransitionType.rightToLeft,
-                duration: Duration(milliseconds: 200),
-                curve: Curves.easeIn,
-                child: BottomNavBar(),
-              ),
-              (route) => false);
+    if (uid != null) {
+      try {
+        QuerySnapshot snap = await FirebaseFirestore.instance
+            .collection("users")
+            .where("uid", isEqualTo: uid)
+            .get();
+        if (snap.docs.isNotEmpty) {
+          if (snap.docs[0]['displayName'] != null &&
+              snap.docs[0]['avatarUrl'] != null) {
+            UserController _currentUser =
+                Provider.of<UserController>(context, listen: false);
+            _currentUser.getCurrentUserInfo();
+            SharedPreferences _prefs = await SharedPreferences.getInstance();
+            _prefs.setString('userName', snap.docs[0]['displayName']);
+            Navigator.pushAndRemoveUntil(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeft,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                  child: BottomNavBar(),
+                ),
+                (route) => false);
+          } else {
+            Navigator.pushAndRemoveUntil(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeft,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                  child: ProfileSetup(),
+                ),
+                (route) => false);
+          }
         } else {
-          Navigator.pushAndRemoveUntil(
-              context,
-              PageTransition(
-                type: PageTransitionType.rightToLeft,
-                duration: Duration(milliseconds: 200),
-                curve: Curves.easeIn,
-                child: ProfileSetup(),
-              ),
-              (route) => false);
+          OurUser _user = OurUser();
+          try {
+            FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+            String? fcmToken = await firebaseMessaging.getToken();
+            await FirebaseFirestore.instance.collection("users").doc(uid).set({
+              "uid": uid,
+              "phoneNumber": FirebaseAuth.instance.currentUser!.phoneNumber,
+              "accountCreated": Timestamp.now(),
+              "avatarUrl": _user.avatarUrl,
+              "bannerImage": _user.bannerImage,
+              "age": _user.age,
+              "bio": _user.bio,
+              "country": _user.country,
+              "displayName": _user.displayName,
+              "token": fcmToken,
+              "userType": _user.userType,
+              "verified": _user.verified,
+            });
+            Navigator.pushAndRemoveUntil(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeft,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                  child: VerificationSuccess(),
+                ),
+                (route) => false);
+          } catch (e) {}
         }
-      } else {
-        OurUser _user = OurUser();
-        try {
-          FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-          String? fcmToken = await firebaseMessaging.getToken();
-          await FirebaseFirestore.instance.collection("users").doc(uid).set({
-            "uid": uid,
-            "phoneNumber": FirebaseAuth.instance.currentUser!.phoneNumber,
-            "accountCreated": Timestamp.now(),
-            "avatarUrl": _user.avatarUrl,
-            "bannerImage": _user.bannerImage,
-            "age": _user.age,
-            "bio": _user.bio,
-            "country": _user.country,
-            "displayName": _user.displayName,
-            "token": fcmToken,
-            "userType": _user.userType,
-            "verified": _user.verified,
-          });
-          Navigator.pushAndRemoveUntil(
-              context,
-              PageTransition(
-                type: PageTransitionType.rightToLeft,
-                duration: Duration(milliseconds: 200),
-                curve: Curves.easeIn,
-                child: VerificationSuccess(),
-              ),
-              (route) => false);
-        } catch (e) {}
-      }
-    } catch (e) {}
+      } catch (e) {}
+    }
   }
 
   void _sendOTP() async {
@@ -146,7 +148,12 @@ class _AuthMainState extends State<AuthMain> {
     ).show();
   }
 
-  void codeAutoRetrievalTimeout(String verificationId) {}
+  void codeAutoRetrievalTimeout(String verificationId) {
+    setState(() {
+      _verificationId = verificationId;
+      otpSent = true;
+    });
+  }
 
   void codeSent(String verificationId, [int? a]) {
     setState(() {

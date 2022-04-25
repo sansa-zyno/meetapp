@@ -518,8 +518,11 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                                   .delete();
                                             } catch (e) {}
 
-                                            await FirebaseAuth.instance
-                                                .signOut();
+                                            Future.delayed(Duration(seconds: 3),
+                                                () async {
+                                              await FirebaseAuth.instance
+                                                  .signOut();
+                                            });
                                             AchievementView(
                                               context,
                                               color: Colors.green,
