@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:achievement_view/achievement_view.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -38,7 +37,6 @@ class _TimerState extends State<Timer> {
   // late DatabaseReference ref2;
   late DocumentReference ref2;
 
-
   getChatRoomIdByUsernames(String a, String b) {
     if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
       return "$b\_$a";
@@ -55,12 +53,12 @@ class _TimerState extends State<Timer> {
     extraCharge = currentCharge + (currentCharge * 0.3);
     log("currentCharge is: $currentCharge and extraCharge is: $extraCharge");
     timerController.startStream(widget.request);
-    var directory =
-    getChatRoomIdByUsernames(widget.request['seller_id'], widget.request['buyer_id']);
+    var directory = getChatRoomIdByUsernames(
+        widget.request['seller_id'], widget.request['buyer_id']);
 
     // ref2 = FirebaseDatabase.instance.ref().child('$directory/');
-    ref2 = FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
-
+    ref2 =
+        FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
   }
 
   @override
@@ -74,9 +72,9 @@ class _TimerState extends State<Timer> {
             physics: const BouncingScrollPhysics(),
             child: Center(
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                    vertical: h * 3.3, horizontal: w * 7.3),
-                child: Column(
+                  padding: EdgeInsets.symmetric(
+                      vertical: h * 3.3, horizontal: w * 7.3),
+                  child: Column(
                     children: [
                       SizedBox(
                         height: h * 3.2,
@@ -93,7 +91,7 @@ class _TimerState extends State<Timer> {
                                 child: Text(
                                   timerController.isMeetingRunning.value
                                       ? '${timerController.minutes}:${timerController.seconds}'
-                                      '\n Long press\nto pause or\nresume meeting.'
+                                          '\n Long press\nto pause or\nresume meeting.'
                                       : 'Touch to\nbegin your\nmeeting',
                                   style: TextStyle(
                                     color: Colors.white,
@@ -122,70 +120,72 @@ class _TimerState extends State<Timer> {
                             timerController.isPauseAnswered.value = false;
                             //+ the above line is working and fetching the user alright
 
-                              try {
-                                // if (!timerController.isMeetingRunning.value
-                                // && UserController().auth.currentUser?.uid == widget.request["seller_id"]
-                                // ) {
-                                    log("\n\n started the timer in then after "
-                                        "joining the channel.\n\n");
-                                    //+ requesting meeting start or stop.
-                                    ref2.set({
-                                      // "startAt": FieldValue.serverTimestamp(),
-                                      "seconds": -2,
-                                      "start_requester_id": UserController().auth.currentUser?.uid,
-                                      "pause_requester_id": ""
-                                    }).then((value) {
-                                      log("in on Tap passed a start/stop request");
-                                      // timerController.meetingMode();
-                                    });
+                            try {
+                              // if (!timerController.isMeetingRunning.value
+                              // && UserController().auth.currentUser?.uid == widget.request["seller_id"]
+                              // ) {
+                              log("\n\n started the timer in then after "
+                                  "joining the channel.\n\n");
+                              //+ requesting meeting start or stop.
+                              ref2.set({
+                                // "startAt": FieldValue.serverTimestamp(),
+                                "seconds": -2,
+                                "start_requester_id":
+                                    UserController().auth.currentUser?.uid,
+                                "pause_requester_id": ""
+                              }).then((value) {
+                                log("in on Tap passed a start/stop request");
+                                // timerController.meetingMode();
+                              });
 
-                                // }
-                              } catch (e) {
-                                // showDialog(
-                                //     context: context,
-                                //     builder: (BuildContext context) =>
-                                //         AlertDialog(
-                                //           title: Text(
-                                //               "Following error was thrown while "
-                                //                   "starting the meeting timer: ${e.toString()}"),
-                                //           actions: [
-                                //             TextButton(
-                                //               child: const Text("Ok"),
-                                //               onPressed: () async {
-                                //                 Navigator.pop(context);
-                                //               },
-                                //             ),
-                                //             // FlatButton(
-                                //             //   child:
-                                //             //   const Text("No"),
-                                //             //   onPressed: () {
-                                //             //     Navigator.pop(
-                                //             //         context);
-                                //             //   },
-                                //             // )
-                                //           ],
-                                //         ));
-                                Get.defaultDialog(
-                                    title: "Error!",
-                                    middleText:
-                                        "Following error was thrown while "
-                                        "starting the meeting timer: ${e.toString()}");
-                              }
+                              // }
+                            } catch (e) {
+                              // showDialog(
+                              //     context: context,
+                              //     builder: (BuildContext context) =>
+                              //         AlertDialog(
+                              //           title: Text(
+                              //               "Following error was thrown while "
+                              //                   "starting the meeting timer: ${e.toString()}"),
+                              //           actions: [
+                              //             TextButton(
+                              //               child: const Text("Ok"),
+                              //               onPressed: () async {
+                              //                 Navigator.pop(context);
+                              //               },
+                              //             ),
+                              //             // FlatButton(
+                              //             //   child:
+                              //             //   const Text("No"),
+                              //             //   onPressed: () {
+                              //             //     Navigator.pop(
+                              //             //         context);
+                              //             //   },
+                              //             // )
+                              //           ],
+                              //         ));
+                              Get.defaultDialog(
+                                  title: "Error!",
+                                  middleText:
+                                      "Following error was thrown while "
+                                      "starting the meeting timer: ${e.toString()}");
+                            }
                             // } else {
                             //   log("token is null.");
                             // }
                           },
                           onLongPress: () {
-                            if(timerController.isMeetingRunning.value){
+                            if (timerController.isMeetingRunning.value) {
                               ref2.set({
                                 // "startAt": FieldValue.serverTimestamp(),
                                 "seconds": 2,
                                 "start_requester_id": "",
-                                "pause_requester_id": UserController().auth.currentUser?.uid
+                                "pause_requester_id":
+                                    UserController().auth.currentUser?.uid
                               }).then((value) {
                                 log("in on long press passing a pause request");
                               });
-                            }else{
+                            } else {
                               log("onLongPress meeting not running and not not paused ");
                             }
                           },
@@ -313,8 +313,7 @@ class _TimerState extends State<Timer> {
                           ),
                           Text(
                             'You are Meeting: '
-                                '${UserController().auth.currentUser?.uid == widget.request["seller_id"]
-                                ? widget.request["buyer_name"] : widget.request["seller_name"]}',
+                            '${UserController().auth.currentUser?.uid == widget.request["seller_id"] ? widget.request["buyer_name"] : widget.request["seller_name"]}',
                             style: TextStyle(
                               fontSize: w * 4.8,
                               fontWeight: FontWeight.w500,
@@ -509,8 +508,7 @@ class _TimerState extends State<Timer> {
                         ],
                       ),
                     ],
-                  )
-              ),
+                  )),
             ),
           ),
         ],

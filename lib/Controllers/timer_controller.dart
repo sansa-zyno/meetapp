@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -454,7 +453,6 @@ class TimerController extends GetxController {
                   "pause_requester_id": dataMap["pause_requester_id"]
                 });
                 Get.back();
-
               } else {
                 log("in -2 !isMeetingRunning else");
                 ref2.set({
