@@ -30,13 +30,13 @@ dependencies:
   flutter:
     sdk: flutter
   page_transition: ^2.0.5
-  firebase_core: ^1.14.0
-  firebase_auth: ^3.3.12
-  cloud_firestore: ^3.1.11
-  firebase_messaging: ^11.2.12
-  firebase_storage: ^10.2.10
-  image_picker: ^0.8.4+11
-  url_launcher: ^6.0.20
+  firebase_core: ^1.15.0
+  firebase_auth: ^3.3.15
+  cloud_firestore: ^3.1.13
+  firebase_messaging: ^11.2.14
+  firebase_storage: ^10.2.13
+  image_picker: ^0.8.5
+  url_launcher: ^6.1.0
   shared_preferences: ^2.0.13
   permission_handler: ^9.2.0
   flutter_statusbarcolor_ns: ^0.4.0
