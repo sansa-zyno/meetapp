@@ -84,17 +84,18 @@ class ChatRoomListTile extends StatefulWidget {
 }
 
 class _ChatRoomListTileState extends State<ChatRoomListTile> {
-  String profilePicUrl = "", name = "", username = "";
+  String profilePicUrl = "", name = "";
   OurUser? user;
 
   getUserInfo() async {
-    username =
+    String username =
         widget.chatRoomId.replaceAll(widget.myUsername, "").replaceAll("_", "");
     QuerySnapshot _doc = await FirebaseFirestore.instance
         .collection('users')
         .where('displayName', isEqualTo: username)
         .get();
     user = OurUser.fromFireStore(_doc.docs[0]);
+
     profilePicUrl = user!.avatarUrl!;
     name = username;
     setState(() {});
@@ -171,10 +172,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                                   .where("read", isEqualTo: false)
                                   .snapshots(),
                               builder: (context, snapshot) {
-                                QuerySnapshot q =
-                                    snapshot.data as QuerySnapshot;
+                                QuerySnapshot? q =
+                                    snapshot.data as QuerySnapshot?;
                                 return snapshot.hasData
-                                    ? Center(child: Text('${q.docs.length}'))
+                                    ? Center(child: Text('${q!.docs.length}'))
                                     : Container();
                               },
                             ),
@@ -183,7 +184,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                   ),
                   SizedBox(width: 15),
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         name,
@@ -192,11 +193,23 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                       ),
                       SizedBox(height: 5),
                       widget.type == "text"
-                          ? Text(
-                              widget.lastMessage,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: widget.read ? Colors.grey : Colors.black,
+                          ? Container(
+                              width: 200,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      widget.lastMessage,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: true,
+                                      style: TextStyle(
+                                        color: widget.read
+                                            ? Colors.grey
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             )
                           : ClipRRect(

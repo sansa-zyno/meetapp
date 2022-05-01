@@ -15,6 +15,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
   bool recent = true;
   bool upcomming = false;
   String? myUsername;
+  Stream<QuerySnapshot>? chatroomStream;
 
   Future<Stream<QuerySnapshot>> getChatRooms() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
@@ -22,14 +23,13 @@ class _ActivityScreenState extends State<ActivityScreen> {
     setState(() {});
     Stream<QuerySnapshot> chatroomStream = FirebaseFirestore.instance
         .collection("chatrooms")
+        .orderBy("lastMessageSendTs", descending: true)
         .where("users", arrayContains: myUsername)
         .where("read", isEqualTo: false)
         .snapshots();
-
     return chatroomStream;
   }
 
-  Stream<QuerySnapshot>? chatroomStream;
   getChatRoomStream() async {
     chatroomStream = await getChatRooms();
   }

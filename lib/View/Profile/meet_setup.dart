@@ -307,7 +307,7 @@ class _MeetSetupState extends State<MeetSetup> {
                                     Radius.circular(30),
                                   ),
                                 ),
-                                helperText: "Add Category tags min 8",
+                                helperText: "Add category tags max 8",
                                 helperStyle: const TextStyle(
                                   color: Color.fromRGBO(20, 22, 20, 0.973),
                                 ),
@@ -330,35 +330,38 @@ class _MeetSetupState extends State<MeetSetup> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 10.0,
                                                 vertical: 5.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                InkWell(
-                                                  child: Text(
-                                                    '$tag',
-                                                    style: const TextStyle(
-                                                        color:
-                                                            Color(0xff00AEFF),
-                                                        fontSize: 16),
-                                                  ),
-                                                  onTap: () {},
-                                                ),
-                                                const SizedBox(width: 4.0),
-                                                InkWell(
-                                                  child: const Icon(
-                                                    Icons.cancel,
-                                                    size: 25.0,
-                                                    color: Color.fromARGB(
-                                                        255, 245, 42, 42),
-                                                  ),
-                                                  onTap: () {
-                                                    onTagDelete(tag);
-                                                  },
-                                                )
-                                              ],
-                                            ),
+                                            child: tags.length <= 8
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      InkWell(
+                                                        child: Text(
+                                                          '$tag',
+                                                          style: const TextStyle(
+                                                              color: Color(
+                                                                  0xff00AEFF),
+                                                              fontSize: 16),
+                                                        ),
+                                                        onTap: () {},
+                                                      ),
+                                                      const SizedBox(
+                                                          width: 4.0),
+                                                      InkWell(
+                                                        child: const Icon(
+                                                          Icons.cancel,
+                                                          size: 25.0,
+                                                          color: Color.fromARGB(
+                                                              255, 245, 42, 42),
+                                                        ),
+                                                        onTap: () {
+                                                          onTagDelete(tag);
+                                                        },
+                                                      )
+                                                    ],
+                                                  )
+                                                : Container(),
                                           );
                                         }).toList()),
                                       )

@@ -383,8 +383,8 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                     fontSize: w * 4,
                     clrs: [widget.clr, widget.clr],
                     onpressed: () async {
-                      if (_startTime.hour >= DateTime.now().hour &&
-                          _startTime.minute >= DateTime.now().minute) {
+                      if (date.compareTo(DateTime.now()) >= 0) {
+                        print(date.toString());
                         if (duration != null) {
                           int totalMin = _startTime.hour < 12
                               ? (_startTime.hour * 60 +

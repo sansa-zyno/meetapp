@@ -153,7 +153,6 @@ class _DetailBarState extends State<DetailBar> {
                         "users": [userName, widget.sellerDetails.displayName]
                       };
                       Database().createChatRoom(chatroomId, chatroomInfo);
-
                       QuerySnapshot q = await FirebaseFirestore.instance
                           .collection("chatrooms")
                           .doc(chatroomId)

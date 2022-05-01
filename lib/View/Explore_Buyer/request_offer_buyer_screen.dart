@@ -33,7 +33,7 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
   DatePickerController datePickerController = DatePickerController();
   DateTime date = DateTime.now();
   int _value = 1;
-  late String duration;
+  String? duration;
   final List<String> _duration = ['30', '40', '50', '60', '70', '80', '90'];
 
   bool isButtonPressed = false;
@@ -375,16 +375,16 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                       Colors.green,
                     ],
                     onpressed: () async {
-                      if (_startTime.hour >= DateTime.now().hour &&
-                          _startTime.minute >= DateTime.now().minute) {
+                      if (date.compareTo(DateTime.now()) >= 0) {
+                        print(date.toString());
                         if (duration != null) {
                           int totalMin = _startTime.hour < 12
                               ? (_startTime.hour * 60 +
                                   _startTime.minute +
-                                  int.parse(duration))
+                                  int.parse(duration!))
                               : ((_startTime.hour - 12) * 60 +
                                   _startTime.minute +
-                                  int.parse(duration));
+                                  int.parse(duration!));
                           await FirebaseFirestore.instance
                               .collection('requests')
                               .doc(widget.personDetails.uid)
@@ -413,7 +413,7 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                                 "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
                             "time":
                                 "${_startTime.hour == 0 ? 12 : _startTime.hour <= 12 ? _startTime.hour : _startTime.hour - 12}:${_startTime.minute.floor() < 10 ? "0" : ""}${_startTime.minute.floor()}${_startTime.period.index == 0 ? "AM" : "PM"} - ${totalMin ~/ 60 == 0 ? 12 : totalMin ~/ 60 <= 12 ? totalMin ~/ 60 : (totalMin ~/ 60) - 12}:${totalMin % 60}${_startTime.period.index == 0 ? totalMin ~/ 60 >= 12 ? "PM" : "AM" : totalMin ~/ 60 >= 12 ? "AM" : "PM"}",
-                            "duration": int.parse(duration),
+                            "duration": int.parse(duration!),
                             "startTime": {
                               "hour": _startTime.hour,
                               "min": _startTime.minute

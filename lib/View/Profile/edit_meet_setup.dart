@@ -340,11 +340,10 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                                       width: 3.0,
                                     ),
                                   ),
-                                  helperText: 'Enter language...',
+                                  helperText: 'Add category tags max 8',
                                   helperStyle: const TextStyle(
                                     color: Color.fromARGB(255, 74, 137, 92),
                                   ),
-                                  hintText: "Enter tag...",
                                   errorText: error,
                                   prefixIconConstraints: BoxConstraints(
                                       maxWidth: _distanceToField * 0.74),
@@ -369,33 +368,42 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                                                   const EdgeInsets.symmetric(
                                                       horizontal: 10.0,
                                                       vertical: 5.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  InkWell(
-                                                    child: Text(
-                                                      '#$tag',
-                                                      style: const TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                    onTap: () {},
-                                                  ),
-                                                  const SizedBox(width: 4.0),
-                                                  InkWell(
-                                                    child: const Icon(
-                                                      Icons.cancel,
-                                                      size: 14.0,
-                                                      color: Color.fromARGB(
-                                                          255, 233, 233, 233),
-                                                    ),
-                                                    onTap: () {
-                                                      onTagDelete(tag);
-                                                    },
-                                                  )
-                                                ],
-                                              ),
+                                              child: tags.length <= 8
+                                                  ? Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        InkWell(
+                                                          child: Text(
+                                                            '#$tag',
+                                                            style:
+                                                                const TextStyle(
+                                                                    color: Colors
+                                                                        .white),
+                                                          ),
+                                                          onTap: () {},
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 4.0),
+                                                        InkWell(
+                                                          child: const Icon(
+                                                            Icons.cancel,
+                                                            size: 14.0,
+                                                            color:
+                                                                Color.fromARGB(
+                                                                    255,
+                                                                    233,
+                                                                    233,
+                                                                    233),
+                                                          ),
+                                                          onTap: () {
+                                                            onTagDelete(tag);
+                                                          },
+                                                        )
+                                                      ],
+                                                    )
+                                                  : Container(),
                                             );
                                           }).toList()),
                                         )

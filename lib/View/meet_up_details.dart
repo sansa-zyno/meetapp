@@ -1,7 +1,6 @@
 import 'package:achievement_view/achievement_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:meeter/Constants/get_token.dart';
 import 'package:meeter/Services/database.dart';
 import 'package:meeter/Widgets/MeeterAppBar/meeterAppBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -439,6 +438,46 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       widget.request["accepted"] == true
                                   ? GestureDetector(
                                       onTap: () async {
+                                        SharedPreferences preferences =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        String userName =
+                                            preferences.getString('userName')!;
+
+                                        if (widget.request['seller_id'] ==
+                                            FirebaseAuth
+                                                .instance.currentUser!.uid) {
+                                          var connectionRoomId =
+                                              getChatRoomIdByUsernames(userName,
+                                                  widget.request['buyer_id']);
+                                          Map<String, dynamic>
+                                              connectionRoomInfo = {
+                                            "users": [
+                                              userName,
+                                              widget.request['buyer_name']
+                                            ]
+                                          };
+                                          Database().createChatRoom(
+                                              connectionRoomId,
+                                              connectionRoomInfo);
+                                        } else if (widget.request['buyer_id'] ==
+                                            FirebaseAuth
+                                                .instance.currentUser!.uid) {
+                                          var connectionRoomId =
+                                              getChatRoomIdByUsernames(userName,
+                                                  widget.request['seller_id']);
+                                          Map<String, dynamic>
+                                              connectionRoomInfo = {
+                                            "users": [
+                                              userName,
+                                              widget.request['seller_name']
+                                            ]
+                                          };
+                                          Database().createChatRoom(
+                                              connectionRoomId,
+                                              connectionRoomInfo);
+                                        }
+
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder: (ctx) =>

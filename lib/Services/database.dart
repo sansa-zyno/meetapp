@@ -90,4 +90,34 @@ class Database {
       "modified": false
     });
   }
+
+  //create a connection room
+  createConnectionRoom(String connectionRoomId,
+      Map<String, dynamic> connectionRoomInfoMap) async {
+    final snapShot = await FirebaseFirestore.instance
+        .collection("connections")
+        .doc(connectionRoomId)
+        .get();
+
+    if (snapShot.exists) {
+      // connection already exists
+      return true;
+    } else {
+      // connection does not exists
+      return FirebaseFirestore.instance
+          .collection("connections")
+          .doc(connectionRoomId)
+          .set(connectionRoomInfoMap);
+    }
+  }
+
+  //get all the people the user has connected with
+  Future<Stream<QuerySnapshot>> getConnectionRooms() async {
+    SharedPreferences _pref = await SharedPreferences.getInstance();
+    String myUsername = _pref.getString('userName')!;
+    return FirebaseFirestore.instance
+        .collection("connections")
+        .where("users", arrayContains: myUsername)
+        .snapshots();
+  }
 }
