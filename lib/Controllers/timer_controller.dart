@@ -333,7 +333,25 @@ class TimerController extends GetxController {
                 "this meeting.",
             confirmTextColor: Colors.white,
             textConfirm: "Ok",
-            onConfirm: () {
+            onConfirm: () async {
+              //+HANDLE THIS HERE PLEASE IN WHATEVER WAY YOU WANT. yOU MIGHT ALSO WANT tO
+              //+DELETE THIS MEETING FRoM THE RECENT ONES OR THE REQUESTS AFTER THIS MEETING
+              //+ IS ENDED hERE
+              await FirebaseFirestore.instance.collection("connections")
+                  .doc(request["seller_id"])
+                  .set({
+                "seller_id": request["seller_id"],
+                "seller_name": request["seller_name"],
+                "seller_image": request["seller_image"],
+                "buyer_id": request["buyer_id"],
+                "buyer_name": request["buyer_name"],
+                "buyer_image": request["buyer_image"],
+                "product_id": request["product_id"],
+                "duration": request["duration"],
+                "title": request["title"],
+                "startTime": request["startTime"],
+                "date": request["date"],
+              });
               Get.back();
               ref2.set({
                 // "startAt": FieldValue.serverTimestamp(),

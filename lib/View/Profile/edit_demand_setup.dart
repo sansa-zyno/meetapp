@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meeter/Providers/user_controller.dart';
 import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
@@ -427,10 +428,30 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                                           searchTerms.add(value.toLowerCase());
                                         }
                                         log("added $value to array: $searchTerms");
+                                        tags = textfieldTagsController.getTags!;
+                                        log("after assigning tags to tags local list in "
+                                            "onchange tags: $tags");
                                       }
-                                    : null,
+                                    : (value) {
+                                  // Get.snackbar(
+                                  //   "Enough Tags!",
+                                  //   "Already added 8 tags",
+                                  //   // duration: const Duration(seconds: 3),
+                                  // );
+                                  log("in else of onChanged and tags.length is: ${tags.length}");
+                                },
                                 onSubmitted:
-                                    tags.length <= 7 ? onSubmitted : null,
+                                    tags.length <= 7
+                                        ? onSubmitted
+                                        : (value) {
+                                      Get.snackbar(
+                                        "Enough Tags!",
+                                        "Already added 8 tags",
+                                        duration: const Duration(seconds: 3),
+                                      );
+                                      log("in else of onSubmitted and tags.length is: ${tags.length}"
+                                          " and  value is: $value");
+                                    },
                               ),
                             );
                           });
