@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:meeter/Widgets/HWidgets/search_filter.dart';
 import 'package:meeter/Widgets/HWidgets/menu.dart';
 import 'package:meeter/Providers/application_bloc.dart';
 import 'package:provider/provider.dart';
+
+import 'home_buyer_screen.dart';
 
 class SearchBuyerScreen extends StatefulWidget {
   @override
@@ -81,6 +84,13 @@ class _SearchBuyerScreenState extends State<SearchBuyerScreen> {
                             child: TextField(
                               controller: _appBloc.searchController2,
                               decoration: InputDecoration(
+                                prefixIcon: GestureDetector(
+                                  onTap: () => Get.offAll(() => HomeBuyerScreen()),
+                                  child: const Icon(
+                                    Icons.arrow_back,
+                                    color: Colors.black,
+                                  ),
+                                ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: OutlineInputBorder(

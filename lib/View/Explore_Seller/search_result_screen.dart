@@ -75,7 +75,14 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         children: [
                           Expanded(
                             child: TextField(
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
+                                // prefixIcon: GestureDetector(
+                                //   onTap: () => Navigator.pop(context),
+                                //   child: const Icon(
+                                //     Icons.arrow_back,
+                                //     color: Colors.black,
+                                //   ),
+                                // ),
                                 filled: true,
                                 fillColor: Colors.white,
                                 border: OutlineInputBorder(

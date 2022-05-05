@@ -66,82 +66,90 @@ class MainLists extends StatelessWidget {
             ],
           ),
           SizedBox(height: h * 0.3),
-          Container(
-              height: 156,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: meetersCollection.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: h * 2.4, vertical: w * 1.1),
-                    child: GestureDetector(
-                      child: Container(
-                        height: 156,
-                        width: 130,
-                        alignment: Alignment.centerLeft,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: clr!),
-                            borderRadius: BorderRadius.circular(15.0),
-                            color: Colors.white),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 90,
-                              width: double.infinity,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(15.0),
-                                  topRight: Radius.circular(15.0),
+         meetersCollection.isNotEmpty
+             ? Container(
+            height: 156,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: meetersCollection.length,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: h * 2.4, vertical: w * 1.1),
+                  child: GestureDetector(
+                    child: Container(
+                      height: 156,
+                      width: 130,
+                      alignment: Alignment.centerLeft,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: clr!),
+                          borderRadius: BorderRadius.circular(15.0),
+                          color: Colors.white),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 90,
+                            width: double.infinity,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15.0),
+                                topRight: Radius.circular(15.0),
+                              ),
+                              child: Image.network(
+                                meetersCollection[index].meetup_bannerImage!,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: h * 0.7, vertical: w * 0.3),
+                              child: Text(
+                                meetersCollection[index].meetup_title!,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.black,
+                                  fontSize: 16,
                                 ),
-                                child: Image.network(
-                                  meetersCollection[index].meetup_bannerImage!,
-                                  fit: BoxFit.cover,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: h * 0.7, vertical: w * 0.3),
+                              child: Text(
+                                "\$${meetersCollection[index].meetup_price} per 30min",
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: h * 0.7, vertical: w * 0.3),
-                                child: Text(
-                                  meetersCollection[index].meetup_title!,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: h * 0.7, vertical: w * 0.3),
-                                child: Text(
-                                  "\$${meetersCollection[index].meetup_price} per 30min",
-                                  style: TextStyle(
-                                    color: Colors.blue,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (ctx) =>
-                                DetailsScreen(meetersCollection[index])));
-                      },
                     ),
-                  );
-                },
-              ))
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (ctx) =>
+                              DetailsScreen(meetersCollection[index])));
+                    },
+                  ),
+                );
+              },
+            ),
+          )
+              : Container(
+            height: 156,
+            child: const Center(
+              child: Text("No Services Right Now!"),
+            ),
+          ),
         ],
       ),
     );

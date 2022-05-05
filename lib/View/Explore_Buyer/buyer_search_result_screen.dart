@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:meeter/View/Explore_Buyer/home_buyer_screen.dart';
 import 'package:meeter/View/Explore_Buyer/search_buyer_screen.dart';
 import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
 import 'package:meeter/Widgets/HWidgets/search_list.dart';
