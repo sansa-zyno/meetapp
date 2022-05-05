@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:meeter/View/Explore_Seller/home_screen.dart';
 import 'package:meeter/Widgets/HWidgets/search_filter.dart';
 import 'package:meeter/Widgets/HWidgets/menu.dart';
 import 'package:meeter/Providers/application_bloc.dart';
@@ -81,9 +83,16 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: TextField(
                               controller: _appBloc.searchController1,
                               decoration: InputDecoration(
+                                prefixIcon: GestureDetector(
+                                  onTap: () => Get.offAll(() => HomeScreen()),
+                                  child: const Icon(
+                                    Icons.arrow_back,
+                                    color: Colors.black,
+                                  ),
+                                ),
                                 filled: true,
                                 fillColor: Colors.white,
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(20),
                                   ),

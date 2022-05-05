@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -31,10 +32,13 @@ class _MeetSetupState extends State<MeetSetup> {
   final _formKey = GlobalKey<FormState>();
   final _scacffoldKey = GlobalKey<ScaffoldState>();
   List<String> tags = [];
+  TextfieldTagsController textfieldTagsController = TextfieldTagsController();
 
   late UserController _currentUser;
   late ApplicationBloc applicationBloc;
   late double _distanceToField;
+  List<String> searchTerms = [];
+  List<String> tagssss = [];
 
   bool value = false;
 
@@ -135,7 +139,7 @@ class _MeetSetupState extends State<MeetSetup> {
                     ),
 
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -144,7 +148,7 @@ class _MeetSetupState extends State<MeetSetup> {
                               height: 55,
                               width: MediaQuery.of(context).size.width * 0.85,
                               child: TextFormField(
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   hintText: "Enter the title of your meet up",
                                   labelText: "Meetup Title",
                                 ),
@@ -158,6 +162,25 @@ class _MeetSetupState extends State<MeetSetup> {
                                   }
                                   return null;
                                 },
+                                onChanged: (value) {
+                                  int spaceCounter = 0;
+                                  // searchTerms.add(value.toLowerCase());
+                                  if (value.contains(" ")) {
+                                    var valueList = value.split(" ");
+                                    log("valueList is: $valueList and ");
+                                    spaceCounter = valueList.length - 1;
+                                    log("spaceCounter is: $spaceCounter and ");
+                                    log("adding ${valueList[spaceCounter]} in if value.contains(' ')");
+                                    searchTerms.add(
+                                        valueList[spaceCounter].toLowerCase());
+                                    searchTerms.add(value.toLowerCase());
+                                    log("searchTerms in if value.contains(' ') is: $searchTerms");
+                                  } else {
+                                    log("in else of onChange means there's no space.");
+                                    searchTerms.add(value.toLowerCase());
+                                  }
+                                  log("added $value to array: $searchTerms");
+                                },
                               ),
                             ),
                           ),
@@ -168,7 +191,7 @@ class _MeetSetupState extends State<MeetSetup> {
                       height: h * 4.2217,
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -178,7 +201,7 @@ class _MeetSetupState extends State<MeetSetup> {
                               child: TextFormField(
                                 keyboardType: TextInputType.multiline,
                                 maxLines: 5,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   hintText: "Enter Meet up description",
                                   labelText: "Meetup Description",
                                 ),
@@ -189,6 +212,23 @@ class _MeetSetupState extends State<MeetSetup> {
                                   }
                                   return null;
                                 },
+                                // onChanged: (value) {
+                                //   int spaceCounter = 0;
+                                //   if(value.contains(" ")){
+                                //     var valueList = value.split(" ");
+                                //     log("valueList is: $valueList and ");
+                                //     spaceCounter = valueList.length - 1;
+                                //     log("spaceCounter is: $spaceCounter and ");
+                                //     log("adding ${valueList[spaceCounter]} in if value.contains(' ')");
+                                //     searchTerms.add(valueList[spaceCounter].toLowerCase());
+                                //     searchTerms.add(value.toLowerCase());
+                                //     log("searchTerms in if value.contains(' ') is: $searchTerms");
+                                //   }else{
+                                //     log("in else of onChange means there's no space.");
+                                //     searchTerms.add(value.toLowerCase());
+                                //   }
+                                //   log("added $value to array: $searchTerms");
+                                // },
                               ),
                             ),
                           ),
@@ -200,7 +240,7 @@ class _MeetSetupState extends State<MeetSetup> {
                       height: h * 4.2217,
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -209,7 +249,7 @@ class _MeetSetupState extends State<MeetSetup> {
                               height: 55,
                               width: MediaQuery.of(context).size.width * 0.85,
                               child: TextFormField(
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   hintText: "Price per 30 minutes",
                                   labelText: "Price",
                                 ),
@@ -230,7 +270,7 @@ class _MeetSetupState extends State<MeetSetup> {
                       height: h * 4.2217,
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -239,7 +279,7 @@ class _MeetSetupState extends State<MeetSetup> {
                               height: 55,
                               width: MediaQuery.of(context).size.width * 0.85,
                               child: TextFormField(
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   hintText: "Enter Location",
                                   labelText: "Preferred Location",
                                 ),
@@ -273,7 +313,7 @@ class _MeetSetupState extends State<MeetSetup> {
                           });
                         },
                       ),
-                      title: Text(
+                      title: const Text(
                         'Available for online meet-up',
                         style: TextStyle(fontFamily: "poppins", fontSize: 14),
                       ),
@@ -284,6 +324,7 @@ class _MeetSetupState extends State<MeetSetup> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFieldTags(
+                        textfieldTagsController: textfieldTagsController,
                         initialTags: tags,
                         inputfieldBuilder:
                             (context, tec, fn, error, onChanged, onSubmitted) {
@@ -365,7 +406,27 @@ class _MeetSetupState extends State<MeetSetup> {
                                       )
                                     : null,
                               ),
-                              onChanged: tags.length <= 7 ? onChanged : null,
+                              onChanged: tags.length <= 7
+                                  ? (value) {
+                                      int spaceCounter = 0;
+                                      // searchTerms.add(value.toLowerCase());
+                                      if (value.contains(" ")) {
+                                        var valueList = value.split(" ");
+                                        log("valueList of tags is: $valueList and ");
+                                        spaceCounter = valueList.length - 1;
+                                        log("spaceCounter of tags  is: $spaceCounter and ");
+                                        log("adding ${valueList[spaceCounter]} in if value.contains(' ')");
+                                        searchTerms.add(valueList[spaceCounter]
+                                            .toLowerCase());
+                                        searchTerms.add(value.toLowerCase());
+                                        log("searchTerms in if value.contains(' ') is: $searchTerms");
+                                      } else {
+                                        log("in else of onChange of tags means there's no space.");
+                                        searchTerms.add(value.toLowerCase());
+                                      }
+                                      log("added $value to array: $searchTerms");
+                                    }
+                                  : null,
                               onSubmitted:
                                   tags.length <= 7 ? onSubmitted : null,
                             );
@@ -382,22 +443,33 @@ class _MeetSetupState extends State<MeetSetup> {
                       child: GradientButton(
                         title: "Go",
                         fontSize: 12,
-                        clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
+                        clrs: const [Color(0xff00AEFF), Color(0xff00AEFF)],
                         onpressed: () async {
                           if (_bannerImage != "" &&
                               _formKey.currentState!.validate()) {
+                            textfieldTagsController.getTags?.forEach((element) {
+                              tagssss.add(element.toLowerCase());
+                            });
+                            log("tags in Go are: $tagssss");
+                            log("searchTerms are in Go before merging are: $searchTerms");
+                            searchTerms.addAll(tagssss);
+                            log("searchTerms are in Go after merging are: $searchTerms");
+                            searchTerms.removeWhere(
+                                (element) => element == " " || element == "");
+                            log("searchTerms after deleting spaces is in Go after merging are: $searchTerms");
                             await uploadDataToDb();
                             Navigator.push(
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeft,
-                                duration: Duration(milliseconds: 200),
+                                duration: const Duration(milliseconds: 200),
                                 curve: Curves.easeIn,
                                 child: BottomNavBar(),
                               ),
                             );
                           } else {
-                            _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                            _scacffoldKey.currentState!
+                                .showSnackBar(const SnackBar(
                               backgroundColor: Colors.red,
                               content: Text(
                                   'All fields are compulsory except the tags field which is optional'),
@@ -444,7 +516,7 @@ class _MeetSetupState extends State<MeetSetup> {
         decoration: BoxDecoration(
           gradient: gradient,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.purple,
               blurRadius: 5,
@@ -470,7 +542,7 @@ class _MeetSetupState extends State<MeetSetup> {
                       decoration: InputDecoration(
                         hintText: text,
                         border: InputBorder.none,
-                        hintStyle: TextStyle(
+                        hintStyle: const TextStyle(
                           fontSize: TEXT_NORMAL_SIZE,
                           color: Colors.grey,
                           fontFamily: "Nunito",
@@ -502,6 +574,7 @@ class _MeetSetupState extends State<MeetSetup> {
         .doc(_currentUser.getCurrentUser.uid)
         .collection('meeter')
         .add({
+      "searchTerms": searchTerms,
       "featured": false,
       "meetup_title": meetTitle.text,
       "meetup_description": meetDescription.text,
@@ -513,7 +586,7 @@ class _MeetSetupState extends State<MeetSetup> {
       "meetup_seller_name": _currentUser.getCurrentUser.displayName,
       "meetup_seller_image": _currentUser.getCurrentUser.avatarUrl,
       "meetup_bannerImage": _bannerImage,
-      "meetup_tags": tags,
+      "meetup_tags": tagssss,
       "lat": applicationBloc.currentLocation != null
           ? applicationBloc.currentLocation!.latitude
           : 0.0,

@@ -29,7 +29,7 @@ class _SearchFilterState extends State<SearchFilter> {
 
   List<String> jobOptions = [
     'Marketing',
-    'Buisness',
+    'Business',
     'Industry',
     'Training',
     'Trade',

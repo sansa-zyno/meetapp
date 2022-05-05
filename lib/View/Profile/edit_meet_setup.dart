@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart';
@@ -31,6 +32,10 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
   String postId = Uuid().v4();
   late double _distanceToField;
   late TextfieldTagsController _controller;
+  TextfieldTagsController textfieldTagsController = TextfieldTagsController();
+  List<String> searchTerms = [];
+  List<String> tagssss = [];
+
   final _formKey = GlobalKey<FormState>();
   final _scacffoldKey = GlobalKey<ScaffoldState>();
 
@@ -317,6 +322,7 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFieldTags(
+                        textfieldTagsController: textfieldTagsController,
                         initialTags: tags.map((e) => e.toString()).toList(),
                         inputfieldBuilder:
                             (context, tec, fn, error, onChanged, onSubmitted) {
@@ -401,7 +407,28 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                                         )
                                       : null,
                                 ),
-                                onChanged: tags.length <= 7 ? onChanged : null,
+                                onChanged: tags.length <= 7
+                                    ? (value) {
+                                        int spaceCounter = 0;
+                                        // searchTerms.add(value.toLowerCase());
+                                        if (value.contains(" ")) {
+                                          var valueList = value.split(" ");
+                                          log("valueList of tags is: $valueList and ");
+                                          spaceCounter = valueList.length - 1;
+                                          log("spaceCounter of tags  is: $spaceCounter and ");
+                                          log("adding ${valueList[spaceCounter]} in if value.contains(' ')");
+                                          searchTerms.add(
+                                              valueList[spaceCounter]
+                                                  .toLowerCase());
+                                          searchTerms.add(value.toLowerCase());
+                                          log("searchTerms in if value.contains(' ') is: $searchTerms");
+                                        } else {
+                                          log("in else of onChange of tags means there's no space.");
+                                          searchTerms.add(value.toLowerCase());
+                                        }
+                                        log("added $value to array: $searchTerms");
+                                      }
+                                    : null,
                                 onSubmitted:
                                     tags.length <= 7 ? onSubmitted : null,
                               ),
@@ -423,6 +450,16 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                         onpressed: () async {
                           if (_bannerImage != "" &&
                               _formKey.currentState!.validate()) {
+                            textfieldTagsController.getTags?.forEach((element) {
+                              tagssss.add(element.toLowerCase());
+                            });
+                            log("tags in Go are: $tagssss");
+                            log("searchTerms are in Go before merging are: $searchTerms");
+                            searchTerms.addAll(tagssss);
+                            log("searchTerms are in Go after merging are: $searchTerms");
+                            searchTerms.removeWhere(
+                                (element) => element == " " || element == "");
+
                             await updateDataToDb();
                             Navigator.pop(context);
                           } else {
@@ -527,6 +564,7 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
         .collection('meeter')
         .doc(widget.doc.id)
         .update({
+      "searchTerms": FieldValue.arrayUnion(searchTerms),
       "meetup_title":
           meetTitle.text != "" ? meetTitle.text : widget.doc["meetup_title"],
       "meetup_description": meetDescription.text != ""
@@ -542,7 +580,7 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
       "meetup_seller_name": _currentUser.getCurrentUser.displayName,
       "meetup_seller_image": _currentUser.getCurrentUser.avatarUrl,
       "meetup_bannerImage": _bannerImage,
-      "meetup_tags": tags
+      "meetup_tags": tagssss
     });
   }
 

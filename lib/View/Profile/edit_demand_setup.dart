@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -35,6 +37,9 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
   final _scacffoldKey = GlobalKey<ScaffoldState>();
 
   List tags = [];
+  TextfieldTagsController textfieldTagsController = TextfieldTagsController();
+  List<String> searchTerms = [];
+  List<String> tagssss = [];
 
   late UserController _currentUser;
 
@@ -317,6 +322,7 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                     Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFieldTags(
+                        textfieldTagsController: textfieldTagsController,
                         initialTags: tags.map((e) => e.toString()).toList(),
                         inputfieldBuilder:
                             (context, tec, fn, error, onChanged, onSubmitted) {
@@ -401,7 +407,28 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                                         )
                                       : null,
                                 ),
-                                onChanged: tags.length <= 7 ? onChanged : null,
+                                onChanged: tags.length <= 7
+                                    ? (value) {
+                                        int spaceCounter = 0;
+                                        // searchTerms.add(value.toLowerCase());
+                                        if (value.contains(" ")) {
+                                          var valueList = value.split(" ");
+                                          log("valueList of tags is: $valueList and ");
+                                          spaceCounter = valueList.length - 1;
+                                          log("spaceCounter of tags  is: $spaceCounter and ");
+                                          log("adding ${valueList[spaceCounter]} in if value.contains(' ')");
+                                          searchTerms.add(
+                                              valueList[spaceCounter]
+                                                  .toLowerCase());
+                                          searchTerms.add(value.toLowerCase());
+                                          log("searchTerms in if value.contains(' ') is: $searchTerms");
+                                        } else {
+                                          log("in else of onChange of tags means there's no space.");
+                                          searchTerms.add(value.toLowerCase());
+                                        }
+                                        log("added $value to array: $searchTerms");
+                                      }
+                                    : null,
                                 onSubmitted:
                                     tags.length <= 7 ? onSubmitted : null,
                               ),
@@ -423,6 +450,15 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                         onpressed: () async {
                           if (_bannerImage != "" &&
                               _formKey.currentState!.validate()) {
+                            textfieldTagsController.getTags?.forEach((element) {
+                              tagssss.add(element.toLowerCase());
+                            });
+                            log("tags in Go are: $tagssss");
+                            log("searchTerms are in Go before merging are: $searchTerms");
+                            searchTerms.addAll(tagssss);
+                            log("searchTerms are in Go after merging are: $searchTerms");
+                            searchTerms.removeWhere(
+                                (element) => element == " " || element == "");
                             await updateDataToDb();
                             Navigator.pop(context);
                           } else {
@@ -527,6 +563,7 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
         .collection('demand')
         .doc(widget.doc.id)
         .update({
+      "searchTerms": FieldValue.arrayUnion(searchTerms),
       "demand_title": demandTitle.text != ""
           ? demandTitle.text
           : widget.doc["demand_title"],
@@ -543,7 +580,7 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
       "demand_person_name": _currentUser.getCurrentUser.displayName,
       "demand_person_image": _currentUser.getCurrentUser.avatarUrl,
       "demand_bannerImage": _bannerImage,
-      "demand_tags": tags
+      "demand_tags": tagssss
     });
   }
 
