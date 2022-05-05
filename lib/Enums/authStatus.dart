@@ -1,4 +1,4 @@
-enum AuthStatus {
+/*enum AuthStatus {
   firstTime,
   authenticating,
   notLoggedIn,
@@ -8,4 +8,4 @@ enum AuthStatus {
   noInterest,
   sellingNull,
   noMeetSetup,
-}
+}*/

@@ -6,8 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatMessages extends StatefulWidget {
   final OurUser recipient;
+  final String chatRoomId;
 
-  ChatMessages(this.recipient);
+  ChatMessages(this.recipient, this.chatRoomId);
 
   @override
   _ChatMessagesState createState() => _ChatMessagesState();
@@ -16,25 +17,14 @@ class ChatMessages extends StatefulWidget {
 class _ChatMessagesState extends State<ChatMessages> {
   Stream? messageStream;
   String myUserName = "";
-  String chatRoomId = "";
-
-  getChatRoomIdByUsernames(String a, String b) {
-    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
-      return "$b\_$a";
-    } else {
-      return "$a\_$b";
-    }
-  }
 
   getMyInfoFromSharedPreference() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     myUserName = prefs.getString('userName')!;
-    chatRoomId =
-        getChatRoomIdByUsernames(myUserName, widget.recipient.displayName!);
   }
 
   getAndSetMessages() async {
-    messageStream = await Database().getChatRoomMessages(chatRoomId);
+    messageStream = await Database().getChatRoomMessages(widget.chatRoomId);
     setState(() {});
   }
 
@@ -205,9 +195,14 @@ class _ChatMessagesState extends State<ChatMessages> {
     var w = MediaQuery.of(context).size.width / 100;
     var h = MediaQuery.of(context).size.height / 100;
     return SafeArea(
-      child: chatMessages(
-        h,
-        w,
+      child: Column(
+        children: [
+          chatMessages(
+            h,
+            w,
+          ),
+          SizedBox(height: 30)
+        ],
       ),
     );
   }

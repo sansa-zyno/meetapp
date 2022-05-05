@@ -6,7 +6,8 @@ import 'package:meeter/Widgets/HWidgets/chat_messages.dart';
 
 class ChatScreen extends StatefulWidget {
   final OurUser recipient;
-  ChatScreen(this.recipient);
+  final String chatRoomid;
+  ChatScreen(this.recipient, this.chatRoomid);
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -24,7 +25,7 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Column(
               children: [
                 SizedBox(height: h * 13.7),
-                ChatMessages(widget.recipient),
+                ChatMessages(widget.recipient, widget.chatRoomid),
               ],
             ),
           ),
@@ -34,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: ChatBottomBar(widget.recipient),
+            child: ChatBottomBar(widget.recipient, widget.chatRoomid),
           ),
         ],
       ),

@@ -4,6 +4,8 @@ import 'package:meeter/Providers/user_controller.dart';
 import 'package:meeter/View/Profile/profile_preview_widgets/about.dart';
 import 'package:meeter/View/Profile/profile_preview_widgets/demands.dart';
 import 'package:meeter/View/Profile/profile_preview_widgets/service.dart';
+import 'package:meeter/View/Profile/profile_preview_widgets/achievement.dart';
+import 'package:meeter/View/Profile/profile_preview_widgets/reviews.dart';
 import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
 import 'package:meeter/Widgets/TextWidgets/poppins_text.dart';
 import 'package:provider/provider.dart';
@@ -167,12 +169,14 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                           clrs: [Colors.white, Colors.white],
                           border: Border.all(color: widget.clr),
                           onpressed: () {
-                            about = false;
-                            service = false;
-                            demand = false;
-                            review = false;
-                            achievement = true;
-                            connection = false;
+                            setState(() {
+                              about = false;
+                              service = false;
+                              demand = false;
+                              review = false;
+                              achievement = true;
+                              connection = false;
+                            });
                           },
                         ),
                       ),
@@ -322,7 +326,9 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                     )
                   : Container(),
               service == true ? Services() : Container(),
-              demand == true ? Demands() : Container()
+              demand == true ? Demands() : Container(),
+              review == true ? Review() : Container(),
+              achievement == true ? Achievement() : Container()
             ],
           ),
         ),

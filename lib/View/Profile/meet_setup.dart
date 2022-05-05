@@ -321,54 +321,53 @@ class _MeetSetupState extends State<MeetSetup> {
                                         child: Row(
                                             children: tags.map((String tag) {
                                           return Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 5.0),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 10.0,
-                                                vertical: 5.0),
-                                            child: tags.length <= 8
-                                                ? Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      InkWell(
-                                                        child: Text(
-                                                          '$tag',
-                                                          style: const TextStyle(
-                                                              color: Color(
-                                                                  0xff00AEFF),
-                                                              fontSize: 16),
-                                                        ),
-                                                        onTap: () {},
-                                                      ),
-                                                      const SizedBox(
-                                                          width: 4.0),
-                                                      InkWell(
-                                                        child: const Icon(
-                                                          Icons.cancel,
-                                                          size: 25.0,
-                                                          color: Color.fromARGB(
-                                                              255, 245, 42, 42),
-                                                        ),
-                                                        onTap: () {
-                                                          onTagDelete(tag);
-                                                        },
-                                                      )
-                                                    ],
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 5.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10.0,
+                                                      vertical: 5.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  InkWell(
+                                                    child: Text(
+                                                      '$tag',
+                                                      style: const TextStyle(
+                                                          color:
+                                                              Color(0xff00AEFF),
+                                                          fontSize: 16),
+                                                    ),
+                                                    onTap: () {},
+                                                  ),
+                                                  const SizedBox(width: 4.0),
+                                                  InkWell(
+                                                    child: const Icon(
+                                                      Icons.cancel,
+                                                      size: 25.0,
+                                                      color: Color.fromARGB(
+                                                          255, 245, 42, 42),
+                                                    ),
+                                                    onTap: () {
+                                                      onTagDelete(tag);
+                                                    },
                                                   )
-                                                : Container(),
-                                          );
+                                                ],
+                                              ));
                                         }).toList()),
                                       )
                                     : null,
                               ),
-                              onChanged: onChanged,
-                              onSubmitted: onSubmitted,
+                              onChanged: tags.length <= 7 ? onChanged : null,
+                              onSubmitted:
+                                  tags.length <= 7 ? onSubmitted : null,
                             );
                           });
                         },

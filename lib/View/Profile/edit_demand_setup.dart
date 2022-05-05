@@ -354,63 +354,56 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                                           child: Row(
                                               children: tags.map((String tag) {
                                             return Container(
-                                              decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(20.0),
+                                                decoration: const BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(20.0),
+                                                  ),
+                                                  color: Color.fromARGB(
+                                                      255, 74, 137, 92),
                                                 ),
-                                                color: Color.fromARGB(
-                                                    255, 74, 137, 92),
-                                              ),
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5.0),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10.0,
-                                                      vertical: 5.0),
-                                              child: tags.length <= 8
-                                                  ? Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        InkWell(
-                                                          child: Text(
-                                                            '#$tag',
-                                                            style:
-                                                                const TextStyle(
-                                                                    color: Colors
-                                                                        .white),
-                                                          ),
-                                                          onTap: () {},
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 4.0),
-                                                        InkWell(
-                                                          child: const Icon(
-                                                            Icons.cancel,
-                                                            size: 14.0,
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 5.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10.0,
+                                                        vertical: 5.0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    InkWell(
+                                                      child: Text(
+                                                        '#$tag',
+                                                        style: const TextStyle(
                                                             color:
-                                                                Color.fromARGB(
-                                                                    255,
-                                                                    233,
-                                                                    233,
-                                                                    233),
-                                                          ),
-                                                          onTap: () {
-                                                            onTagDelete(tag);
-                                                          },
-                                                        )
-                                                      ],
+                                                                Colors.white),
+                                                      ),
+                                                      onTap: () {},
+                                                    ),
+                                                    const SizedBox(width: 4.0),
+                                                    InkWell(
+                                                      child: const Icon(
+                                                        Icons.cancel,
+                                                        size: 14.0,
+                                                        color: Color.fromARGB(
+                                                            255, 233, 233, 233),
+                                                      ),
+                                                      onTap: () {
+                                                        onTagDelete(tag);
+                                                      },
                                                     )
-                                                  : Container(),
-                                            );
+                                                  ],
+                                                ));
                                           }).toList()),
                                         )
                                       : null,
                                 ),
-                                onChanged: onChanged,
-                                onSubmitted: onSubmitted,
+                                onChanged: tags.length <= 7 ? onChanged : null,
+                                onSubmitted:
+                                    tags.length <= 7 ? onSubmitted : null,
                               ),
                             );
                           });

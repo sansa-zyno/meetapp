@@ -22,8 +22,8 @@ class UserController with ChangeNotifier {
   String postId = Uuid().v4();
 
   Future<bool> updateAvatar(String uid) async {
-    Future<String> uploadImage(File imageFile, String uid) async {
-      late String downloadUrl;
+    Future<String?> uploadImage(File imageFile, String uid) async {
+      String? downloadUrl;
       Reference reference =
           FirebaseStorage.instance.ref().child("profilePictures/$uid.jpg");
       UploadTask uploadTask = reference.putData(imageFile.readAsBytesSync());
@@ -43,8 +43,10 @@ class UserController with ChangeNotifier {
     }
 
     uploadToStorage(String uid) async {
-      String mediaUrl = await uploadImage(file, uid);
-      await updatePostInFirestore(mediaUrl: mediaUrl, uid: uid);
+      String? mediaUrl = await uploadImage(file, uid);
+      if (mediaUrl != null) {
+        await updatePostInFirestore(mediaUrl: mediaUrl, uid: uid);
+      }
     }
 
     handleChooseFromGallery(String uid) async {
@@ -61,8 +63,8 @@ class UserController with ChangeNotifier {
   }
 
   Future<bool> updateBanner(String uid, String collection) async {
-    Future<String> uploadImage(File imageFile, String uid) async {
-      late String downloadUrl;
+    Future<String?> uploadImage(File imageFile, String uid) async {
+      String? downloadUrl;
       Reference reference =
           FirebaseStorage.instance.ref().child("profileBanners/$uid.jpg");
       UploadTask uploadTask = reference.putData(imageFile.readAsBytesSync());
@@ -80,8 +82,10 @@ class UserController with ChangeNotifier {
     }
 
     uploadToStorage(String uid) async {
-      String mediaUrl = await uploadImage(file, uid);
-      await updatePostInFirestore(mediaUrl: mediaUrl, uid: uid);
+      String? mediaUrl = await uploadImage(file, uid);
+      if (mediaUrl != null) {
+        await updatePostInFirestore(mediaUrl: mediaUrl, uid: uid);
+      }
     }
 
     handleChooseFromGallery(String uid) async {

@@ -383,8 +383,16 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                     fontSize: w * 4,
                     clrs: [widget.clr, widget.clr],
                     onpressed: () async {
-                      if (date.compareTo(DateTime.now()) >= 0) {
-                        print(date.toString());
+                      String dateToString =
+                          "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}";
+                      int startHour = _startTime.hour;
+                      int startMin = _startTime.minute;
+                      int timeInMin = (startHour * 60) + startMin;
+                      String startTime =
+                          "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
+                      String formattedString = "$dateToString $startTime";
+                      DateTime dateTime = DateTime.parse(formattedString);
+                      if (dateTime.compareTo(DateTime.now()) >= 0) {
                         if (duration != null) {
                           int totalMin = _startTime.hour < 12
                               ? (_startTime.hour * 60 +

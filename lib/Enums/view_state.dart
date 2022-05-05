@@ -1,4 +1,4 @@
-enum ViewState{
+/*enum ViewState{
   LOADING,
   IDLE
-}
+}*/

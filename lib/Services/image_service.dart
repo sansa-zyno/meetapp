@@ -8,13 +8,13 @@ class ImageService {
   ImageService() {
     getUser();
   }
-  late OurUser user;
+  OurUser? user;
   getUser() async {
     user = await UserController().getCurrentUserInfo();
   }
 
-  Future<String> getImage() async {
-    late String urlImage;
+  Future<String?> getImage() async {
+    String? urlImage;
     try {
       ImagePicker imagePicker = ImagePicker();
       PickedFile? image = await imagePicker.getImage(
@@ -35,29 +35,34 @@ class ImageService {
 
   void setImageMsg(String url, String chatRoomId, String username) async {
     var lastMessageTs = DateTime.now();
-    Map<String, dynamic> messageInfoMap = {
-      "type": 'image',
-      "read": false,
-      "photoUrl": url,
-      "sendBy": username,
-      "ts": lastMessageTs,
-    };
-
-    Database().addMessage(chatRoomId, messageInfoMap).then((value) {
-      Map<String, dynamic> lastMessageInfoMap = {
+    if (user != null) {
+      Map<String, dynamic> messageInfoMap = {
         "type": 'image',
         "read": false,
-        "lastMessage": url,
-        "lastMessageSendTs": lastMessageTs,
-        "lastMessageSendBy": username,
-        "lastMessageSendByImgUrl": user.avatarUrl
+        "photoUrl": url,
+        "sendBy": username,
+        "ts": lastMessageTs,
+        "imgUrl": user!.avatarUrl
       };
-      Database().updateLastMessageSend(chatRoomId, lastMessageInfoMap);
-    });
+
+      Database().addMessage(chatRoomId, messageInfoMap).then((value) {
+        Map<String, dynamic> lastMessageInfoMap = {
+          "type": 'image',
+          "read": false,
+          "lastMessage": url,
+          "lastMessageSendTs": lastMessageTs,
+          "lastMessageSendBy": username,
+          "lastMessageSendByImgUrl": user!.avatarUrl
+        };
+        Database().updateLastMessageSend(chatRoomId, lastMessageInfoMap);
+      });
+    }
   }
 
   void uploadImage(String chatRoomId, String username) async {
-    String url = await getImage();
-    setImageMsg(url, chatRoomId, username);
+    String? url = await getImage();
+    if (url != null) {
+      setImageMsg(url, chatRoomId, username);
+    }
   }
 }

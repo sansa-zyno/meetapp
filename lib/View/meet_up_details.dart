@@ -32,9 +32,16 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
 
   getChatRoomIdByUsernames(String a, String b) {
     if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
-      return "$b\_$a";
+      return "$b\_$a\_${widget.request["product_id"]}";
+    } else if (a.substring(0, 1).codeUnitAt(0) ==
+        b.substring(0, 1).codeUnitAt(0)) {
+      if (a == buyerDetails.displayName) {
+        return "$a\_$b\_${widget.request["product_id"]}";
+      } else {
+        return "$b\_$a\_${widget.request["product_id"]}";
+      }
     } else {
-      return "$a\_$b";
+      return "$a\_$b\_${widget.request["product_id"]}";
     }
   }
 
@@ -382,11 +389,54 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       };
                                       Database().createChatRoom(
                                           chatroomId, chatroomInfo);
+
+                                      DocumentSnapshot doc =
+                                          await FirebaseFirestore.instance
+                                              .collection("chatrooms")
+                                              .doc(chatroomId)
+                                              .get();
+                                      Map<String, dynamic>? map =
+                                          doc.data() as Map<String, dynamic>?;
+                                      if (map != null) {
+                                        if (map
+                                            .containsKey("lastMessageSendBy")) {
+                                          if (doc['lastMessageSendBy'] !=
+                                              userName) {
+                                            //get all messages that havent been read
+                                            QuerySnapshot q =
+                                                await FirebaseFirestore.instance
+                                                    .collection("chatrooms")
+                                                    .doc(chatroomId)
+                                                    .collection('chats')
+                                                    .where("read",
+                                                        isEqualTo: false)
+                                                    .get();
+                                            //turn to read to pevent showing as unread in chat history
+                                            for (int i = 0;
+                                                i < q.docs.length;
+                                                i++) {
+                                              await FirebaseFirestore.instance
+                                                  .collection("chatrooms")
+                                                  .doc(chatroomId)
+                                                  .collection('chats')
+                                                  .doc(q.docs[i].id)
+                                                  .update({"read": true});
+                                            }
+
+                                            //turn to read to prevent showing here again
+                                            await FirebaseFirestore.instance
+                                                .collection("chatrooms")
+                                                .doc(chatroomId)
+                                                .update({"read": true});
+                                          }
+                                        }
+                                      }
+
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              ChatScreen(buyerDetails),
+                                          builder: (context) => ChatScreen(
+                                              buyerDetails, chatroomId),
                                         ),
                                       );
                                     } else {}
@@ -410,8 +460,8 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              ChatScreen(sellerDetails),
+                                          builder: (context) => ChatScreen(
+                                              sellerDetails, chatroomId),
                                         ),
                                       );
                                     } else {}
@@ -438,7 +488,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       widget.request["accepted"] == true
                                   ? GestureDetector(
                                       onTap: () async {
-                                        SharedPreferences preferences =
+                                        /* SharedPreferences preferences =
                                             await SharedPreferences
                                                 .getInstance();
                                         String userName =
@@ -476,7 +526,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                           Database().createChatRoom(
                                               connectionRoomId,
                                               connectionRoomInfo);
-                                        }
+                                        }*/
 
                                         Navigator.of(context).push(
                                           MaterialPageRoute(

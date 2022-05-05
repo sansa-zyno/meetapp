@@ -91,7 +91,7 @@ class Database {
     });
   }
 
-  //create a connection room
+  /*//create a connection room
   createConnectionRoom(String connectionRoomId,
       Map<String, dynamic> connectionRoomInfoMap) async {
     final snapShot = await FirebaseFirestore.instance
@@ -119,5 +119,5 @@ class Database {
         .collection("connections")
         .where("users", arrayContains: myUsername)
         .snapshots();
-  }
+  }*/
 }

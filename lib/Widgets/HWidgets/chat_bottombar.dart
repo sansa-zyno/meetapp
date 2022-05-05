@@ -8,7 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatBottomBar extends StatefulWidget {
   final OurUser recipient;
-  ChatBottomBar(this.recipient);
+  final String chatRoomId;
+  ChatBottomBar(this.recipient, this.chatRoomId);
 
   @override
   _ChatBottomBarState createState() => _ChatBottomBarState();
@@ -17,23 +18,12 @@ class ChatBottomBar extends StatefulWidget {
 class _ChatBottomBarState extends State<ChatBottomBar> {
   TextEditingController messageTextEdittingController = TextEditingController();
 
-  String chatRoomId = "";
   String messageId = "";
   String myUserName = "";
-
-  getChatRoomIdByUsernames(String a, String b) {
-    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
-      return "$b\_$a";
-    } else {
-      return "$a\_$b";
-    }
-  }
 
   getMyInfoFromSharedPreference() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     myUserName = prefs.getString('userName')!;
-    chatRoomId =
-        getChatRoomIdByUsernames(myUserName, widget.recipient.displayName!);
   }
 
   addMessage(bool sendClicked, context) {
@@ -53,7 +43,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
         "imgUrl": user.avatarUrl
       };
 
-      Database().addMessage(chatRoomId, messageInfoMap).then((value) {
+      Database().addMessage(widget.chatRoomId, messageInfoMap).then((value) {
         Map<String, dynamic> lastMessageInfoMap = {
           "type": 'text',
           "read": false,
@@ -63,7 +53,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
           "lastMessageSendByImgUrl": user.avatarUrl
         };
 
-        Database().updateLastMessageSend(chatRoomId, lastMessageInfoMap);
+        Database().updateLastMessageSend(widget.chatRoomId, lastMessageInfoMap);
 
         if (sendClicked) {
           // remove the text in the message input field
@@ -132,7 +122,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
               ),
               IconButton(
                 onPressed: () {
-                  ImageService().uploadImage(chatRoomId, myUserName);
+                  ImageService().uploadImage(widget.chatRoomId, myUserName);
                 },
                 icon: Icon(
                   Icons.camera_alt_outlined,

@@ -26,9 +26,9 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
 
   getChatRoomIdByUsernames(String a, String b) {
     if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
-      return "$b\_$a";
+      return "$b\_$a\_${widget.demand.demand_id}";
     } else {
-      return "$a\_$b";
+      return "$a\_$b\_${widget.demand.demand_id}";
     }
   }
 
@@ -147,32 +147,45 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
                       "users": [userName, widget.personDetails.displayName]
                     };
                     Database().createChatRoom(chatroomId, chatroomInfo);
-
-                    QuerySnapshot q = await FirebaseFirestore.instance
+                    DocumentSnapshot doc = await FirebaseFirestore.instance
                         .collection("chatrooms")
                         .doc(chatroomId)
-                        .collection('chats')
-                        .where("read", isEqualTo: false)
                         .get();
-                    for (int i = 0; i < q.docs.length; i++) {
-                      await FirebaseFirestore.instance
-                          .collection("chatrooms")
-                          .doc(chatroomId)
-                          .collection('chats')
-                          .doc(q.docs[i].id)
-                          .update({"read": true});
+                    Map<String, dynamic>? map =
+                        doc.data() as Map<String, dynamic>?;
+                    if (map != null) {
+                      if (map.containsKey("lastMessageSendBy")) {
+                        if (doc['lastMessageSendBy'] != userName) {
+                          //get all messages that havent been read
+                          QuerySnapshot q = await FirebaseFirestore.instance
+                              .collection("chatrooms")
+                              .doc(chatroomId)
+                              .collection('chats')
+                              .where("read", isEqualTo: false)
+                              .get();
+                          //turn to read to prevent chat history from seeing it as unread
+                          for (int i = 0; i < q.docs.length; i++) {
+                            await FirebaseFirestore.instance
+                                .collection("chatrooms")
+                                .doc(chatroomId)
+                                .collection('chats')
+                                .doc(q.docs[i].id)
+                                .update({"read": true});
+                          }
+                          //turn to read to prevent notification in activity/recent screen
+                          await FirebaseFirestore.instance
+                              .collection("chatrooms")
+                              .doc(chatroomId)
+                              .update({"read": true});
+                        }
+                      }
                     }
-
-                    await FirebaseFirestore.instance
-                        .collection("chatrooms")
-                        .doc(chatroomId)
-                        .update({"read": true});
 
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              ChatScreen(widget.personDetails),
+                              ChatScreen(widget.personDetails, chatroomId),
                         ));
                   } else {}
                 },

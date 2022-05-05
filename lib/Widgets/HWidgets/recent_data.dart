@@ -130,13 +130,14 @@ class RecentData extends StatelessWidget {
                                 isEqualTo: msg!["lastMessageSendBy"])
                             .get();
                         OurUser user = OurUser.fromFireStore(_doc.docs[0]);
-
+                        //get all messages that havent been read
                         QuerySnapshot q = await FirebaseFirestore.instance
                             .collection("chatrooms")
                             .doc(msg!.id)
                             .collection('chats')
                             .where("read", isEqualTo: false)
                             .get();
+                        //turn to read to pevent showing as unread in chat history
                         for (int i = 0; i < q.docs.length; i++) {
                           await FirebaseFirestore.instance
                               .collection("chatrooms")
@@ -148,8 +149,8 @@ class RecentData extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (ctx) => ChatScreen(user)));
-
+                                builder: (ctx) => ChatScreen(user, msg!.id)));
+                        //turn to read to prevent showing here again
                         await FirebaseFirestore.instance
                             .collection("chatrooms")
                             .doc(msg!.id)
