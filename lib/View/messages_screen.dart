@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/Services/database.dart';
@@ -43,14 +42,19 @@ class _MessagesState extends State<Messages> {
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
           //leading: Icon(Icons.notifications, color: Colors.black87,),
-          title: Text(
-            'Inbox',
-            style: TextStyle(
-              color: Colors.black,
+          title: ShaderMask(
+            blendMode: BlendMode.srcIn,
+            shaderCallback: (rect) => LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.indigoAccent, Colors.blue, Colors.green])
+                .createShader(rect),
+            child: Text(
+              'Inbox',
             ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.white54,
         ),
         body: StreamBuilder(
             stream: chatroomStream,
@@ -110,7 +114,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
 
     user = OurUser.fromFireStore(_doc.docs[0]);
     profilePicUrl = user!.avatarUrl!;
-    name = username;
+    //name = username;
     setState(() {});
     QuerySnapshot q1 =
         await FirebaseFirestore.instance.collectionGroup("meeter").get();
@@ -222,7 +226,10 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                                             child: snapshot.hasData
                                                 ? Center(
                                                     child: Text(
-                                                        '${q.docs.length}'))
+                                                        '${q.docs.length}',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white)))
                                                 : Container()))
                                     : Container();
                               })
@@ -233,10 +240,21 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        productName,
-                        style:
-                            TextStyle(fontSize: 16, color: Color(0xFF166138)),
+                      ShaderMask(
+                        blendMode: BlendMode.srcIn,
+                        shaderCallback: (rect) => LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.indigoAccent,
+                              Colors.blue,
+                              Colors.green
+                            ]).createShader(rect),
+                        child: Text(
+                          productName,
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
                       ),
                       SizedBox(height: 5),
                       widget.type == "text"

@@ -337,9 +337,11 @@ class TimerController extends GetxController {
               //+HANDLE THIS HERE PLEASE IN WHATEVER WAY YOU WANT. yOU MIGHT ALSO WANT tO
               //+DELETE THIS MEETING FRoM THE RECENT ONES OR THE REQUESTS AFTER THIS MEETING
               //+ IS ENDED hERE
-              await FirebaseFirestore.instance.collection("connections")
+              await FirebaseFirestore.instance
+                  .collection("connections")
                   .doc(request["seller_id"])
                   .set({
+                "title": request["title"],
                 "seller_id": request["seller_id"],
                 "seller_name": request["seller_name"],
                 "seller_image": request["seller_image"],
@@ -348,9 +350,9 @@ class TimerController extends GetxController {
                 "buyer_image": request["buyer_image"],
                 "product_id": request["product_id"],
                 "duration": request["duration"],
-                "title": request["title"],
-                "startTime": request["startTime"],
+                "location": request["location"],
                 "date": request["date"],
+                "meeters": ["${request["seller_id"]}", "${request["buyer_id"]}"]
               });
               Get.back();
               ref2.set({

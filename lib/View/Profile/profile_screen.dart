@@ -4,7 +4,8 @@ import 'package:meeter/Providers/user_controller.dart';
 import 'package:meeter/View/Profile/profile_preview_widgets/about.dart';
 import 'package:meeter/View/Profile/profile_preview_widgets/demands.dart';
 import 'package:meeter/View/Profile/profile_preview_widgets/service.dart';
-import 'package:meeter/View/Profile/profile_preview_widgets/achievement.dart';
+import 'package:meeter/View/Profile/achievement.dart';
+import 'package:meeter/View/Profile/connection.dart';
 import 'package:meeter/View/Profile/profile_preview_widgets/reviews.dart';
 import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
 import 'package:meeter/Widgets/TextWidgets/poppins_text.dart';
@@ -25,8 +26,6 @@ class _ProfilePreviewState extends State<ProfilePreview> {
   bool service = false;
   bool demand = false;
   bool review = false;
-  bool connection = false;
-  bool achievement = false;
   late UserController _currentUser;
 
   @override
@@ -145,14 +144,10 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                           fontSize: 12,
                           letterSpacing: 0,
                           onpressed: () {
-                            setState(() {
-                              about = false;
-                              service = false;
-                              demand = false;
-                              review = false;
-                              achievement = false;
-                              connection = true;
-                            });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) => Connection()));
                           },
                         ),
                       ),
@@ -169,14 +164,10 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                           clrs: [Colors.white, Colors.white],
                           border: Border.all(color: widget.clr),
                           onpressed: () {
-                            setState(() {
-                              about = false;
-                              service = false;
-                              demand = false;
-                              review = false;
-                              achievement = true;
-                              connection = false;
-                            });
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) => Achievement()));
                           },
                         ),
                       ),
@@ -216,8 +207,6 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                           service = false;
                           demand = false;
                           review = false;
-                          achievement = false;
-                          connection = false;
                         });
                       },
                     ),
@@ -248,8 +237,6 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                           service = true;
                           demand = false;
                           review = false;
-                          achievement = false;
-                          connection = false;
                         });
                       },
                     ),
@@ -280,8 +267,6 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                           service = false;
                           demand = true;
                           review = false;
-                          achievement = false;
-                          connection = false;
                         });
                       },
                     ),
@@ -312,8 +297,6 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                           service = false;
                           demand = false;
                           review = true;
-                          achievement = false;
-                          connection = false;
                         });
                       },
                     ),
@@ -328,7 +311,6 @@ class _ProfilePreviewState extends State<ProfilePreview> {
               service == true ? Services() : Container(),
               demand == true ? Demands() : Container(),
               review == true ? Review() : Container(),
-              achievement == true ? Achievement() : Container()
             ],
           ),
         ),
