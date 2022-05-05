@@ -30,7 +30,7 @@ class _ConnectionState extends State<Connection> {
         children: [
           StreamBuilder(
               stream: FirebaseFirestore.instance
-                  .collection("connection")
+                  .collection("connections")
                   .where("meeters", arrayContains: auth!.currentUser!.uid)
                   .snapshots(),
               builder: (ctx, snapshot) {

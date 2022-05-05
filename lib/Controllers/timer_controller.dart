@@ -348,9 +348,7 @@ class TimerController extends GetxController {
                 "buyer_id": request["buyer_id"],
                 "buyer_name": request["buyer_name"],
                 "buyer_image": request["buyer_image"],
-                "product_id": request["product_id"],
                 "duration": request["duration"],
-                "location": request["location"],
                 "date": request["date"],
                 "meeters": ["${request["seller_id"]}", "${request["buyer_id"]}"]
               });
