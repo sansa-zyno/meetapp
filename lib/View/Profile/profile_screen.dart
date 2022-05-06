@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:meeter/Providers/user_controller.dart';
-import 'package:meeter/View/Profile/connection_buyer.dart';
 import 'package:meeter/View/Profile/profile_screen_widgets/about.dart';
 import 'package:meeter/View/Profile/profile_screen_widgets/demands.dart';
 import 'package:meeter/View/Profile/profile_screen_widgets/service.dart';
 import 'package:meeter/View/Profile/achievement.dart';
-import 'package:meeter/View/Profile/connection_seller.dart';
+import 'package:meeter/View/Profile/connection.dart';
 import 'package:meeter/View/Profile/profile_screen_widgets/reviews.dart';
 import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
 import 'package:meeter/Widgets/TextWidgets/poppins_text.dart';
@@ -145,17 +144,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           fontSize: 12,
                           letterSpacing: 0,
                           onpressed: () {
-                            widget.clr == Color(0xff00AEFF)
-                                ? Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            ConnectionSeller(clr: widget.clr)))
-                                : Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            ConnectionBuyer(clr: widget.clr)));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) => Connection()));
                           },
                         ),
                       ),

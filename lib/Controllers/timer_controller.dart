@@ -337,6 +337,7 @@ class TimerController extends GetxController {
               //+HANDLE THIS HERE PLEASE IN WHATEVER WAY YOU WANT. yOU MIGHT ALSO WANT tO
               //+DELETE THIS MEETING FRoM THE RECENT ONES OR THE REQUESTS AFTER THIS MEETING
               //+ IS ENDED hERE
+              DateTime date = DateTime.now();
               await FirebaseFirestore.instance
                   .collection("connections")
                   .doc(request["seller_id"])
@@ -348,8 +349,8 @@ class TimerController extends GetxController {
                 "buyer_id": request["buyer_id"],
                 "buyer_name": request["buyer_name"],
                 "buyer_image": request["buyer_image"],
-                "duration": request["duration"],
-                "date": request["date"],
+                "date":
+                    "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
                 "meeters": ["${request["seller_id"]}", "${request["buyer_id"]}"]
               });
               Get.back();
