@@ -340,8 +340,8 @@ class TimerController extends GetxController {
               DateTime date = DateTime.now();
               await FirebaseFirestore.instance
                   .collection("connections")
-                  .doc(request["seller_id"]).collection("connection")
-                  .add({
+                  .doc(request["seller_id"])
+                  .set({
                 "title": request["title"],
                 "seller_id": request["seller_id"],
                 "seller_name": request["seller_name"],
