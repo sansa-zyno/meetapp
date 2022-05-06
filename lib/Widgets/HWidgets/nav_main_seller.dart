@@ -5,7 +5,7 @@ import 'package:meeter/View/Discover/discover.dart';
 import 'package:meeter/View/Explore_Seller/home_screen.dart';
 import 'package:meeter/View/Profile/meet_setup.dart';
 import 'package:meeter/View/Profile/demand_setup.dart';
-import 'package:meeter/View/Profile/profile_preview.dart';
+import 'package:meeter/View/Profile/profile_screen.dart';
 import 'package:spincircle_bottom_bar/modals.dart';
 import 'package:spincircle_bottom_bar/spincircle_bottom_bar.dart';
 
@@ -43,7 +43,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                   .where((element) => element['type'] == 'service')
                   .toList()
               : []),
-      ProfilePreview(
+      ProfileScreen(
         clr: Color(0xff00AEFF),
       ),
     ];

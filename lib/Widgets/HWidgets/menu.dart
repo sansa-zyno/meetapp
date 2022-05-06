@@ -3,7 +3,7 @@ import 'package:getwidget/components/drawer/gf_drawer.dart';
 import 'package:meeter/Providers/user_controller.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/View/Auth/authMain.dart';
-import 'package:meeter/View/Profile/profile_preview.dart';
+import 'package:meeter/View/Profile/profile_screen.dart';
 import 'package:meeter/View/calendar_screen.dart';
 import 'package:meeter/View/messages_screen.dart';
 import 'package:meeter/View/favourites.dart';
@@ -213,11 +213,11 @@ class _MenuState extends State<Menu> {
               onTap: () {
                 widget.clr == Colors.blue
                     ? Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => ProfilePreview(
+                        builder: (ctx) => ProfileScreen(
                               clr: Color(0xff00AEFF),
                             )))
                     : Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => ProfilePreview(
+                        builder: (ctx) => ProfileScreen(
                               clr: Color(0xff4CAF50),
                             )));
               },

@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:meeter/Providers/user_controller.dart';
-import 'package:meeter/View/Profile/profile_preview_widgets/about.dart';
-import 'package:meeter/View/Profile/profile_preview_widgets/demands.dart';
-import 'package:meeter/View/Profile/profile_preview_widgets/service.dart';
+import 'package:meeter/View/Profile/connection_buyer.dart';
+import 'package:meeter/View/Profile/profile_screen_widgets/about.dart';
+import 'package:meeter/View/Profile/profile_screen_widgets/demands.dart';
+import 'package:meeter/View/Profile/profile_screen_widgets/service.dart';
 import 'package:meeter/View/Profile/achievement.dart';
-import 'package:meeter/View/Profile/connection.dart';
-import 'package:meeter/View/Profile/profile_preview_widgets/reviews.dart';
+import 'package:meeter/View/Profile/connection_seller.dart';
+import 'package:meeter/View/Profile/profile_screen_widgets/reviews.dart';
 import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
 import 'package:meeter/Widgets/TextWidgets/poppins_text.dart';
 import 'package:provider/provider.dart';
 
-class ProfilePreview extends StatefulWidget {
+class ProfileScreen extends StatefulWidget {
   final Color clr;
-  ProfilePreview({required this.clr});
+  ProfileScreen({required this.clr});
 
   @override
-  _ProfilePreviewState createState() => _ProfilePreviewState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _ProfilePreviewState extends State<ProfilePreview> {
+class _ProfileScreenState extends State<ProfileScreen> {
   final controller = PageController();
 
   bool about = true;
@@ -144,10 +145,17 @@ class _ProfilePreviewState extends State<ProfilePreview> {
                           fontSize: 12,
                           letterSpacing: 0,
                           onpressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (ctx) => Connection()));
+                            widget.clr == Color(0xff00AEFF)
+                                ? Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) =>
+                                            ConnectionSeller(clr: widget.clr)))
+                                : Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) =>
+                                            ConnectionBuyer(clr: widget.clr)));
                           },
                         ),
                       ),

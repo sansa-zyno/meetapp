@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:meeter/View/Dashboard/activity_buyer.dart';
 import 'package:meeter/View/Explore_Buyer/home_buyer_screen.dart';
 import 'package:meeter/View/Discover/seller_discover.dart';
-import 'package:meeter/View/Profile/profile_preview.dart';
+import 'package:meeter/View/Profile/profile_screen.dart';
 import 'package:spincircle_bottom_bar/modals.dart';
 import 'package:spincircle_bottom_bar/spincircle_bottom_bar.dart';
 import 'package:meeter/View/Profile/meet_setup.dart';
@@ -43,7 +43,7 @@ class _BuyerBottomNavBarState extends State<BuyerBottomNavBar> {
                   .where((element) => element['type'] == 'demand')
                   .toList()
               : []),
-      ProfilePreview(
+      ProfileScreen(
         clr: Color(0xff4CAF50),
       ),
     ];

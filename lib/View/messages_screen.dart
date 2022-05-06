@@ -253,7 +253,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                         child: Text(
                           productName,
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
                       SizedBox(height: 5),
