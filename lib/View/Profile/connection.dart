@@ -185,7 +185,8 @@ class _ConnectionState extends State<Connection> {
                             ]).createShader(rect),
                         child: Text(
                           'Connections',
-                          style: TextStyle(fontSize: 21),
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),

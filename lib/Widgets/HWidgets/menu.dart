@@ -195,9 +195,7 @@ class _MenuState extends State<Menu> {
                     ),
                   ),
                   onTap: () async {
-                    Future.delayed(Duration(seconds: 3), () async {
-                      await FirebaseAuth.instance.signOut();
-                    });
+                    await FirebaseAuth.instance.signOut();
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => AuthMain()),

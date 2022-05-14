@@ -89,27 +89,29 @@ class _MyHomePageState extends State<MyHomePage> {
             element['buyer_id'] == _auth.currentUser!.uid)
         .where((element) => element['accepted'] == true)
         .toList();
-    requests!.forEach((element) {
-      String date = element['date'];
-      int duration = element['duration'];
-      int startHour = element['startTime']['hour'];
-      int startMin = element['startTime']['min'];
-      int timeInMin = (startHour * 60) + startMin + duration;
-      String endTime =
-          "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
-      String formattedString = "$date $endTime";
-      DateTime dateTime = DateTime.parse(formattedString);
-      if (dateTime.compareTo(DateTime.now()) >= 0) {
-        Future.delayed(const Duration(hours: 1), () async {
-          await FirebaseFirestore.instance
-              .collection("requests")
-              .doc(element['seller_id'])
-              .collection("request")
-              .doc(element.id)
-              .delete();
-        });
-      }
-    });
+    if (requests != null) {
+      requests!.forEach((element) {
+        String date = element['date'];
+        int duration = element['duration'];
+        int startHour = element['startTime']['hour'];
+        int startMin = element['startTime']['min'];
+        int timeInMin = (startHour * 60) + startMin + duration;
+        String endTime =
+            "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
+        String formattedString = "$date $endTime";
+        DateTime dateTime = DateTime.parse(formattedString);
+        if (dateTime.compareTo(DateTime.now()) >= 0) {
+          Future.delayed(const Duration(hours: 1), () async {
+            await FirebaseFirestore.instance
+                .collection("requests")
+                .doc(element['seller_id'])
+                .collection("request")
+                .doc(element.id)
+                .delete();
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -137,7 +139,10 @@ class _MyHomePageState extends State<MyHomePage> {
           if (snapshot.hasData) {
             if (_userController.getCurrentUser.displayName == null ||
                 _userController.getCurrentUser.avatarUrl == null) {
-              return ProfileSetup();
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+              Future.delayed(Duration(seconds: 5), () => ProfileSetup());
             } else {
               return BottomNavBar();
             }

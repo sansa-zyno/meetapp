@@ -4,7 +4,7 @@ import 'dart:convert' as convert;
 import 'package:meeter/Model/place_search.dart';
 
 class PlacesService {
-  final key = 'AIzaSyC0tZefy5ZcMDxpPPfcCiQV4Lzwrzo420Y';
+  final key = 'AIzaSyBzdSEyJtvihUdx4U3w5VRU_WIdNbXgSm8';
 
   Future<List<PlaceSearch>> getAutocomplete(String search) async {
     var url =

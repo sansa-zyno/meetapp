@@ -518,11 +518,9 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                                   .delete();
                                             } catch (e) {}
 
-                                            Future.delayed(Duration(seconds: 3),
-                                                () async {
-                                              await FirebaseAuth.instance
-                                                  .signOut();
-                                            });
+                                            await FirebaseAuth.instance
+                                                .signOut();
+
                                             AchievementView(
                                               context,
                                               color: Colors.green,
@@ -536,6 +534,7 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                                   "Your account has been deleted successfully",
                                               isCircle: true,
                                             )..show();
+
                                             Navigator.pushAndRemoveUntil(
                                                 context,
                                                 MaterialPageRoute(
