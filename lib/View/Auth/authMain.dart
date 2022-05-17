@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
 import 'package:meeter/Providers/user_controller.dart';
 import 'package:meeter/View/Profile/profile_setup.dart';
 import 'package:provider/provider.dart';
@@ -31,13 +34,22 @@ class _AuthMainState extends State<AuthMain> {
   void _verifyOTP() async {
     final credential = PhoneAuthProvider.credential(
         verificationId: _verificationId, smsCode: _otp.text);
+    log("oTP in _verifyOTP is: ${_otp.text}");
+    log("in verifyOtp and credential: ${credential.smsCode} "
+        "and credential.verificationId: ${credential.verificationId} "
+        " and credential.providerId: ${credential.providerId} "
+        "and credential.signInMethod: ${credential.signInMethod}");
     try {
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+
+      log("userCredential.user: ${userCredential.user}");
 
       if (FirebaseAuth.instance.currentUser != null) {
+        log("inside the user not null");
         setState(() {
           isLoggedIn = true;
           uid = FirebaseAuth.instance.currentUser!.uid;
+          log("userid: $uid");
         });
       } else {
         AchievementView(
@@ -53,7 +65,11 @@ class _AuthMainState extends State<AuthMain> {
           isCircle: true,
         ).show();
       }
-    } catch (e) {}
+    } catch (e) {
+      log("Following error was thrown while trying to authenticate the OTP : ${e.toString()}.");
+      Get.defaultDialog(title: "Error!",
+      middleText: "Following error was thrown while trying to authenticate the OTP : ${e.toString()}");
+    }
 
     if (uid != null) {
       try {
@@ -69,6 +85,8 @@ class _AuthMainState extends State<AuthMain> {
             _currentUser.getCurrentUserInfo();
             SharedPreferences _prefs = await SharedPreferences.getInstance();
             _prefs.setString('userName', snap.docs[0]['displayName']);
+            log("in old user before navigation");
+
             Navigator.pushAndRemoveUntil(
                 context,
                 PageTransition(
@@ -79,6 +97,7 @@ class _AuthMainState extends State<AuthMain> {
                 ),
                 (route) => false);
           } else {
+
             Navigator.pushAndRemoveUntil(
                 context,
                 PageTransition(
@@ -108,6 +127,7 @@ class _AuthMainState extends State<AuthMain> {
               "userType": _user.userType,
               "verified": _user.verified,
             });
+            log("in new user before navigation");
             Navigator.pushAndRemoveUntil(
                 context,
                 PageTransition(
@@ -117,9 +137,14 @@ class _AuthMainState extends State<AuthMain> {
                   child: VerificationSuccess(),
                 ),
                 (route) => false);
-          } catch (e) {}
+          } catch (e) {
+            log("Error in setting Firebase Messaging. ${e.toString()}");
+          }
         }
-      } catch (e) {}
+      } catch (e) {
+        log("Error in adding or fetching user data. ${e.toString()}");
+
+      }
     }
   }
 
@@ -172,7 +197,7 @@ class _AuthMainState extends State<AuthMain> {
       ),
       title: "Verification failed",
       elevation: 20,
-      subTitle: "There is an issue verifying this number",
+      subTitle: "There is an issue verifying this number: ${exception.message}",
       isCircle: true,
     ).show();
     setState(() {
@@ -182,11 +207,109 @@ class _AuthMainState extends State<AuthMain> {
   }
 
   void verificationCompleted(PhoneAuthCredential credential) async {
-    await FirebaseAuth.instance.signInWithCredential(credential);
-    if (FirebaseAuth.instance.currentUser != null) {
-      setState(() {
-        isLoggedIn = true;
-      });
+    try{
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      log("userCredential.user: ${userCredential.user}");
+      if (FirebaseAuth.instance.currentUser != null) {
+        log("inside the user not null");
+        setState(() {
+          isLoggedIn = true;
+          uid = FirebaseAuth.instance.currentUser!.uid;
+          log("userid: $uid");
+        });
+      } else {
+        AchievementView(
+          context,
+          color: Colors.red,
+          icon: const Icon(
+            FontAwesomeIcons.bug,
+            color: Colors.white,
+          ),
+          title: "Something went wrong!",
+          elevation: 20,
+          subTitle: "Could not fetch the OTP",
+          isCircle: true,
+        ).show();
+      }
+    } catch (e) {
+      log("Following error was thrown while trying to authenticate the OTP : ${e.toString()}.");
+      Get.defaultDialog(title: "Error!",
+          middleText: "Following error was thrown while trying to authenticate the OTP : ${e.toString()}.");
+    }
+    if (uid != null) {
+      try {
+        QuerySnapshot snap = await FirebaseFirestore.instance
+            .collection("users")
+            .where("uid", isEqualTo: uid)
+            .get();
+        if (snap.docs.isNotEmpty) {
+          if (snap.docs[0]['displayName'] != null &&
+              snap.docs[0]['avatarUrl'] != null) {
+            UserController _currentUser =
+            Provider.of<UserController>(context, listen: false);
+            _currentUser.getCurrentUserInfo();
+            SharedPreferences _prefs = await SharedPreferences.getInstance();
+            _prefs.setString('userName', snap.docs[0]['displayName']);
+            log("in old user before navigation");
+
+            Navigator.pushAndRemoveUntil(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeft,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                  child: BottomNavBar(),
+                ),
+                    (route) => false);
+          } else {
+
+            Navigator.pushAndRemoveUntil(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeft,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                  child: ProfileSetup(),
+                ),
+                    (route) => false);
+          }
+        } else {
+          OurUser _user = OurUser();
+          try {
+            FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+            String? fcmToken = await firebaseMessaging.getToken();
+            await FirebaseFirestore.instance.collection("users").doc(uid).set({
+              "uid": uid,
+              "phoneNumber": FirebaseAuth.instance.currentUser!.phoneNumber,
+              "accountCreated": Timestamp.now(),
+              "avatarUrl": _user.avatarUrl,
+              "bannerImage": _user.bannerImage,
+              "age": _user.age,
+              "bio": _user.bio,
+              "country": _user.country,
+              "displayName": _user.displayName,
+              "token": fcmToken,
+              "userType": _user.userType,
+              "verified": _user.verified,
+            });
+            log("in new user before navigation");
+            Navigator.pushAndRemoveUntil(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeft,
+                  duration: Duration(milliseconds: 200),
+                  curve: Curves.easeIn,
+                  child: VerificationSuccess(),
+                ),
+                    (route) => false);
+          } catch (e) {
+            log("Error in setting Firebase Messaging. ${e.toString()}");
+          }
+        }
+      } catch (e) {
+        log("Error in adding or fetching user data. ${e.toString()}");
+
+      }
     }
   }
 

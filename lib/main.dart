@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
   onLoad() async {
     _userController = Provider.of<UserController>(context, listen: false);
     OurUser user = await _userController.getCurrentUserInfo();
-    saveUsertoSharedPref(user.displayName!);
+    saveUsertoSharedPref(user.displayName ?? "");
   }
 
   deleteUpcomingAfterTimeElapse() async {

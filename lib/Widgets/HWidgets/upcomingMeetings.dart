@@ -156,7 +156,10 @@ class _UpcomingMeetingsState extends State<UpcomingMeetings> {
                     ],
                   ),
                 )
-              : Container(),
+              : Container(child: Center(child: Padding(
+                padding: const EdgeInsets.only(top: 10.0),
+                child: Text("No Upcoming Meetings"),
+              ),),),
         ],
       ),
     );
