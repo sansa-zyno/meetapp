@@ -335,8 +335,6 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                                                       BorderRadius.all(
                                                     Radius.circular(20.0),
                                                   ),
-                                                  color: Color.fromARGB(
-                                                      255, 74, 137, 92),
                                                 ),
                                                 margin:
                                                     const EdgeInsets.symmetric(

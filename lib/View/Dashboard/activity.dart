@@ -56,7 +56,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                   height: h * 16.8,
                 ),
                 Container(
-                  // height: h * 67.4,
+                  height: h * 70,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,
