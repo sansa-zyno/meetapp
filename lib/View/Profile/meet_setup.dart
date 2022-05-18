@@ -441,11 +441,11 @@ class _MeetSetupState extends State<MeetSetup> {
                               onSubmitted: tags.length <= 7
                                   ? onSubmitted
                                   : (value) {
-                                Get.snackbar(
-                                  "Enough Tags!",
-                                  "Already added 8 tags",
-                                  duration: const Duration(seconds: 3),
-                                );
+                                      Get.snackbar(
+                                        "Enough Tags!",
+                                        "Already added 8 tags",
+                                        duration: const Duration(seconds: 3),
+                                      );
                                       log("in else of onSubmitted and tags.length is: ${tags.length}"
                                           " and  value is: $value");
                                     },
@@ -461,7 +461,7 @@ class _MeetSetupState extends State<MeetSetup> {
                       width: 270,
                       height: 50,
                       child: GradientButton(
-                        title: "Go",
+                        title: "Submit",
                         fontSize: 12,
                         clrs: const [Color(0xff00AEFF), Color(0xff00AEFF)],
                         onpressed: () async {

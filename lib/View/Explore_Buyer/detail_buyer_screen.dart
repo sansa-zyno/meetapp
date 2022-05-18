@@ -60,8 +60,8 @@ class _DetailsBuyerScreenState extends State<DetailsBuyerScreen> {
                   priceText: "\$${widget.demands.demand_price}",
                   priceText1: '/ 30 min',
                   timeText: widget.demands.demand_available_online!
-                      ? "Availabe"
-                      : "Not available",
+                      ? "Availabe virtually"
+                      : "Not available virtually",
                   likesText: likes,
                   // categoryText: 'In Category',
                   detailText: widget.demands.demand_description,

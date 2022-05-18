@@ -139,10 +139,12 @@ class _MyHomePageState extends State<MyHomePage> {
           if (snapshot.hasData) {
             if (_userController.getCurrentUser.displayName == null ||
                 _userController.getCurrentUser.avatarUrl == null) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
               Future.delayed(Duration(seconds: 5), () => ProfileSetup());
+              return Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
             } else {
               return BottomNavBar();
             }

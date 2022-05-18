@@ -235,10 +235,42 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
               ],
             ),
           ),
-          MeeterAppbarBuyer(
-            title: "Activity",
-            icon: Icons.menu_outlined,
-          ),
+          SafeArea(
+            child: Container(
+              height: 90,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(
+                  color: Colors.green,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Activity",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: w * 6.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );

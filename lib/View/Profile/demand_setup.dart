@@ -303,11 +303,17 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                                       color: Color.fromARGB(255, 74, 137, 92),
                                       width: 3.0,
                                     ),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(30),
+                                    ),
                                   ),
                                   focusedBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
                                       color: Color.fromARGB(255, 74, 137, 92),
                                       width: 3.0,
+                                    ),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(30),
                                     ),
                                   ),
                                   helperText: 'Add category tags max 8',
@@ -346,10 +352,10 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                                                   children: [
                                                     InkWell(
                                                       child: Text(
-                                                        '#$tag',
+                                                        '$tag',
                                                         style: const TextStyle(
-                                                            color:
-                                                                Colors.white),
+                                                            color: Colors.green,
+                                                            fontSize: 16),
                                                       ),
                                                       onTap: () {},
                                                     ),
@@ -357,9 +363,9 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                                                     InkWell(
                                                       child: const Icon(
                                                         Icons.cancel,
-                                                        size: 14.0,
+                                                        size: 25.0,
                                                         color: Color.fromARGB(
-                                                            255, 233, 233, 233),
+                                                            255, 245, 42, 42),
                                                       ),
                                                       onTap: () {
                                                         onTagDelete(tag);
@@ -394,25 +400,24 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                                         tags = textfieldTagsController.getTags!;
                                       }
                                     : (value) {
-                                  // Get.snackbar(
-                                  //   "Enough Tags!",
-                                  //   "Already added 8 tags",
-                                  //   // duration: const Duration(seconds: 3),
-                                  // );
-                                  log("in else of onchanged and tags.length is: ${tags.length}");
-                                },
-                                onSubmitted:
-                                    tags.length <= 7
-                                        ? onSubmitted
-                                        : (value) {
-                                      Get.snackbar(
-                                        "Enough Tags!",
-                                        "Already added 8 tags",
-                                        duration: const Duration(seconds: 3),
-                                      );
-                                      log("in else of onSubmitted and tags.length is: ${tags.length}"
-                                          " and  value is: $value");
-                                    },
+                                        // Get.snackbar(
+                                        //   "Enough Tags!",
+                                        //   "Already added 8 tags",
+                                        //   // duration: const Duration(seconds: 3),
+                                        // );
+                                        log("in else of onchanged and tags.length is: ${tags.length}");
+                                      },
+                                onSubmitted: tags.length <= 7
+                                    ? onSubmitted
+                                    : (value) {
+                                        Get.snackbar(
+                                          "Enough Tags!",
+                                          "Already added 8 tags",
+                                          duration: const Duration(seconds: 3),
+                                        );
+                                        log("in else of onSubmitted and tags.length is: ${tags.length}"
+                                            " and  value is: $value");
+                                      },
                               ),
                             );
                           });
