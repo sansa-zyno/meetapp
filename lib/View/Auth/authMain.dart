@@ -40,7 +40,8 @@ class _AuthMainState extends State<AuthMain> {
         " and credential.providerId: ${credential.providerId} "
         "and credential.signInMethod: ${credential.signInMethod}");
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
       log("userCredential.user: ${userCredential.user}");
 
@@ -67,8 +68,10 @@ class _AuthMainState extends State<AuthMain> {
       }
     } catch (e) {
       log("Following error was thrown while trying to authenticate the OTP : ${e.toString()}.");
-      Get.defaultDialog(title: "Error!",
-      middleText: "Following error was thrown while trying to authenticate the OTP : ${e.toString()}");
+      Get.defaultDialog(
+          title: "Error!",
+          middleText:
+              "Following error was thrown while trying to authenticate the OTP : ${e.toString()}");
     }
 
     if (uid != null) {
@@ -78,8 +81,8 @@ class _AuthMainState extends State<AuthMain> {
             .where("uid", isEqualTo: uid)
             .get();
         if (snap.docs.isNotEmpty) {
-          if (snap.docs[0]['displayName'] != null &&
-              snap.docs[0]['avatarUrl'] != null) {
+          if (snap.docs[0]['displayName'] != "" &&
+              snap.docs[0]['avatarUrl'] != "") {
             UserController _currentUser =
                 Provider.of<UserController>(context, listen: false);
             _currentUser.getCurrentUserInfo();
@@ -97,7 +100,6 @@ class _AuthMainState extends State<AuthMain> {
                 ),
                 (route) => false);
           } else {
-
             Navigator.pushAndRemoveUntil(
                 context,
                 PageTransition(
@@ -117,15 +119,16 @@ class _AuthMainState extends State<AuthMain> {
               "uid": uid,
               "phoneNumber": FirebaseAuth.instance.currentUser!.phoneNumber,
               "accountCreated": Timestamp.now(),
-              "avatarUrl": _user.avatarUrl,
+              "avatarUrl": "",
               "bannerImage": _user.bannerImage,
               "age": _user.age,
               "bio": _user.bio,
               "country": _user.country,
-              "displayName": _user.displayName,
+              "displayName": "",
               "token": fcmToken,
               "userType": _user.userType,
               "verified": _user.verified,
+              "lastSeen": DateTime.now().toString()
             });
             log("in new user before navigation");
             Navigator.pushAndRemoveUntil(
@@ -143,7 +146,6 @@ class _AuthMainState extends State<AuthMain> {
         }
       } catch (e) {
         log("Error in adding or fetching user data. ${e.toString()}");
-
       }
     }
   }
@@ -207,8 +209,9 @@ class _AuthMainState extends State<AuthMain> {
   }
 
   void verificationCompleted(PhoneAuthCredential credential) async {
-    try{
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
       log("userCredential.user: ${userCredential.user}");
       if (FirebaseAuth.instance.currentUser != null) {
         log("inside the user not null");
@@ -233,8 +236,10 @@ class _AuthMainState extends State<AuthMain> {
       }
     } catch (e) {
       log("Following error was thrown while trying to authenticate the OTP : ${e.toString()}.");
-      Get.defaultDialog(title: "Error!",
-          middleText: "Following error was thrown while trying to authenticate the OTP : ${e.toString()}.");
+      Get.defaultDialog(
+          title: "Error!",
+          middleText:
+              "Following error was thrown while trying to authenticate the OTP : ${e.toString()}.");
     }
     if (uid != null) {
       try {
@@ -243,10 +248,10 @@ class _AuthMainState extends State<AuthMain> {
             .where("uid", isEqualTo: uid)
             .get();
         if (snap.docs.isNotEmpty) {
-          if (snap.docs[0]['displayName'] != null &&
-              snap.docs[0]['avatarUrl'] != null) {
+          if (snap.docs[0]['displayName'] != "" &&
+              snap.docs[0]['avatarUrl'] != "") {
             UserController _currentUser =
-            Provider.of<UserController>(context, listen: false);
+                Provider.of<UserController>(context, listen: false);
             _currentUser.getCurrentUserInfo();
             SharedPreferences _prefs = await SharedPreferences.getInstance();
             _prefs.setString('userName', snap.docs[0]['displayName']);
@@ -260,9 +265,8 @@ class _AuthMainState extends State<AuthMain> {
                   curve: Curves.easeIn,
                   child: BottomNavBar(),
                 ),
-                    (route) => false);
+                (route) => false);
           } else {
-
             Navigator.pushAndRemoveUntil(
                 context,
                 PageTransition(
@@ -271,7 +275,7 @@ class _AuthMainState extends State<AuthMain> {
                   curve: Curves.easeIn,
                   child: ProfileSetup(),
                 ),
-                    (route) => false);
+                (route) => false);
           }
         } else {
           OurUser _user = OurUser();
@@ -282,15 +286,16 @@ class _AuthMainState extends State<AuthMain> {
               "uid": uid,
               "phoneNumber": FirebaseAuth.instance.currentUser!.phoneNumber,
               "accountCreated": Timestamp.now(),
-              "avatarUrl": _user.avatarUrl,
+              "avatarUrl": "",
               "bannerImage": _user.bannerImage,
               "age": _user.age,
               "bio": _user.bio,
               "country": _user.country,
-              "displayName": _user.displayName,
+              "displayName": "",
               "token": fcmToken,
               "userType": _user.userType,
               "verified": _user.verified,
+              "lastSeen": DateTime.now().toString()
             });
             log("in new user before navigation");
             Navigator.pushAndRemoveUntil(
@@ -301,14 +306,13 @@ class _AuthMainState extends State<AuthMain> {
                   curve: Curves.easeIn,
                   child: VerificationSuccess(),
                 ),
-                    (route) => false);
+                (route) => false);
           } catch (e) {
             log("Error in setting Firebase Messaging. ${e.toString()}");
           }
         }
       } catch (e) {
         log("Error in adding or fetching user data. ${e.toString()}");
-
       }
     }
   }

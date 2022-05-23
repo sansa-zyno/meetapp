@@ -63,11 +63,20 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   late FirebaseAuth _auth;
   late UserController _userController;
   List<QueryDocumentSnapshot>? requests;
   Stream? infoStream;
+
+  setStatusOnline() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    String dt = DateTime.now().toString();
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUser!.uid)
+        .update({"lastSeen": dt});
+  }
 
   saveUsertoSharedPref(String displayName) async {
     SharedPreferences _prefs = await SharedPreferences.getInstance();
@@ -117,6 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance!.addObserver(this);
     _auth = FirebaseAuth.instance;
     if (_auth.currentUser != null) {
       onLoad();
@@ -131,6 +141,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // TODO: implement didChangeAppLifecycleState
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      setStatusOnline();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     _userController = Provider.of<UserController>(context);
     return StreamBuilder(
@@ -139,12 +158,14 @@ class _MyHomePageState extends State<MyHomePage> {
           if (snapshot.hasData) {
             if (_userController.getCurrentUser.displayName == null ||
                 _userController.getCurrentUser.avatarUrl == null) {
-              Future.delayed(Duration(seconds: 5), () => ProfileSetup());
               return Scaffold(
                 body: Center(
                   child: CircularProgressIndicator(),
                 ),
               );
+            } else if (_userController.getCurrentUser.displayName == "" ||
+                _userController.getCurrentUser.avatarUrl == "") {
+              return ProfileSetup();
             } else {
               return BottomNavBar();
             }

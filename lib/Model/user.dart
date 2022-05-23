@@ -13,6 +13,7 @@ class OurUser {
   String? bio;
   String? occupation;
   Timestamp? accountCreated;
+  String? lastSeen;
 
   OurUser(
       {this.accountCreated,
@@ -26,7 +27,8 @@ class OurUser {
       this.bio,
       this.age,
       this.bannerImage,
-      this.occupation});
+      this.occupation,
+      this.lastSeen});
 
   factory OurUser.fromFireStore(DocumentSnapshot _data) {
     return OurUser(
@@ -41,6 +43,7 @@ class OurUser {
         verified: _data["verified"] ?? "",
         bio: _data["bio"] ?? "",
         occupation: _data["occupation"] ?? "",
-        bannerImage: _data["bannerImage"] ?? "");
+        bannerImage: _data["bannerImage"] ?? "",
+        lastSeen: _data["lastSeen"] ?? "");
   }
 }

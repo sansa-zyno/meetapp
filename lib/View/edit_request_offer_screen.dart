@@ -14,6 +14,7 @@ import 'package:meeter/Providers/application_bloc.dart';
 import 'package:meeter/Model/place.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meeter/View/meet_up_details.dart';
+import 'package:geocoding/geocoding.dart';
 
 class EditRequestOffer extends StatefulWidget {
   final DocumentSnapshot doc;
@@ -29,7 +30,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
   final Completer<GoogleMapController> _mapController = Completer();
   DatePickerController datePickerController = DatePickerController();
   late TextEditingController questionController;
-  final _locationController = TextEditingController();
+  late TextEditingController _locationController;
   late String time;
   late DateTime date;
   int _value = 1;
@@ -60,6 +61,8 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
         hour: widget.doc['startTime']['hour'],
         minute: widget.doc['startTime']['min']);
     questionController = TextEditingController(text: widget.doc['question']);
+    _locationController =
+        TextEditingController(text: widget.doc['location_address']);
     time = widget.doc['time'];
     {
       duration = widget.doc['duration'].toString();
@@ -74,7 +77,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
     locationSubscription =
         applicationBloc.selectedLocation!.stream.listen((place) {
       if (place != null) {
-        _locationController.text = place.name;
+        // _locationController.text = place.name;
         _goToPlace(place);
       } else {
         _locationController.text = "";
@@ -298,20 +301,19 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                               controller: _locationController,
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
-                                hintText: 'Pin a Location',
+                                hintText: 'Search and pin a Location',
                                 prefixIcon: Icon(
                                   Icons.location_on,
                                   color: widget.clr,
                                 ),
-                                suffixIcon: Icon(
-                                  Icons.search,
-                                  color: widget.clr,
+                                suffixIcon: IconButton(
+                                  icon: Icon(Icons.search, color: widget.clr),
+                                  onPressed: () =>
+                                      applicationBloc.clearSelectedLocation(),
                                 ),
                               ),
                               onChanged: (value) =>
                                   applicationBloc.searchPlaces(value),
-                              onTap: () =>
-                                  applicationBloc.clearSelectedLocation(),
                             ),
                           ),
                           Stack(
@@ -335,6 +337,16 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                     onMapCreated:
                                         (GoogleMapController controller) {
                                       _mapController.complete(controller);
+                                    },
+                                    onLongPress: (LatLng position) async {
+                                      List<Placemark> placemarks =
+                                          await placemarkFromCoordinates(
+                                              position.latitude,
+                                              position.longitude);
+                                      //print(placemarks[0].name);
+                                      //print(placemarks.toString());
+                                      _locationController.text =
+                                          "${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}";
                                     },
                                   )),
                               if (applicationBloc.searchResults != null &&
@@ -393,7 +405,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                       String formattedString = "$dateToString $startTime";
                       DateTime dateTime = DateTime.parse(formattedString);
                       if (dateTime.compareTo(DateTime.now()) >= 0) {
-                        if (duration != null) {
+                        if (duration != "") {
                           int totalMin = _startTime.hour < 12
                               ? (_startTime.hour * 60 +
                                   _startTime.minute +
@@ -401,12 +413,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                               : ((_startTime.hour - 12) * 60 +
                                   _startTime.minute +
                                   int.parse(duration));
-                          await FirebaseFirestore.instance
-                              .collection('requests')
-                              .doc(widget.doc['seller_id'])
-                              .collection('request')
-                              .doc(widget.doc.id)
-                              .update({
+                          Map<String, dynamic> map = {
                             "modified": true,
                             "accepted": null,
                             "modifiedBy":
@@ -418,36 +425,86 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                             "time":
                                 "${_startTime.hour == 0 ? 12 : _startTime.hour <= 12 ? _startTime.hour : _startTime.hour - 12}:${_startTime.minute.floor() < 10 ? "0" : ""}${_startTime.minute.floor()}${_startTime.period.index == 0 ? "AM" : "PM"} - ${totalMin ~/ 60 == 0 ? 12 : totalMin ~/ 60 <= 12 ? totalMin ~/ 60 : (totalMin ~/ 60) - 12}:${totalMin % 60}${_startTime.period.index == 0 ? totalMin ~/ 60 >= 12 ? "PM" : "AM" : totalMin ~/ 60 >= 12 ? "AM" : "PM"}",
                             "duration": int.parse(duration),
+                            "location": _value == 1 ? "Physical" : "Virtual",
+                            "location_address": _locationController.text,
                             "startTime": {
                               "hour": _startTime.hour,
                               "min": _startTime.minute
                             },
-                            "location": _value == 1 ? "Physical" : "Virtual",
-                          });
-                          AchievementView(
-                            context,
-                            color: Colors.green,
-                            icon: Icon(
-                              FontAwesomeIcons.check,
-                              color: Colors.white,
-                            ),
-                            title: "Success!",
-                            elevation: 20,
-                            subTitle: "Update sent successfully",
-                            isCircle: true,
-                          ).show();
-                          DocumentSnapshot doc = await FirebaseFirestore
-                              .instance
-                              .collection('requests')
-                              .doc(widget.doc['seller_id'])
-                              .collection('request')
-                              .doc(widget.doc.id)
-                              .get();
-                          Navigator.pushReplacement(
+                          };
+                          if (_value == 1) {
+                            if (_locationController.text != "") {
+                              await FirebaseFirestore.instance
+                                  .collection('requests')
+                                  .doc(widget.doc['seller_id'])
+                                  .collection('request')
+                                  .doc(widget.doc.id)
+                                  .update(map);
+                              AchievementView(
+                                context,
+                                color: Colors.green,
+                                icon: Icon(
+                                  FontAwesomeIcons.check,
+                                  color: Colors.white,
+                                ),
+                                title: "Success!",
+                                elevation: 20,
+                                subTitle: "Update sent successfully",
+                                isCircle: true,
+                              ).show();
+                              DocumentSnapshot doc = await FirebaseFirestore
+                                  .instance
+                                  .collection('requests')
+                                  .doc(widget.doc['seller_id'])
+                                  .collection('request')
+                                  .doc(widget.doc.id)
+                                  .get();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) =>
+                                          MeetUpDetails(doc, widget.clr)));
+                            } else {
+                              _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text(
+                                  'Please pin a location',
+                                  textAlign: TextAlign.center,
+                                ),
+                              ));
+                            }
+                          } else {
+                            await FirebaseFirestore.instance
+                                .collection('requests')
+                                .doc(widget.doc['seller_id'])
+                                .collection('request')
+                                .doc(widget.doc.id)
+                                .update(map);
+                            AchievementView(
                               context,
-                              MaterialPageRoute(
-                                  builder: (ctx) =>
-                                      MeetUpDetails(doc, widget.clr)));
+                              color: Colors.green,
+                              icon: Icon(
+                                FontAwesomeIcons.check,
+                                color: Colors.white,
+                              ),
+                              title: "Success!",
+                              elevation: 20,
+                              subTitle: "Update sent successfully",
+                              isCircle: true,
+                            ).show();
+                            DocumentSnapshot doc = await FirebaseFirestore
+                                .instance
+                                .collection('requests')
+                                .doc(widget.doc['seller_id'])
+                                .collection('request')
+                                .doc(widget.doc.id)
+                                .get();
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) =>
+                                        MeetUpDetails(doc, widget.clr)));
+                          }
                         } else {
                           _scacffoldKey.currentState!.showSnackBar(SnackBar(
                             backgroundColor: Colors.red,

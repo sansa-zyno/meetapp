@@ -337,19 +337,21 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                                   isDense: true,
                                   border: const OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 74, 137, 92),
-                                      width: 3.0,
+                                        color: Colors.black, width: 1.0),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(30),
                                     ),
                                   ),
                                   focusedBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 74, 137, 92),
-                                      width: 3.0,
+                                        color: Color(0xff00AEFF), width: 2.0),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(30),
                                     ),
                                   ),
-                                  helperText: 'Add category tags max 8',
+                                  helperText: "Add category tags max 8",
                                   helperStyle: const TextStyle(
-                                    color: Color.fromARGB(255, 74, 137, 92),
+                                    color: Color.fromRGBO(20, 22, 20, 0.973),
                                   ),
                                   errorText: error,
                                   prefixIconConstraints: BoxConstraints(
@@ -361,13 +363,9 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                                           child: Row(
                                               children: tags.map((String tag) {
                                             return Container(
-                                                decoration: const BoxDecoration(
+                                                decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(20.0),
-                                                  ),
-                                                  color: Color.fromARGB(
-                                                      255, 74, 137, 92),
+                                                      BorderRadius.circular(20),
                                                 ),
                                                 margin:
                                                     const EdgeInsets.symmetric(
@@ -383,10 +381,11 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                                                   children: [
                                                     InkWell(
                                                       child: Text(
-                                                        '#$tag',
+                                                        '$tag',
                                                         style: const TextStyle(
-                                                            color:
-                                                                Colors.white),
+                                                            color: Color(
+                                                                0xff00AEFF),
+                                                            fontSize: 16),
                                                       ),
                                                       onTap: () {},
                                                     ),
@@ -394,9 +393,9 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                                                     InkWell(
                                                       child: const Icon(
                                                         Icons.cancel,
-                                                        size: 14.0,
+                                                        size: 25.0,
                                                         color: Color.fromARGB(
-                                                            255, 233, 233, 233),
+                                                            255, 245, 42, 42),
                                                       ),
                                                       onTap: () {
                                                         onTagDelete(tag);
@@ -433,25 +432,24 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                                             "onchange tags: $tags");
                                       }
                                     : (value) {
-                                  // Get.snackbar(
-                                  //   "Enough Tags!",
-                                  //   "Already added 8 tags",
-                                  //   // duration: const Duration(seconds: 3),
-                                  // );
-                                  log("in else of onchanged and tags.length is: ${tags.length}");
-                                },
-                                onSubmitted:
-                                    tags.length <= 7
-                                        ? onSubmitted
-                                        : (value) {
-                                      Get.snackbar(
-                                        "Enough Tags!",
-                                        "Already added 8 tags",
-                                        duration: const Duration(seconds: 3),
-                                      );
-                                      log("in else of onSubmitted and tags.length is: ${tags.length}"
-                                          " and  value is: $value");
-                                    },
+                                        // Get.snackbar(
+                                        //   "Enough Tags!",
+                                        //   "Already added 8 tags",
+                                        //   // duration: const Duration(seconds: 3),
+                                        // );
+                                        log("in else of onchanged and tags.length is: ${tags.length}");
+                                      },
+                                onSubmitted: tags.length <= 7
+                                    ? onSubmitted
+                                    : (value) {
+                                        Get.snackbar(
+                                          "Enough Tags!",
+                                          "Already added 8 tags",
+                                          duration: const Duration(seconds: 3),
+                                        );
+                                        log("in else of onSubmitted and tags.length is: ${tags.length}"
+                                            " and  value is: $value");
+                                      },
                               ),
                             );
                           });

@@ -48,7 +48,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
           "type": 'text',
           "read": false,
           "lastMessage": message,
-          "lastMessageSendTs": lastMessageTs,
+          "lastMessageSendTs": "${lastMessageTs}",
           "lastMessageSendBy": myUserName,
           "lastMessageSendByImgUrl": user.avatarUrl
         };

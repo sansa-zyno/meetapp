@@ -412,7 +412,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
                         title: "Finish Setting Up",
                         clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
                         onpressed: () async {
-                          if (_currentUser.getCurrentUser.avatarUrl != null &&
+                          if (_currentUser.getCurrentUser.avatarUrl != "" &&
                               nameController.text != "") {
                             updateDataToDb();
                             SharedPreferences _prefs =

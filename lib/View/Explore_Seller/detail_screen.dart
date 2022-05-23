@@ -58,9 +58,9 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 titleText: widget.meeter.meetup_title!,
                 priceText: "\$${widget.meeter.meetup_price}",
                 priceText1: '/ 30 min',
-                timeText: widget.meeter.meetup_available_online!
-                    ? "Availabe virtually"
-                    : "Not available virtually",
+                availability: widget.meeter.meetup_available_online!
+                    ? "Availabe online"
+                    : "Not available online",
                 likesText: likes ?? 0,
                 // categoryText: 'In Category',
                 detailText: widget.meeter.meetup_description!,

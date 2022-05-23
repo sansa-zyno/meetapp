@@ -13,6 +13,7 @@ import 'package:meeter/Providers/application_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:achievement_view/achievement_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geocoding/geocoding.dart';
 
 class RequestOffer extends StatefulWidget {
   final MeetupData doc;
@@ -62,7 +63,7 @@ class _RequestOfferState extends State<RequestOffer> {
     locationSubscription =
         applicationBloc.selectedLocation!.stream.listen((place) {
       if (place != null) {
-        _locationController.text = place.name;
+        // _locationController.text = place.name;
         _goToPlace(place);
       } else {
         _locationController.text = "";
@@ -299,20 +300,19 @@ class _RequestOfferState extends State<RequestOffer> {
                               controller: _locationController,
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
-                                hintText: 'Pin a Location',
+                                hintText: 'Search and pin a Location',
                                 prefixIcon: Icon(
                                   Icons.location_on,
                                   color: Colors.blue,
                                 ),
-                                suffixIcon: Icon(
-                                  Icons.search,
-                                  color: Colors.blue,
+                                suffixIcon: IconButton(
+                                  icon: Icon(Icons.search, color: Colors.blue),
+                                  onPressed: () =>
+                                      applicationBloc.clearSelectedLocation(),
                                 ),
                               ),
                               onChanged: (value) =>
                                   applicationBloc.searchPlaces(value),
-                              onTap: () =>
-                                  applicationBloc.clearSelectedLocation(),
                             ),
                           ),
                           Stack(
@@ -336,6 +336,16 @@ class _RequestOfferState extends State<RequestOffer> {
                                     onMapCreated:
                                         (GoogleMapController controller) {
                                       _mapController.complete(controller);
+                                    },
+                                    onLongPress: (LatLng position) async {
+                                      List<Placemark> placemarks =
+                                          await placemarkFromCoordinates(
+                                              position.latitude,
+                                              position.longitude);
+                                      //print(placemarks[0].name);
+                                      //print(placemarks.toString());
+                                      _locationController.text =
+                                          "${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}";
                                     },
                                   )),
                               if (applicationBloc.searchResults != null &&
@@ -405,15 +415,7 @@ class _RequestOfferState extends State<RequestOffer> {
                                 : ((_startTime.hour - 12) * 60 +
                                     _startTime.minute +
                                     int.parse(duration!));
-                            await FirebaseFirestore.instance
-                                .collection('requests')
-                                .doc(widget.sellerDetails.uid)
-                                .set({"r": "r"});
-                            await FirebaseFirestore.instance
-                                .collection('requests')
-                                .doc(widget.sellerDetails.uid)
-                                .collection('request')
-                                .add({
+                            Map<String, dynamic> map = {
                               "type": "service",
                               "accepted": null,
                               "modified": null,
@@ -440,6 +442,7 @@ class _RequestOfferState extends State<RequestOffer> {
                                 "min": _startTime.minute
                               },
                               "location": _value == 1 ? "Physical" : "Virtual",
+                              "location_address": _locationController.text,
                               "buyer_name":
                                   _currentUser.getCurrentUser.displayName,
                               "buyer_image":
@@ -449,20 +452,65 @@ class _RequestOfferState extends State<RequestOffer> {
                                 widget.doc.meetup_seller_uid,
                                 _currentUser.getCurrentUser.uid
                               ]
-                            });
-                            AchievementView(
-                              context,
-                              color: Colors.green,
-                              icon: Icon(
-                                FontAwesomeIcons.check,
-                                color: Colors.white,
-                              ),
-                              title: "Success!",
-                              elevation: 20,
-                              subTitle: "Request sent successfully",
-                              isCircle: true,
-                            ).show();
-                            Navigator.pop(context);
+                            };
+                            if (_value == 1) {
+                              if (_locationController.text != "") {
+                                await FirebaseFirestore.instance
+                                    .collection('requests')
+                                    .doc(widget.sellerDetails.uid)
+                                    .set({"r": "r"});
+                                await FirebaseFirestore.instance
+                                    .collection('requests')
+                                    .doc(widget.sellerDetails.uid)
+                                    .collection('request')
+                                    .add(map);
+                                AchievementView(
+                                  context,
+                                  color: Colors.green,
+                                  icon: Icon(
+                                    FontAwesomeIcons.check,
+                                    color: Colors.white,
+                                  ),
+                                  title: "Success!",
+                                  elevation: 20,
+                                  subTitle: "Request sent successfully",
+                                  isCircle: true,
+                                ).show();
+                                Navigator.pop(context);
+                              } else {
+                                _scacffoldKey.currentState!
+                                    .showSnackBar(SnackBar(
+                                  backgroundColor: Colors.red,
+                                  content: Text(
+                                    'Please pin a location',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ));
+                              }
+                            } else {
+                              await FirebaseFirestore.instance
+                                  .collection('requests')
+                                  .doc(widget.sellerDetails.uid)
+                                  .set({"r": "r"});
+                              await FirebaseFirestore.instance
+                                  .collection('requests')
+                                  .doc(widget.sellerDetails.uid)
+                                  .collection('request')
+                                  .add(map);
+                              AchievementView(
+                                context,
+                                color: Colors.green,
+                                icon: Icon(
+                                  FontAwesomeIcons.check,
+                                  color: Colors.white,
+                                ),
+                                title: "Success!",
+                                elevation: 20,
+                                subTitle: "Request sent successfully",
+                                isCircle: true,
+                              ).show();
+                              Navigator.pop(context);
+                            }
                           } else {
                             _scacffoldKey.currentState!.showSnackBar(SnackBar(
                               backgroundColor: Colors.red,

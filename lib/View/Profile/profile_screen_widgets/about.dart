@@ -159,7 +159,7 @@ class About extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: PoppinsText(
-                text: "Last Active",
+                text: "Last Seen",
                 clr: Colors.grey,
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
@@ -171,7 +171,7 @@ class About extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: PoppinsText(
-                text: "Online",
+                text: "${_currentUser.getCurrentUser.lastSeen}",
                 clr: Colors.black,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,

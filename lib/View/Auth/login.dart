@@ -36,7 +36,10 @@ class _LoginState extends State<Login> {
                       child: Container(
                         width: 150,
                         padding: EdgeInsets.all(20),
-                        child: Image.asset("assets/images/Logo@2x.png"),
+                        child: Image.asset(
+                          "assets/meeterLogo.png",
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     Align(
@@ -44,7 +47,7 @@ class _LoginState extends State<Login> {
                       child: Container(
                         padding: EdgeInsets.all(20),
                         child: PoppinsText(
-                          text: "SIGN IN",
+                          text: "SIGN IN/SIGN UP",
                           align: TextAlign.center,
                           fontWeight: FontWeight.bold,
                           fontSize: 22,
@@ -83,6 +86,14 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                     SizedBox(
+                      height: 8,
+                    ),
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 25),
+                        child: Text(
+                            "Please enter your country phone code prefixed to your phone number without a space between them",
+                            style: TextStyle(fontStyle: FontStyle.italic))),
+                    SizedBox(
                       height: 20,
                     ),
                     Container(
@@ -91,7 +102,7 @@ class _LoginState extends State<Login> {
                       child: Hero(
                         tag: "Login",
                         child: GradientButton(
-                            title: "Sign in",
+                            title: "SIGN IN/SIGN UP",
                             clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
                             onpressed: widget.onpressed),
                       ),

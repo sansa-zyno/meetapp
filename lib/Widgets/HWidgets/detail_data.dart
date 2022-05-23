@@ -6,7 +6,7 @@ class DetailsData extends StatefulWidget {
   String? picture;
   String? priceText;
   String? priceText1;
-  String? timeText;
+  String? availability;
   int? likesText;
   // String categoryText;
   String? detailText;
@@ -18,7 +18,7 @@ class DetailsData extends StatefulWidget {
       this.picture,
       this.priceText,
       this.priceText1,
-      this.timeText,
+      this.availability,
       this.likesText,
       // this.categoryText,
       this.detailText,
@@ -125,7 +125,7 @@ class _DetailsDataState extends State<DetailsData> {
                         width: w * 1.2,
                       ),
                       Text(
-                        widget.timeText!,
+                        widget.availability!,
                         style: TextStyle(
                           fontWeight: FontWeight.w300,
                           color: Colors.black,

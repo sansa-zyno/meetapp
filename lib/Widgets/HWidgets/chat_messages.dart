@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/Services/database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sticky_grouped_list/sticky_grouped_list.dart';
+import 'package:date_format/date_format.dart';
 
 class ChatMessages extends StatefulWidget {
   final OurUser recipient;
@@ -155,7 +157,7 @@ class _ChatMessagesState extends State<ChatMessages> {
       builder: (context, snapshot) {
         QuerySnapshot? q = snapshot.data as QuerySnapshot?;
         return snapshot.hasData
-            ? ListView.builder(
+            ? /*ListView.builder(
                 shrinkWrap: true,
                 padding: EdgeInsets.only(bottom: 70, top: 16),
                 itemCount: q!.docs.length,
@@ -172,7 +174,57 @@ class _ChatMessagesState extends State<ChatMessages> {
                         )
                       : imageMessageTile(
                           ds['photoUrl'], myUserName == ds["sendBy"]);
-                })
+                })*/
+            StickyGroupedListView<dynamic, DateTime>(
+                elements: q!.docs,
+                shrinkWrap: true,
+                groupBy: (dynamic element) {
+                  DateTime dt = DateTime.parse(
+                      element['ts'].toDate().toString().substring(0, 10));
+                  return dt;
+                },
+                groupSeparatorBuilder: (dynamic element) {
+                  DateTime dt =
+                      DateTime.parse(element['ts'].toDate().toString());
+                  String date = formatDate(dt, [MM, ' ', d, ', ', yyyy]);
+                  return Center(child: Text(date));
+                },
+                itemBuilder: (context, dynamic element) {
+                  DateTime dt =
+                      DateTime.parse(element['ts'].toDate().toString());
+                  String time = formatDate(dt, [hh, ':', nn, ' ', am]);
+                  print(time.toString());
+                  return element['type'] == 'text'
+                      ? Column(
+                          crossAxisAlignment: myUserName == element["sendBy"]
+                              ? CrossAxisAlignment.end
+                              : CrossAxisAlignment.start,
+                          children: [
+                            chatMessageTile(
+                              element["message"],
+                              myUserName == element["sendBy"],
+                              h,
+                              w,
+                            ),
+                            Padding(
+                              padding: myUserName == element["sendBy"]
+                                  ? const EdgeInsets.only(right: 15.0)
+                                  : const EdgeInsets.only(left: 15.0),
+                              child: Text(
+                                time,
+                                style: TextStyle(color: Colors.blue),
+                              ),
+                            )
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            imageMessageTile(element['photoUrl'],
+                                myUserName == element["sendBy"]),
+                          ],
+                        );
+                }, // optional // optional
+              )
             : Center(child: CircularProgressIndicator());
       },
     );
@@ -207,3 +259,23 @@ class _ChatMessagesState extends State<ChatMessages> {
     );
   }
 }
+
+/*const String dateFormatter = 'MMMM dd, y';
+
+extension DateHelper on DateTime {
+  String formatDate() {
+    final formatter = DateFormat(dateFormatter);
+    return formatter.format(this);
+  }
+
+  bool isSameDate(DateTime other) {
+    return this.year == other.year &&
+        this.month == other.month &&
+        this.day == other.day;
+  }
+
+  int getDifferenceInDaysWithNow() {
+    final now = DateTime.now();
+    return now.difference(this).inDays;
+  }
+}*/

@@ -1,7 +1,9 @@
 import 'package:achievement_view/achievement_view.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:meeter/Services/database.dart';
+import 'package:meeter/View/Profile/profile_screen_others.dart';
 import 'package:meeter/Widgets/MeeterAppBar/meeterAppBar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meeter/View/edit_request_offer_screen.dart';
@@ -94,6 +96,9 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
   @override
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserController>(context);
+    TextStyle defaultStyle = TextStyle(color: Colors.grey, fontSize: 20.0);
+    TextStyle linkStyle = TextStyle(color: Colors.blue);
+
     return Scaffold(
       key: _scacffoldKey,
       body: Stack(
@@ -111,9 +116,34 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                     children: [
                       Icon(Icons.person),
                       SizedBox(width: 8),
-                      Text("Hosted By ${widget.request['seller_name']}",
+                      RichText(
+                        text: TextSpan(
+                          style: defaultStyle,
+                          children: <TextSpan>[
+                            TextSpan(text: 'Requested by '),
+                            FirebaseAuth.instance.currentUser!.uid !=
+                                    widget.request['buyer_id']
+                                ? TextSpan(
+                                    text: "${widget.request['buyer_name']}",
+                                    style: linkStyle,
+                                    recognizer: TapGestureRecognizer()
+                                      ..onTap = () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (ctx) =>
+                                                    ProfileScreenOther(
+                                                      id: widget
+                                                          .request['buyer_id'],
+                                                    )));
+                                      })
+                                : TextSpan(text: 'me'),
+                          ],
+                        ),
+                      )
+                      /*Text(" By ${widget.request['seller_name']}",
                           style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18))
+                              fontWeight: FontWeight.bold, fontSize: 18))*/
                     ],
                   ),
                   SizedBox(height: 20),
@@ -141,6 +171,12 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                         Text("${widget.request['time']}"),
                       ],
                     ),
+                  ]),
+                  SizedBox(height: 20),
+                  Row(children: [
+                    widget.request['location'] == "Physical"
+                        ? Text("${widget.request['location_address']}")
+                        : Text("Virtual")
                   ]),
                   SizedBox(height: 50),
                   widget.request.exists
