@@ -14,6 +14,7 @@ class MeetupData {
   String? meetup_seller_image;
   String? meetup_bannerImage;
   List? meetup_tags;
+  DateTime? meetup_date;
   double? lat;
   double? long;
 
@@ -32,6 +33,7 @@ class MeetupData {
       this.meetup_seller_uid,
       this.meetup_tags,
       this.meetup_title,
+      this.meetup_date,
       this.featured});
 
   MeetupData.fromSnap(DocumentSnapshot snap)
@@ -47,6 +49,7 @@ class MeetupData {
         meetup_seller_image = snap['meetup_seller_image'],
         meetup_bannerImage = snap['meetup_bannerImage'],
         meetup_tags = snap['meetup_tags'],
+        meetup_date = snap['meetup_date'].toDate(),
         lat = snap['lat'],
         long = snap['long'],
         featured = snap['featured'];

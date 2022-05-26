@@ -139,7 +139,7 @@ class SearchList extends StatelessWidget {
                                       children: [
                                         Expanded(
                                           child: Text(
-                                            "Ratings:",
+                                            "Rating:",
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,
@@ -148,17 +148,97 @@ class SearchList extends StatelessWidget {
                                             textAlign: TextAlign.start,
                                           ),
                                         ),
-                                        Expanded(
-                                          child: Text(
-                                            'Overwhelmingly Positive',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 12,
-                                              color: Colors.black,
-                                            ),
-                                            textAlign: TextAlign.start,
-                                          ),
-                                        ),
+                                        clr == Colors.blue
+                                            ? ldoc[index].meetup_likes <= 10
+                                                ? Expanded(
+                                                    child: Text(
+                                                      'Positive',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 12,
+                                                        color: Colors.black,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                    ),
+                                                  )
+                                                : ldoc[index].meetup_likes >
+                                                            10 &&
+                                                        ldoc[index]
+                                                                .meetup_likes <=
+                                                            100
+                                                    ? Expanded(
+                                                        child: Text(
+                                                          'Very Positive',
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 12,
+                                                            color: Colors.black,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                        ),
+                                                      )
+                                                    : Expanded(
+                                                        child: Text(
+                                                          'Overwhelmingly Positive',
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 12,
+                                                            color: Colors.black,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                        ),
+                                                      )
+                                            : ldoc[index].demand_likes <= 10
+                                                ? Expanded(
+                                                    child: Text(
+                                                      'Positive',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 12,
+                                                        color: Colors.black,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                    ),
+                                                  )
+                                                : ldoc[index].demand_likes >
+                                                            10 &&
+                                                        ldoc[index]
+                                                                .demand_likes <=
+                                                            100
+                                                    ? Expanded(
+                                                        child: Text(
+                                                          'Very Positive',
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 12,
+                                                            color: Colors.black,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                        ),
+                                                      )
+                                                    : Expanded(
+                                                        child: Text(
+                                                          'Overwhelmingly Positive',
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            fontSize: 12,
+                                                            color: Colors.black,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.start,
+                                                        ),
+                                                      ),
                                       ],
                                     ),
                                   ],

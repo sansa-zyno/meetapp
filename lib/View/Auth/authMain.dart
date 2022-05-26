@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
@@ -115,6 +116,8 @@ class _AuthMainState extends State<AuthMain> {
           try {
             FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
             String? fcmToken = await firebaseMessaging.getToken();
+            String date = formatDate(DateTime.now(),
+                [MM, ' ', d, ', ', yyyy, ' ', hh, ':', nn, ' ', am]);
             await FirebaseFirestore.instance.collection("users").doc(uid).set({
               "uid": uid,
               "phoneNumber": FirebaseAuth.instance.currentUser!.phoneNumber,
@@ -128,7 +131,7 @@ class _AuthMainState extends State<AuthMain> {
               "token": fcmToken,
               "userType": _user.userType,
               "verified": _user.verified,
-              "lastSeen": DateTime.now().toString()
+              "lastSeen": date
             });
             log("in new user before navigation");
             Navigator.pushAndRemoveUntil(
@@ -282,6 +285,8 @@ class _AuthMainState extends State<AuthMain> {
           try {
             FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
             String? fcmToken = await firebaseMessaging.getToken();
+            String date = formatDate(DateTime.now(),
+                [MM, ' ', d, ', ', yyyy, ' ', hh, ':', nn, ' ', am]);
             await FirebaseFirestore.instance.collection("users").doc(uid).set({
               "uid": uid,
               "phoneNumber": FirebaseAuth.instance.currentUser!.phoneNumber,
@@ -295,7 +300,7 @@ class _AuthMainState extends State<AuthMain> {
               "token": fcmToken,
               "userType": _user.userType,
               "verified": _user.verified,
-              "lastSeen": DateTime.now().toString()
+              "lastSeen": date
             });
             log("in new user before navigation");
             Navigator.pushAndRemoveUntil(

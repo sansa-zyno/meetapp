@@ -96,7 +96,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
   @override
   Widget build(BuildContext context) {
     final _currentUser = Provider.of<UserController>(context);
-    TextStyle defaultStyle = TextStyle(color: Colors.grey, fontSize: 20.0);
+    TextStyle defaultStyle = TextStyle(color: Colors.black, fontSize: 18.0);
     TextStyle linkStyle = TextStyle(color: Colors.blue);
 
     return Scaffold(
@@ -137,7 +137,10 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                                           .request['buyer_id'],
                                                     )));
                                       })
-                                : TextSpan(text: 'me'),
+                                : TextSpan(
+                                    text: 'me',
+                                    style: linkStyle,
+                                  ),
                           ],
                         ),
                       )
@@ -147,10 +150,22 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                     ],
                   ),
                   SizedBox(height: 20),
-                  Text("${widget.request['desc']}",
-                      textAlign: TextAlign.start,
+                  Text("${widget.request['title']}",
                       style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 16)),
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18)),
+                  SizedBox(height: 20),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        color: Colors.white30,
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.all(Radius.circular(20))),
+                    child: Text("${widget.request['question']}",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14)),
+                  ),
                   SizedBox(height: 20),
                   Row(children: [
                     Icon(Icons.calendar_view_day),
@@ -173,11 +188,18 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                     ),
                   ]),
                   SizedBox(height: 20),
-                  Row(children: [
-                    widget.request['location'] == "Physical"
-                        ? Text("${widget.request['location_address']}")
-                        : Text("Virtual")
-                  ]),
+                  widget.request['location'] == "Physical"
+                      ? Container(
+                          height: 30,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  child: Text(
+                                      "Location: ${widget.request['location_address']}")),
+                            ],
+                          ),
+                        )
+                      : Text("Location: Virtual"),
                   SizedBox(height: 50),
                   widget.request.exists
                       ? Center(

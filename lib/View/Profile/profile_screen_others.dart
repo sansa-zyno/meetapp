@@ -229,7 +229,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(20.0),
                                     child: PoppinsText(
-                                      text: "Description",
+                                      text: "Bio",
                                       clr: Colors.grey,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
@@ -330,35 +330,6 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20.0),
                                     child: PoppinsText(
-                                      text: "Recent Meeting",
-                                      clr: Colors.grey,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: PoppinsText(
-                                      text: "N/A",
-                                      clr: Colors.black,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: PoppinsText(
                                       text: "Last Seen",
                                       clr: Colors.grey,
                                       fontSize: 12,
@@ -411,6 +382,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                                               MediaQuery.of(context).size.width,
                                           child: ListView.builder(
                                             shrinkWrap: true,
+                                            padding: EdgeInsets.all(5),
                                             itemCount: (data.length / 2).ceil(),
                                             itemBuilder: (context, index) {
                                               return Column(
@@ -427,8 +399,8 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                                                       text: data[
                                                               "${count[index]}Language"] ??
                                                           "",
-                                                      clr: Colors.grey,
-                                                      fontSize: 12,
+                                                      clr: Colors.black,
+                                                      fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w400,
                                                     ),
@@ -444,7 +416,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                                                       clr: Colors.black,
                                                       fontSize: 12,
                                                       fontWeight:
-                                                          FontWeight.w600,
+                                                          FontWeight.w300,
                                                     ),
                                                   ),
                                                   SizedBox(
@@ -556,7 +528,9 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                 ),
               ),
             )
-          : Container(),
+          : Container(
+              child: Center(child: CircularProgressIndicator()),
+            ),
     );
   }
 }

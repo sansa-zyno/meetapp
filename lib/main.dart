@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:date_format/date_format.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -71,11 +72,12 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   setStatusOnline() async {
     final currentUser = FirebaseAuth.instance.currentUser;
-    String dt = DateTime.now().toString();
+    String date = formatDate(
+        DateTime.now(), [MM, ' ', d, ', ', yyyy, ' ', hh, ':', nn, ' ', am]);
     await FirebaseFirestore.instance
         .collection("users")
         .doc(currentUser!.uid)
-        .update({"lastSeen": dt});
+        .update({"lastSeen": date});
   }
 
   saveUsertoSharedPref(String displayName) async {
@@ -109,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
             "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
         String formattedString = "$date $endTime";
         DateTime dateTime = DateTime.parse(formattedString);
-        if (dateTime.compareTo(DateTime.now()) >= 0) {
+        if (dateTime.compareTo(DateTime.now()) <= 0) {
           Future.delayed(const Duration(hours: 1), () async {
             await FirebaseFirestore.instance
                 .collection("requests")

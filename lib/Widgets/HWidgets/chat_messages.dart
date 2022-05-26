@@ -178,6 +178,7 @@ class _ChatMessagesState extends State<ChatMessages> {
             StickyGroupedListView<dynamic, DateTime>(
                 elements: q!.docs,
                 shrinkWrap: true,
+                floatingHeader: true,
                 groupBy: (dynamic element) {
                   DateTime dt = DateTime.parse(
                       element['ts'].toDate().toString().substring(0, 10));
@@ -223,7 +224,9 @@ class _ChatMessagesState extends State<ChatMessages> {
                                 myUserName == element["sendBy"]),
                           ],
                         );
-                }, // optional // optional
+                },
+                itemScrollController:
+                    GroupedItemScrollController(), // optional // optional
               )
             : Center(child: CircularProgressIndicator());
       },
@@ -253,7 +256,7 @@ class _ChatMessagesState extends State<ChatMessages> {
             h,
             w,
           ),
-          SizedBox(height: 30)
+          SizedBox(height: 100)
         ],
       ),
     );

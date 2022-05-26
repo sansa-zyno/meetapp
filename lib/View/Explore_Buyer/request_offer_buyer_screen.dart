@@ -120,7 +120,7 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                           ),
                         ),
                         hintText:
-                            'Topic Asked: \nHow did you find a co-founder? \nHow did you find investor for start-up? \nDo i need to know coding and finance to do a start-up? \nWhat is the new advice do you give to new start-up?',
+                            'How did you find a co-founder? \nHow did you find investor for start-up? \nDo i need to know coding and finance to do a start-up? \nWhat is the new advice do you give to new start-up?',
                         hintStyle: TextStyle(
                           color: Colors.grey,
                         ),
@@ -334,6 +334,14 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                                       //print(placemarks.toString());
                                       _locationController.text =
                                           "${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}";
+                                      _scacffoldKey.currentState!
+                                          .showSnackBar(SnackBar(
+                                        backgroundColor: Colors.green,
+                                        content: Text(
+                                          'Location selected',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ));
                                     },
                                   )),
                               if (applicationBloc.searchResults != null &&

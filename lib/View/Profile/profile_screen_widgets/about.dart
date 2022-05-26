@@ -36,7 +36,7 @@ class About extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(20.0),
               child: PoppinsText(
-                text: "Description",
+                text: "Bio",
                 clr: Colors.grey,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -207,6 +207,7 @@ class About extends StatelessWidget {
                     width: MediaQuery.of(context).size.width,
                     child: ListView.builder(
                       shrinkWrap: true,
+                      padding: EdgeInsets.all(5),
                       itemCount: (data.length / 2).ceil(),
                       itemBuilder: (context, index) {
                         return Column(
@@ -218,8 +219,8 @@ class About extends StatelessWidget {
                                   const EdgeInsets.symmetric(horizontal: 20.0),
                               child: PoppinsText(
                                 text: data["${count[index]}Language"] ?? "",
-                                clr: Colors.grey,
-                                fontSize: 12,
+                                clr: Colors.black,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
@@ -229,8 +230,8 @@ class About extends StatelessWidget {
                               child: PoppinsText(
                                 text: data["${count[index]}Proficiency"] ?? "",
                                 clr: Colors.black,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300,
                               ),
                             ),
                             SizedBox(

@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:meeter/Widgets/TextWidgets/poppins_text.dart';
 import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import './interested_sellers.dart';
 
 class DiscoverInterested extends StatefulWidget {
-  final doc;
+  final DocumentSnapshot doc;
   DiscoverInterested(this.doc);
   @override
   _DiscoverInterestedState createState() => _DiscoverInterestedState();
@@ -103,7 +104,7 @@ class _DiscoverInterestedState extends State<DiscoverInterested> {
                                 type: PageTransitionType.rightToLeft,
                                 duration: Duration(milliseconds: 200),
                                 curve: Curves.easeIn,
-                                child: InterestedSellers(),
+                                child: InterestedSellers(widget.doc),
                               ),
                             );
                           },

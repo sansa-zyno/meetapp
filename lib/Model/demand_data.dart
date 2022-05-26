@@ -14,6 +14,7 @@ class DemandData {
   String? demand_person_image;
   String? demand_bannerImage;
   List? demand_tags;
+  DateTime? demand_date;
   double? lat;
   double? long;
 
@@ -32,6 +33,7 @@ class DemandData {
       this.demand_person_uid,
       this.demand_tags,
       this.demand_title,
+      this.demand_date,
       this.featured});
 
   DemandData.fromSnap(DocumentSnapshot snap)
@@ -47,6 +49,7 @@ class DemandData {
         demand_person_image = snap['demand_person_image'],
         demand_bannerImage = snap['demand_bannerImage'],
         demand_tags = snap['demand_tags'],
+        demand_date = snap['demand_date'].toDate(),
         lat = snap['lat'],
         long = snap['long'],
         featured = snap['featured'];

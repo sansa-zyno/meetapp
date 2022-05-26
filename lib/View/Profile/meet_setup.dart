@@ -322,6 +322,58 @@ class _MeetSetupState extends State<MeetSetup> {
                     SizedBox(
                       height: h * 1.2217,
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        "Please choose your tags from any of the predefined set of tags. Not case sensitive ",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.blue,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(
+                      height: h * 1.2217,
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("DynamicTags")
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          DocumentSnapshot doc = snapshot.data!.docs[0];
+                          List tags = doc['tags'];
+                          return snapshot.hasData
+                              ? Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white30,
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20))),
+                                  child: Wrap(
+                                    children: tags
+                                        .map((tag) => Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 5, 0, 5),
+                                              child: Text("   $tag",
+                                                  style: TextStyle(
+                                                      color: Colors.blue,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18)),
+                                            ))
+                                        .toList(),
+                                  ),
+                                )
+                              : Container();
+                        }),
+                    SizedBox(
+                      height: h * 1.2217,
+                    ),
                     Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFieldTags(
@@ -607,6 +659,7 @@ class _MeetSetupState extends State<MeetSetup> {
       "meetup_seller_image": _currentUser.getCurrentUser.avatarUrl,
       "meetup_bannerImage": _bannerImage,
       "meetup_tags": tagssss,
+      "meetup_date": DateTime.now,
       "lat": applicationBloc.currentLocation != null
           ? applicationBloc.currentLocation!.latitude
           : 0.0,

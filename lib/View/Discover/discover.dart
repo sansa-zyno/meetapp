@@ -12,14 +12,12 @@ class Discover extends StatefulWidget {
 }
 
 class _DiscoverState extends State<Discover> {
-  late UserController _currentUser;
-
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width / 100;
     final h = MediaQuery.of(context).size.height / 100;
 
-    _currentUser = Provider.of<UserController>(context);
+    int i = 4;
 
     return Scaffold(
       body: Stack(
@@ -43,7 +41,8 @@ class _DiscoverState extends State<Discover> {
                           ListView.builder(
                             physics: ClampingScrollPhysics(),
                             shrinkWrap: true,
-                            itemCount: snapshot.data!.docs.length,
+                            itemCount:
+                                snapshot.data!.docs.take(i).toList().length,
                             itemBuilder: (context, index) {
                               return GestureDetector(
                                 child: Padding(
@@ -114,7 +113,10 @@ class _DiscoverState extends State<Discover> {
                               title: "More Discover Topics",
                               fontSize: 12,
                               clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
-                              onpressed: () {},
+                              onpressed: () {
+                                i += 4;
+                                setState(() {});
+                              },
                             ),
                           ),
                           Container(height: 80)

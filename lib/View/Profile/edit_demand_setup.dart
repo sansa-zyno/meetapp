@@ -317,9 +317,61 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                         style: TextStyle(fontFamily: "poppins", fontSize: 14),
                       ),
                     ),
-                    // SizedBox(
-                    //   height: h * 4.2217,
-                    // ),
+                    SizedBox(
+                      height: h * 1.2217,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Text(
+                        "Please choose your tags from any of the predefined set of tags. Not case sensitive ",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.blue,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(
+                      height: h * 1.2217,
+                    ),
+                    StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("DynamicTags")
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          DocumentSnapshot doc = snapshot.data!.docs[0];
+                          List tags = doc['tags'];
+                          return snapshot.hasData
+                              ? Container(
+                                  padding: EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                      color: Colors.white30,
+                                      border: Border.all(color: Colors.grey),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20))),
+                                  child: Wrap(
+                                    children: tags
+                                        .map((tag) => Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      0, 5, 0, 5),
+                                              child: Text("   $tag",
+                                                  style: TextStyle(
+                                                      color: Colors.blue,
+                                                      fontStyle:
+                                                          FontStyle.italic,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18)),
+                                            ))
+                                        .toList(),
+                                  ),
+                                )
+                              : Container();
+                        }),
+                    SizedBox(
+                      height: h * 1.2217,
+                    ),
                     Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFieldTags(
@@ -337,25 +389,21 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                                   isDense: true,
                                   border: const OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 74, 137, 92),
-                                      width: 3.0,
-                                    ),
+                                        color: Colors.black, width: 1.0),
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(30),
                                     ),
                                   ),
                                   focusedBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
-                                      color: Color.fromARGB(255, 74, 137, 92),
-                                      width: 3.0,
-                                    ),
+                                        color: Color(0xff00AEFF), width: 2.0),
                                     borderRadius: BorderRadius.all(
                                       Radius.circular(30),
                                     ),
                                   ),
-                                  helperText: 'Add category tags max 8',
+                                  helperText: "Add category tags max 8",
                                   helperStyle: const TextStyle(
-                                    color: Color.fromARGB(255, 74, 137, 92),
+                                    color: Color.fromRGBO(20, 22, 20, 0.973),
                                   ),
                                   errorText: error,
                                   prefixIconConstraints: BoxConstraints(
@@ -367,11 +415,9 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                                           child: Row(
                                               children: tags.map((String tag) {
                                             return Container(
-                                                decoration: const BoxDecoration(
+                                                decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(20.0),
-                                                  ),
+                                                      BorderRadius.circular(20),
                                                 ),
                                                 margin:
                                                     const EdgeInsets.symmetric(
@@ -389,7 +435,8 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                                                       child: Text(
                                                         '$tag',
                                                         style: const TextStyle(
-                                                            color: Colors.green,
+                                                            color: Color(
+                                                                0xff00AEFF),
                                                             fontSize: 16),
                                                       ),
                                                       onTap: () {},
@@ -442,7 +489,7 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                                         //   "Already added 8 tags",
                                         //   // duration: const Duration(seconds: 3),
                                         // );
-                                        log("in else of onChanged and tags.length is: ${tags.length}");
+                                        log("in else of onchanged and tags.length is: ${tags.length}");
                                       },
                                 onSubmitted: tags.length <= 7
                                     ? onSubmitted

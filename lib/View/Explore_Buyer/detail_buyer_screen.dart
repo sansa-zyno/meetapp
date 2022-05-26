@@ -18,6 +18,7 @@ class _DetailsBuyerScreenState extends State<DetailsBuyerScreen> {
   OurUser? demandPerson;
   int? likes;
   late FirebaseAuth _auth;
+  String timesAgo = "";
 
   onLoad() async {
     UserController user = UserController();
@@ -36,10 +37,43 @@ class _DetailsBuyerScreenState extends State<DetailsBuyerScreen> {
     }
   }
 
+  calcTimesAgo() {
+    Duration dur = DateTime.now().difference(widget.demands.demand_date!);
+    print(dur.inHours);
+    if (dur.inHours < 24) {
+      timesAgo = "Moments ago";
+      setState(() {});
+    }
+    if (dur.inDays > 0 && dur.inDays < 7) {
+      timesAgo =
+          dur.inDays == 1 ? "${dur.inDays} day ago" : "${dur.inDays} days ago";
+      setState(() {});
+    }
+    if (dur.inDays >= 7 && dur.inDays < 30) {
+      timesAgo = (dur.inDays / 7).truncate() == 1
+          ? "${(dur.inDays / 7).truncate()} week ago"
+          : "${(dur.inDays / 7).truncate()} weeks ago";
+      setState(() {});
+    }
+    if (dur.inDays >= 30 && dur.inDays < 365) {
+      timesAgo = (dur.inDays / 30).truncate() == 1
+          ? "${(dur.inDays / 30).truncate()} month ago"
+          : "${(dur.inDays / 30).truncate()} months ago";
+      setState(() {});
+    }
+    if (dur.inDays >= 365) {
+      timesAgo = (dur.inDays / 365).truncate() == 1
+          ? "${(dur.inDays / 365).truncate()} year ago"
+          : "${(dur.inDays / 365).truncate()} years ago";
+      setState(() {});
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    calcTimesAgo();
     onLoad();
     _auth = FirebaseAuth.instance;
     setState(() {});
@@ -59,9 +93,7 @@ class _DetailsBuyerScreenState extends State<DetailsBuyerScreen> {
                   titleText: widget.demands.demand_title,
                   priceText: "\$${widget.demands.demand_price}",
                   priceText1: '/ 30 min',
-                  availability: widget.demands.demand_available_online!
-                      ? "Availabe online"
-                      : "Not available online",
+                  timesAgo: timesAgo,
                   likesText: likes,
                   // categoryText: 'In Category',
                   detailText: widget.demands.demand_description,
