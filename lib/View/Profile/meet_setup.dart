@@ -659,7 +659,7 @@ class _MeetSetupState extends State<MeetSetup> {
       "meetup_seller_image": _currentUser.getCurrentUser.avatarUrl,
       "meetup_bannerImage": _bannerImage,
       "meetup_tags": tagssss,
-      "meetup_date": DateTime.now,
+      "meetup_date": DateTime.now(),
       "lat": applicationBloc.currentLocation != null
           ? applicationBloc.currentLocation!.latitude
           : 0.0,

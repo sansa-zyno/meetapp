@@ -611,7 +611,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
       "demand_person_image": _currentUser.getCurrentUser.avatarUrl,
       "demand_bannerImage": _bannerImage,
       "demand_tags": tagssss,
-      "demand_date": DateTime.now,
+      "demand_date": DateTime.now(),
       "lat": applicationBloc.currentLocation != null
           ? applicationBloc.currentLocation!.latitude
           : 0.0,
