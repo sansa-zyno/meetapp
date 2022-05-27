@@ -35,6 +35,7 @@ dependencies:
   cloud_firestore: ^3.1.13
   firebase_messaging: ^11.2.14
   firebase_storage: ^10.2.13
+  firebase_database: ^9.0.14
   image_picker: ^0.8.5
   url_launcher: ^6.1.0
   shared_preferences: ^2.0.13

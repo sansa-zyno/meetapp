@@ -23,20 +23,14 @@ class TimerController extends GetxController {
   RxInt timerSeconds = 0.obs;
 
   RxBool isMeetingRunning = false.obs;
-  RxBool isMeetingRunning2 = false.obs;
   RxBool isMeetingPaused = false.obs;
-  RxBool isMeetingPaused2 = false.obs;
   RxBool isMeetingStarted = false.obs;
 
   RxString minutes = '00'.obs;
   RxString seconds = '00'.obs;
-  RxString minutes2 = '00'.obs;
-  RxString seconds2 = '00'.obs;
 
   Duration duration = Duration();
   late Timer timer;
-  Duration duration2 = Duration();
-  late Timer timer2;
 
   RxBool isStartAnswered = false.obs;
   RxBool isEndAnswered = false.obs;
@@ -49,33 +43,14 @@ class TimerController extends GetxController {
     buildTime();
   }
 
-  void addTime2() {
-    log("inside addTime2");
-    final addSeconds = 1;
-    final seconds = duration2.inSeconds + addSeconds;
-    duration2 = Duration(seconds: seconds);
-    buildTime2();
-  }
-
   void resetTimer() {
     duration = Duration();
     minutes.value = '00';
     seconds.value = '00';
   }
 
-  void resetTimer2() {
-    duration2 = Duration();
-    minutes2.value = '00';
-    seconds2.value = '00';
-  }
-
   void startTimer() {
     timer = Timer.periodic(Duration(seconds: 1), (_) => addTime());
-  }
-
-  void startTimer2() {
-    log("inside startTimer2");
-    timer2 = Timer.periodic(Duration(seconds: 1), (_) => addTime2());
   }
 
   buildTime() {
@@ -85,48 +60,11 @@ class TimerController extends GetxController {
     log('time is: ${minutes.value}:${seconds.value}');
   }
 
-  buildTime2() {
-    log("inside buildTime2.");
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    minutes2.value = twoDigits(duration2.inMinutes);
-    seconds2.value = twoDigits(duration2.inSeconds.remainder(60));
-    log('time2 is: ${minutes2.value}:${seconds2.value}');
-  }
-
   void pauseMode() {
     isMeetingPaused.value = !isMeetingPaused.value;
     if (!isMeetingPaused.value) {
       log("inside if(isMeetingPaused.value)");
       startTimer();
-      // await FirebaseFirestore.instance.collection("requests")
-      //     .doc(sellerId).collection("request")
-      //     .where("buyer_id", isEqualTo: buyerId).limit(1)
-      //     .get().then((value) async {
-      //   await FirebaseFirestore.instance.collection("requests")
-      //       .doc(sellerId).collection("request")
-      //       .doc(value.docs.first.id).update({"started": true});
-      // });
-      // buildTime();
-    } else {
-      log("the time is:: ${minutes.value}:${seconds.value}");
-      timer.cancel();
-    }
-  }
-
-  void pauseMode2() {
-    // isMeetingPaused2.value = !isMeetingPaused2.value;
-    if (!isMeetingPaused2.value) {
-      log("inside if(isMeetingPaused.value)");
-      startTimer2();
-      // await FirebaseFirestore.instance.collection("requests")
-      //     .doc(sellerId).collection("request")
-      //     .where("buyer_id", isEqualTo: buyerId).limit(1)
-      //     .get().then((value) async {
-      //   await FirebaseFirestore.instance.collection("requests")
-      //       .doc(sellerId).collection("request")
-      //       .doc(value.docs.first.id).update({"started": true});
-      // });
-      // buildTime();
     } else {
       log("the time is:: ${minutes.value}:${seconds.value}");
       timer.cancel();
@@ -138,21 +76,6 @@ class TimerController extends GetxController {
     if (isMeetingRunning.value) {
       log("inside if(isMeetingRunning.value)");
       startTimer();
-      // await FirebaseFirestore.instance
-      //     .collection("requests")
-      //     .doc(sellerId)
-      //     .collection("request")
-      //     .where("buyer_id", isEqualTo: buyerId)
-      //     .limit(1)
-      //     .get()
-      //     .then((value) async {
-      //   await FirebaseFirestore.instance
-      //       .collection("requests")
-      //       .doc(sellerId)
-      //       .collection("request")
-      //       .doc(value.docs.first.id)
-      //       .update({"started": true});
-      // });
       /**/
       // buildTime();
     } else {
@@ -161,30 +84,6 @@ class TimerController extends GetxController {
       resetTimer();
     }
     // update();
-  }
-
-  void meetingMode2() {
-    log("isMeetingRunning2 before is: ${isMeetingRunning2.value}");
-    // isMeetingRunning2.value = !isMeetingRunning2.value;
-    log("isMeetingRunning2 after is: ${isMeetingRunning2.value}");
-    if (isMeetingRunning2.value) {
-      log("inside if(isMeetingRunning2.value)");
-      startTimer2();
-      // await FirebaseFirestore.instance.collection("requests")
-      //     .doc(sellerId).collection("request")
-      //     .where("buyer_id", isEqualTo: buyerId).limit(1)
-      //     .get().then((value) async {
-      //   await FirebaseFirestore.instance.collection("requests")
-      //       .doc(sellerId).collection("request")
-      //       .doc(value.docs.first.id).update({"started": true});
-      // });
-      /**/
-      // buildTime();
-    } else {
-      log("the time2 is:: ${minutes2.value}:${seconds2.value}");
-      timer2.cancel();
-    }
-    update();
   }
 
   getChatRoomIdByUsernames(String a, String b) {
@@ -261,7 +160,7 @@ class TimerController extends GetxController {
       // log("jsonData is: $jsonData");
       Map<String, dynamic>? dataMap = data ?? {};
       // log("jsonData is: $jsonData");
-      log("dataMap is: ${dataMap['seconds'].runtimeType}");
+      // log("dataMap is: ${dataMap['seconds'].runtimeType}");
       log("dataMap is: ${dataMap['seconds']}");
       log("data is: $data");
       // Timestamp tmp = dataMap['startAt'] ?? Timestamp(0, 0);
@@ -273,6 +172,12 @@ class TimerController extends GetxController {
         //+ 0 means nothing for the other user -> means the timer won't start
         //+ when page is opened and 0 is in RTDB
         log("inside 0 wala");
+        isMeetingRunning.value = false;
+        if(timer.isActive){
+          log("inside timer is active");
+          timer.cancel();
+          resetTimer();
+        }
       } else if (timerSeconds.value == -1) {
         //+ -1 means the meeting is ended and  timer is reset and the value
         //+ in RTDB is changed to 0.
