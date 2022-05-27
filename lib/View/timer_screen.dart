@@ -399,7 +399,7 @@ class _TimerState extends State<Timer> {
                               ),
                               Expanded(
                                 child: Text(
-                                  '\$$extraCharge/1 min',
+                                  '\$${extraCharge.toPrecision(2)}/1 min',
                                   style: TextStyle(
                                     fontSize: w * 4.8,
                                     color: Colors.grey,
@@ -440,7 +440,7 @@ class _TimerState extends State<Timer> {
                               ),
                               Expanded(
                                 child: Text(
-                                  '\$$currentCharge/1 min',
+                                  '\$${currentCharge.toPrecision(2)}/1 min',
                                   style: TextStyle(
                                     fontSize: w * 4.8,
                                     color: Colors.grey,
