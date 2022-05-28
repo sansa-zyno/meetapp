@@ -167,8 +167,10 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               );
             } else if (_userController.getCurrentUser.displayName == "" ||
                 _userController.getCurrentUser.avatarUrl == "") {
+              setStatusOnline();
               return ProfileSetup();
             } else {
+              setStatusOnline();
               return BottomNavBar();
             }
           } else {

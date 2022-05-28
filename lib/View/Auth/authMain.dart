@@ -82,6 +82,15 @@ class _AuthMainState extends State<AuthMain> {
             .where("uid", isEqualTo: uid)
             .get();
         if (snap.docs.isNotEmpty) {
+          setStatusOnline() async {
+            String date = formatDate(DateTime.now(),
+                [MM, ' ', d, ', ', yyyy, ' ', hh, ':', nn, ' ', am]);
+            await FirebaseFirestore.instance
+                .collection("users")
+                .doc(uid)
+                .update({"lastSeen": date});
+          }
+
           if (snap.docs[0]['displayName'] != "" &&
               snap.docs[0]['avatarUrl'] != "") {
             UserController _currentUser =
@@ -90,7 +99,7 @@ class _AuthMainState extends State<AuthMain> {
             SharedPreferences _prefs = await SharedPreferences.getInstance();
             _prefs.setString('userName', snap.docs[0]['displayName']);
             log("in old user before navigation");
-
+            setStatusOnline();
             Navigator.pushAndRemoveUntil(
                 context,
                 PageTransition(
@@ -101,6 +110,7 @@ class _AuthMainState extends State<AuthMain> {
                 ),
                 (route) => false);
           } else {
+            setStatusOnline();
             Navigator.pushAndRemoveUntil(
                 context,
                 PageTransition(
@@ -251,6 +261,15 @@ class _AuthMainState extends State<AuthMain> {
             .where("uid", isEqualTo: uid)
             .get();
         if (snap.docs.isNotEmpty) {
+          setStatusOnline() async {
+            String date = formatDate(DateTime.now(),
+                [MM, ' ', d, ', ', yyyy, ' ', hh, ':', nn, ' ', am]);
+            await FirebaseFirestore.instance
+                .collection("users")
+                .doc(uid)
+                .update({"lastSeen": date});
+          }
+
           if (snap.docs[0]['displayName'] != "" &&
               snap.docs[0]['avatarUrl'] != "") {
             UserController _currentUser =
@@ -259,7 +278,7 @@ class _AuthMainState extends State<AuthMain> {
             SharedPreferences _prefs = await SharedPreferences.getInstance();
             _prefs.setString('userName', snap.docs[0]['displayName']);
             log("in old user before navigation");
-
+            setStatusOnline();
             Navigator.pushAndRemoveUntil(
                 context,
                 PageTransition(
@@ -270,6 +289,7 @@ class _AuthMainState extends State<AuthMain> {
                 ),
                 (route) => false);
           } else {
+            setStatusOnline();
             Navigator.pushAndRemoveUntil(
                 context,
                 PageTransition(

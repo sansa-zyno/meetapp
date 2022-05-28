@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'package:meeter/View/Profile/profile_screen_others_widgets/about.dart';
+import 'package:meeter/View/Profile/profile_screen_others_widgets/achievement.dart';
+import 'package:meeter/View/Profile/profile_screen_others_widgets/connection.dart';
+import 'package:meeter/View/Profile/profile_screen_others_widgets/reviews.dart';
+import 'package:meeter/View/Profile/profile_screen_others_widgets/service.dart';
+import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
 import 'package:meeter/Widgets/TextWidgets/poppins_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:readmore/readmore.dart';
 
 class ProfileScreenOther extends StatefulWidget {
   final String id;
@@ -126,6 +131,58 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                       fontSize: 12,
                     ),
                     SizedBox(
+                      height: 50,
+                    ),
+                    Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            child: Container(
+                              alignment: Alignment.center,
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              height: 50,
+                              child: GradientButton(
+                                title: "Connection",
+                                clrs: [Colors.blue, Colors.blue],
+                                fontSize: 12,
+                                letterSpacing: 0,
+                                onpressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (ctx) =>
+                                              Connection(widget.id)));
+                                },
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              height: 50,
+                              child: GradientButton(
+                                fontSize: 12,
+                                letterSpacing: 0,
+                                title: "Achievement",
+                                textClr: Color(0xff00AEFF),
+                                clrs: [Colors.white, Colors.white],
+                                border: Border.all(color: Colors.blue),
+                                onpressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (ctx) => Achievement()));
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
                       height: 20,
                     ),
                     Row(
@@ -220,310 +277,9 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                         ),
                       ],
                     ),
-                    about == true
-                        ? Container(
-                            child: Column(
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: PoppinsText(
-                                      text: "Bio",
-                                      clr: Colors.grey,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                userDoc!['bio'] != null
-                                    ? Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: ReadMoreText(
-                                          userDoc!['bio'],
-                                          trimLines: 2,
-                                          style: TextStyle(color: Colors.black),
-                                          colorClickableText: Colors.pink,
-                                          trimMode: TrimMode.Line,
-                                          trimCollapsedText: 'Show more',
-                                          trimExpandedText: 'Show less',
-                                          moreStyle: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: "poppins",
-                                              letterSpacing: 1),
-                                        ),
-                                      )
-                                    : Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0),
-                                        child: ReadMoreText(
-                                          "N/A",
-                                          trimLines: 2,
-                                          colorClickableText: Colors.pink,
-                                          trimMode: TrimMode.Line,
-                                          trimCollapsedText: 'Show more',
-                                          trimExpandedText: 'Show less',
-                                          moreStyle: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              fontFamily: "poppins",
-                                              letterSpacing: 1),
-                                        ),
-                                      ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Divider(
-                                  thickness: 0,
-                                  color: Color(0xff00AEFF),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: PoppinsText(
-                                      text: "User Information",
-                                      clr: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: PoppinsText(
-                                      text: "Member Since",
-                                      clr: Colors.grey,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: PoppinsText(
-                                      text:
-                                          "${userDoc!['accountCreated'].toDate().day} - ${userDoc!['accountCreated'].toDate().month} - ${userDoc!['accountCreated'].toDate().year}",
-                                      clr: Colors.black,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: PoppinsText(
-                                      text: "Last Seen",
-                                      clr: Colors.grey,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                    child: PoppinsText(
-                                      text: userDoc!['lastSeen'],
-                                      clr: Colors.black,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                Divider(
-                                  thickness: 0,
-                                  color: Color(0xff00AEFF),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                                    child: PoppinsText(
-                                      text: "Languages",
-                                      clr: Colors.black,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ),
-                                StreamBuilder<DocumentSnapshot>(
-                                    stream: FirebaseFirestore.instance
-                                        .collection("language")
-                                        .doc(widget.id)
-                                        .snapshots(),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData &&
-                                          snapshot.data!.data() != null) {
-                                        Map data = snapshot.data!.data()!
-                                            as Map<String, dynamic>;
-                                        return Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            padding: EdgeInsets.all(5),
-                                            itemCount: (data.length / 2).ceil(),
-                                            itemBuilder: (context, index) {
-                                              return Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                children: [
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 20.0),
-                                                    child: PoppinsText(
-                                                      text: data[
-                                                              "${count[index]}Language"] ??
-                                                          "",
-                                                      clr: Colors.black,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                            .symmetric(
-                                                        horizontal: 20.0),
-                                                    child: PoppinsText(
-                                                      text: data[
-                                                              "${count[index]}Proficiency"] ??
-                                                          "",
-                                                      clr: Colors.black,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w300,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    height: 20,
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        );
-                                      } else {
-                                        return Container();
-                                      }
-                                    }),
-                              ],
-                            ),
-                          )
-                        : Container(),
-                    service == true
-                        ? StreamBuilder(
-                            stream: FirebaseFirestore.instance
-                                .collection('meeters')
-                                .doc(widget.id)
-                                .collection('meeter')
-                                .snapshots(),
-                            builder: (ctx, snapshot) {
-                              QuerySnapshot? query =
-                                  snapshot.data as QuerySnapshot?;
-                              return snapshot.hasData
-                                  ? ListView.builder(
-                                      itemCount: query!.docs.length,
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8),
-                                      shrinkWrap: true,
-                                      physics: ClampingScrollPhysics(),
-                                      itemBuilder: (context, index) {
-                                        return Card(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(8),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        query.docs[index]
-                                                            ['meetup_title'],
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Text(
-                                                        query.docs[index][
-                                                            'meetup_description'],
-                                                        style: TextStyle(
-                                                            fontStyle: FontStyle
-                                                                .italic),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Text(query.docs[index]
-                                                          ['meetup_location']),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Text(query.docs[index]
-                                                              ['meetup_price']
-                                                          .toString()),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      })
-                                  : Container();
-                            })
-                        : review == true
-                            ? Container(
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Text(
-                                        "Sorry, this function is still being updated! We\’ll get back to you soon with a new feature",
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : Container(),
+                    about == true ? About(userDoc!, widget.id) : Container(),
+                    service == true ? Services(widget.id) : Container(),
+                    review == true ? Review() : Container(),
                   ],
                 ),
               ),
