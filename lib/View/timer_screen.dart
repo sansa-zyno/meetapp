@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:achievement_view/achievement_view.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -12,15 +13,9 @@ import '../Constants/controllers.dart';
 import '../Constants/get_token.dart';
 import '../Providers/user_controller.dart';
 
-const appId = "22c3a09e17c14a218162b6ee8ef8450e";
 
 class Timer extends StatefulWidget {
   final DocumentSnapshot request;
-
-  // bool haveMoreMembers;
-  // final String token;
-  // final String channelName;
-
   Timer(this.request);
 
   @override
@@ -34,7 +29,7 @@ class _TimerState extends State<Timer> {
   int extraMinutes = 0;
   int extraSeconds = 0;
   double totalCharge = 0.0;
-  // late DatabaseReference ref2;
+  late DatabaseReference ref;
   late DocumentReference ref2;
 
   getChatRoomIdByUsernames(String a, String b) {
@@ -56,7 +51,7 @@ class _TimerState extends State<Timer> {
     var directory = getChatRoomIdByUsernames(
         widget.request['seller_id'], widget.request['buyer_id']);
 
-    // ref2 = FirebaseDatabase.instance.ref().child('$directory/');
+    ref = FirebaseDatabase.instance.ref().child('$directory/');
     ref2 =
         FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
   }
@@ -134,6 +129,13 @@ class _TimerState extends State<Timer> {
                                     UserController().auth.currentUser?.uid,
                                 "pause_requester_id": ""
                               }).then((value) {
+                                ref.set({
+                                  "startAt": ServerValue.timestamp,
+                                  "seconds": -2,
+                                  "start_requester_id":
+                                  UserController().auth.currentUser?.uid,
+                                  "pause_requester_id": ""
+                                });
                                 log("in on Tap passed a start/stop request");
                                 // timerController.meetingMode();
                               });
@@ -183,6 +185,13 @@ class _TimerState extends State<Timer> {
                                 "pause_requester_id":
                                     UserController().auth.currentUser?.uid
                               }).then((value) {
+                                ref.set({
+                                  "startAt": ServerValue.timestamp,
+                                  "seconds": 2,
+                                  "start_requester_id": "",
+                                  "pause_requester_id":
+                                  UserController().auth.currentUser?.uid
+                                });
                                 log("in on long press passing a pause request");
                               });
                             } else {
@@ -390,7 +399,7 @@ class _TimerState extends State<Timer> {
                               ),
                               Expanded(
                                 child: Text(
-                                  '\$$extraCharge/1 min',
+                                  '\$${extraCharge.toPrecision(2)}/1 min',
                                   style: TextStyle(
                                     fontSize: w * 4.8,
                                     color: Colors.grey,
@@ -431,7 +440,7 @@ class _TimerState extends State<Timer> {
                               ),
                               Expanded(
                                 child: Text(
-                                  '\$$currentCharge/1 min',
+                                  '\$${currentCharge.toPrecision(2)}/1 min',
                                   style: TextStyle(
                                     fontSize: w * 4.8,
                                     color: Colors.grey,
