@@ -58,14 +58,22 @@ class MoreLists extends StatelessWidget {
                         ),
                         Padding(
                           padding: EdgeInsets.all(w * 1.5),
-                          child: Text(
-                            meetersCollection[index].meetup_title!,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black,
-                              fontSize: 17.0,
-                            ),
-                            textAlign: TextAlign.center,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  meetersCollection[index].meetup_title!,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.black,
+                                    fontSize: 17.0,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         Padding(
