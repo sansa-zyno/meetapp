@@ -132,471 +132,459 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
     _currentUser = Provider.of<UserController>(context);
     return Scaffold(
       key: _scacffoldKey,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Container(
+      appBar: AppBar(
+        toolbarHeight: 90,
+        flexibleSpace: SafeArea(
+          child: Container(
+            height: 90,
+            width: double.infinity,
+            decoration: BoxDecoration(
               color: Colors.white,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  SizedBox(
-                    height: 140,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            height: 55,
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            child: Hero(
-                              tag: "Name",
-                              child: RoundedTextField(
-                                hint: "Name",
-                                type: TextInputType.text,
-                                obsecureText: false,
-                                icon: Icon(
-                                  Icons.badge,
-                                  color: Color(0xff00AEFF),
-                                ),
-                                iconColor: Colors.cyan,
-                                label: "Name",
-                                controller: nameController,
-                                onChange: (text) {},
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+              border: Border.all(
+                color: Color(0xff00AEFF),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Edit Profile",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xff00AEFF),
+                        fontSize: w * 6.0,
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            child: TextField(
-                              controller: bioController,
-                              keyboardType: TextInputType.multiline,
-                              maxLines: 5,
-                              decoration: new InputDecoration(
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xff00AEFF), width: 2.0),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30),
-                                    ),
-                                  ),
-                                  disabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.grey, width: 1.0),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30),
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Color(0xff00AEFF), width: 1.0),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30),
-                                    ),
-                                  ),
-                                  hintText:
-                                      'Enter a short description of yourself',
-                                  labelText: "Bio",
-                                  labelStyle: TextStyle(
-                                    fontFamily: "Nunito",
-                                  ),
-                                  hintStyle: TextStyle(fontFamily: "Nunito")),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            height: 55,
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            child: RoundedTextField(
-                              hint: "Occupation",
-                              type: TextInputType.text,
-                              obsecureText: false,
-                              icon: Icon(Icons.work_outline_rounded,
-                                  color: Color(0xff00AEFF)),
-                              iconColor: Colors.cyan,
-                              label: "Occupation",
-                              controller: occupationController,
-                              onChange: (text) {},
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            height: 55,
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            child: RoundedTextField(
-                              hint: "Age",
-                              type: TextInputType.number,
-                              obsecureText: false,
-                              icon: Icon(
-                                Icons.event,
-                                color: Color(0xff00AEFF),
-                              ),
-                              iconColor: Colors.cyan,
-                              label: "Age",
-                              controller: ageController,
-                              onChange: (text) {},
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Flexible(
-                          child: Container(
-                            height: 55,
-                            width: MediaQuery.of(context).size.width * 0.85,
-                            child: RoundedTextField(
-                              hint: "Country",
-                              type: TextInputType.text,
-                              obsecureText: false,
-                              icon: Icon(Icons.location_pin,
-                                  color: Color(0xff00AEFF)),
-                              iconColor: Colors.cyan,
-                              label: "Country",
-                              controller: countryController,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ListView(
-                    shrinkWrap: true,
-                    children: langSelector,
-                    addAutomaticKeepAlives: true,
-                    physics: NeverScrollableScrollPhysics(),
-                  ),
-                  GestureDetector(
-                    child: PoppinsText(
-                      text: "Add more languages +",
-                      clr: Colors.blue,
-                    ),
-                    onTap: () {
-                      setState(() {
-                        langSelector = [
-                          ...langSelector,
-                          new LangSelector(
-                            ith: count[langSelector.length],
-                          )
-                        ];
-
-                        langDynamicSelector = langSelector;
-                      });
-                    },
-                  ),
-                  SizedBox(
-                    height: h * 2.2217,
-                  ),
-                  SizedBox(
-                    height: h * 4.2217,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 250,
-                        height: 50,
+                ),
+              ],
+            ),
+          ),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
+      ),
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Container(
+          color: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SizedBox(
+                height: 30,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        height: 55,
+                        width: MediaQuery.of(context).size.width * 0.85,
                         child: Hero(
-                          tag: "Edit",
-                          child: GradientButton(
-                            title: "Submit",
-                            clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
-                            onpressed: () async {
-                              if (nameController.text != "") {
-                                updateDataToDb();
-                                SharedPreferences _prefs =
-                                    await SharedPreferences.getInstance();
-                                _prefs.setString(
-                                    'userName', nameController.text);
-                                _currentUser = Provider.of<UserController>(
-                                    context,
-                                    listen: false);
-                                Future.delayed(const Duration(seconds: 3),
-                                    () async {
-                                  await _currentUser.getCurrentUserInfo();
-                                  Navigator.pop(context);
-                                });
-                              } else {
-                                _scacffoldKey.currentState!
-                                    .showSnackBar(SnackBar(
-                                  backgroundColor: Colors.red,
-                                  content: Text('Your name cannot be empty!'),
-                                ));
-                              }
-                            },
+                          tag: "Name",
+                          child: RoundedTextField(
+                            hint: "Name",
+                            type: TextInputType.text,
+                            obsecureText: false,
+                            icon: Icon(
+                              Icons.badge,
+                              color: Color(0xff00AEFF),
+                            ),
+                            iconColor: Colors.cyan,
+                            label: "Name",
+                            controller: nameController,
+                            onChange: (text) {},
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 25,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: h * 4.2217,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        child: TextField(
+                          controller: bioController,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 5,
+                          decoration: new InputDecoration(
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color(0xff00AEFF), width: 2.0),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30),
+                                ),
+                              ),
+                              disabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.grey, width: 1.0),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30),
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Color(0xff00AEFF), width: 1.0),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30),
+                                ),
+                              ),
+                              hintText: 'Enter a short description of yourself',
+                              labelText: "Bio",
+                              labelStyle: TextStyle(
+                                fontFamily: "Nunito",
+                              ),
+                              hintStyle: TextStyle(fontFamily: "Nunito")),
+                        ),
                       ),
-                      Container(
-                        width: 250,
-                        height: 50,
-                        child: GradientButton(
-                          title: "Delete Account",
-                          clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
-                          onpressed: () async {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) => AlertDialog(
-                                      title: Text(
-                                          'Are you sure to continue this process ?'),
-                                      actions: [
-                                        FlatButton(
-                                          child: Text("Yes"),
-                                          onPressed: () async {
-                                            await FirebaseFirestore.instance
-                                                .collection('users')
-                                                .doc(_currentUser
-                                                    .getCurrentUser.uid)
-                                                .delete();
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: h * 4.2217,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        height: 55,
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        child: RoundedTextField(
+                          hint: "Occupation",
+                          type: TextInputType.text,
+                          obsecureText: false,
+                          icon: Icon(Icons.work_outline_rounded,
+                              color: Color(0xff00AEFF)),
+                          iconColor: Colors.cyan,
+                          label: "Occupation",
+                          controller: occupationController,
+                          onChange: (text) {},
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: h * 4.2217,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        height: 55,
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        child: RoundedTextField(
+                          hint: "Age",
+                          type: TextInputType.number,
+                          obsecureText: false,
+                          icon: Icon(
+                            Icons.event,
+                            color: Color(0xff00AEFF),
+                          ),
+                          iconColor: Colors.cyan,
+                          label: "Age",
+                          controller: ageController,
+                          onChange: (text) {},
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: h * 4.2217,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        height: 55,
+                        width: MediaQuery.of(context).size.width * 0.85,
+                        child: RoundedTextField(
+                          hint: "Country",
+                          type: TextInputType.text,
+                          obsecureText: false,
+                          icon: Icon(Icons.location_pin,
+                              color: Color(0xff00AEFF)),
+                          iconColor: Colors.cyan,
+                          label: "Country",
+                          controller: countryController,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ListView(
+                shrinkWrap: true,
+                children: langSelector,
+                addAutomaticKeepAlives: true,
+                physics: NeverScrollableScrollPhysics(),
+              ),
+              GestureDetector(
+                child: PoppinsText(
+                  text: "Add more languages +",
+                  clr: Colors.blue,
+                ),
+                onTap: () {
+                  setState(() {
+                    langSelector = [
+                      ...langSelector,
+                      new LangSelector(
+                        ith: count[langSelector.length],
+                      )
+                    ];
 
-                                            try {
-                                              QuerySnapshot m =
-                                                  await FirebaseFirestore
-                                                      .instance
-                                                      .collection('meeters')
-                                                      .doc(_currentUser
-                                                          .getCurrentUser.uid)
-                                                      .collection("meeter")
-                                                      .get();
-                                              for (int i = 0;
-                                                  i < m.docs.length;
-                                                  i++) {
-                                                await FirebaseFirestore.instance
-                                                    .collection('meeters')
-                                                    .doc(_currentUser
-                                                        .getCurrentUser.uid)
-                                                    .collection("meeter")
-                                                    .doc(m.docs[i].id)
-                                                    .delete();
-                                              }
+                    langDynamicSelector = langSelector;
+                  });
+                },
+              ),
+              SizedBox(
+                height: h * 2.2217,
+              ),
+              SizedBox(
+                height: h * 4.2217,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    width: 250,
+                    height: 50,
+                    child: Hero(
+                      tag: "Edit",
+                      child: GradientButton(
+                        title: "Submit",
+                        clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
+                        onpressed: () async {
+                          if (nameController.text != "") {
+                            updateDataToDb();
+                            SharedPreferences _prefs =
+                                await SharedPreferences.getInstance();
+                            _prefs.setString('userName', nameController.text);
+                            _currentUser = Provider.of<UserController>(context,
+                                listen: false);
+                            Future.delayed(const Duration(seconds: 3),
+                                () async {
+                              await _currentUser.getCurrentUserInfo();
+                              Navigator.pop(context);
+                            });
+                          } else {
+                            _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text('Your name cannot be empty!'),
+                            ));
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Container(
+                    width: 250,
+                    height: 50,
+                    child: GradientButton(
+                      title: "Delete Account",
+                      clrs: [Color(0xff00AEFF), Color(0xff00AEFF)],
+                      onpressed: () async {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                                  title: Text(
+                                      'Are you sure to continue this process ?'),
+                                  actions: [
+                                    FlatButton(
+                                      child: Text("Yes"),
+                                      onPressed: () async {
+                                        await FirebaseFirestore.instance
+                                            .collection('users')
+                                            .doc(
+                                                _currentUser.getCurrentUser.uid)
+                                            .delete();
+
+                                        try {
+                                          QuerySnapshot m =
                                               await FirebaseFirestore.instance
                                                   .collection('meeters')
                                                   .doc(_currentUser
                                                       .getCurrentUser.uid)
-                                                  .delete();
-                                            } catch (e) {}
+                                                  .collection("meeter")
+                                                  .get();
+                                          for (int i = 0;
+                                              i < m.docs.length;
+                                              i++) {
+                                            await FirebaseFirestore.instance
+                                                .collection('meeters')
+                                                .doc(_currentUser
+                                                    .getCurrentUser.uid)
+                                                .collection("meeter")
+                                                .doc(m.docs[i].id)
+                                                .delete();
+                                          }
+                                          await FirebaseFirestore.instance
+                                              .collection('meeters')
+                                              .doc(_currentUser
+                                                  .getCurrentUser.uid)
+                                              .delete();
+                                        } catch (e) {}
 
-                                            try {
-                                              QuerySnapshot d =
-                                                  await FirebaseFirestore
-                                                      .instance
-                                                      .collection('demands')
-                                                      .doc(_currentUser
-                                                          .getCurrentUser.uid)
-                                                      .collection("demand")
-                                                      .get();
-
-                                              for (int i = 0;
-                                                  i < d.docs.length;
-                                                  i++) {
-                                                await FirebaseFirestore.instance
-                                                    .collection('demands')
-                                                    .doc(_currentUser
-                                                        .getCurrentUser.uid)
-                                                    .collection("demand")
-                                                    .doc(d.docs[i].id)
-                                                    .delete();
-                                              }
+                                        try {
+                                          QuerySnapshot d =
                                               await FirebaseFirestore.instance
                                                   .collection('demands')
                                                   .doc(_currentUser
                                                       .getCurrentUser.uid)
-                                                  .delete();
-                                            } catch (e) {}
+                                                  .collection("demand")
+                                                  .get();
 
-                                            try {
-                                              QuerySnapshot r =
-                                                  await FirebaseFirestore
-                                                      .instance
-                                                      .collectionGroup(
-                                                          'request')
-                                                      .get();
+                                          for (int i = 0;
+                                              i < d.docs.length;
+                                              i++) {
+                                            await FirebaseFirestore.instance
+                                                .collection('demands')
+                                                .doc(_currentUser
+                                                    .getCurrentUser.uid)
+                                                .collection("demand")
+                                                .doc(d.docs[i].id)
+                                                .delete();
+                                          }
+                                          await FirebaseFirestore.instance
+                                              .collection('demands')
+                                              .doc(_currentUser
+                                                  .getCurrentUser.uid)
+                                              .delete();
+                                        } catch (e) {}
 
-                                              r.docs.forEach((element) async {
-                                                if (element['seller_id'] ==
-                                                        _currentUser
-                                                            .getCurrentUser
-                                                            .uid ||
-                                                    element['buyer_id'] ==
-                                                        _currentUser
-                                                            .getCurrentUser
-                                                            .uid) {
-                                                  await FirebaseFirestore
-                                                      .instance
-                                                      .collection('requests')
-                                                      .doc(element['seller_id'])
-                                                      .collection("request")
-                                                      .doc(element.id)
-                                                      .delete();
-                                                }
-                                              });
+                                        try {
+                                          QuerySnapshot r =
+                                              await FirebaseFirestore.instance
+                                                  .collectionGroup('request')
+                                                  .get();
 
+                                          r.docs.forEach((element) async {
+                                            if (element['seller_id'] ==
+                                                    _currentUser
+                                                        .getCurrentUser.uid ||
+                                                element['buyer_id'] ==
+                                                    _currentUser
+                                                        .getCurrentUser.uid) {
                                               await FirebaseFirestore.instance
                                                   .collection('requests')
-                                                  .doc(_currentUser
-                                                      .getCurrentUser.uid)
+                                                  .doc(element['seller_id'])
+                                                  .collection("request")
+                                                  .doc(element.id)
                                                   .delete();
-                                            } catch (e) {}
+                                            }
+                                          });
 
-                                            try {
-                                              QuerySnapshot f =
-                                                  await FirebaseFirestore
-                                                      .instance
-                                                      .collection('favourites')
-                                                      .doc(_currentUser
-                                                          .getCurrentUser.uid)
-                                                      .collection("favourite")
-                                                      .get();
+                                          await FirebaseFirestore.instance
+                                              .collection('requests')
+                                              .doc(_currentUser
+                                                  .getCurrentUser.uid)
+                                              .delete();
+                                        } catch (e) {}
 
-                                              for (int i = 0;
-                                                  i < f.docs.length;
-                                                  i++) {
-                                                await FirebaseFirestore.instance
-                                                    .collection('favourites')
-                                                    .doc(_currentUser
-                                                        .getCurrentUser.uid)
-                                                    .collection("favourite")
-                                                    .doc(f.docs[i].id)
-                                                    .delete();
-                                              }
+                                        try {
+                                          QuerySnapshot f =
                                               await FirebaseFirestore.instance
                                                   .collection('favourites')
                                                   .doc(_currentUser
                                                       .getCurrentUser.uid)
-                                                  .delete();
-                                            } catch (e) {}
+                                                  .collection("favourite")
+                                                  .get();
 
-                                            await FirebaseAuth.instance
-                                                .signOut();
+                                          for (int i = 0;
+                                              i < f.docs.length;
+                                              i++) {
+                                            await FirebaseFirestore.instance
+                                                .collection('favourites')
+                                                .doc(_currentUser
+                                                    .getCurrentUser.uid)
+                                                .collection("favourite")
+                                                .doc(f.docs[i].id)
+                                                .delete();
+                                          }
+                                          await FirebaseFirestore.instance
+                                              .collection('favourites')
+                                              .doc(_currentUser
+                                                  .getCurrentUser.uid)
+                                              .delete();
+                                        } catch (e) {}
 
-                                            AchievementView(
-                                              context,
-                                              color: Colors.green,
-                                              icon: Icon(
-                                                FontAwesomeIcons.check,
-                                                color: Colors.white,
-                                              ),
-                                              title: "Succesfull!",
-                                              elevation: 20,
-                                              subTitle:
-                                                  "Your account has been deleted successfully",
-                                              isCircle: true,
-                                            )..show();
+                                        await FirebaseAuth.instance.signOut();
 
-                                            Navigator.pushAndRemoveUntil(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        GettingStarted()),
-                                                (route) => false);
-                                          },
-                                        ),
-                                        FlatButton(
-                                          child: Text("No"),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                        )
-                                      ],
-                                    ));
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Container(
-              height: 90,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  color: Color(0xff00AEFF),
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Edit Profile",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xff00AEFF),
-                          fontSize: w * 6.0,
-                        ),
-                      ),
+                                        AchievementView(
+                                          context,
+                                          color: Colors.green,
+                                          icon: Icon(
+                                            FontAwesomeIcons.check,
+                                            color: Colors.white,
+                                          ),
+                                          title: "Succesfull!",
+                                          elevation: 20,
+                                          subTitle:
+                                              "Your account has been deleted successfully",
+                                          isCircle: true,
+                                        )..show();
+
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    GettingStarted()),
+                                            (route) => false);
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text("No"),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    )
+                                  ],
+                                ));
+                      },
                     ),
-                  ),
+                  )
                 ],
               ),
-            ),
-          )
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meeter/Widgets/HWidgets/upcoming_data.dart';
-import 'package:meeter/Widgets/MeeterAppBar/meeterAppBar_buyer.dart';
 import 'package:meeter/Widgets/HWidgets/recent_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';

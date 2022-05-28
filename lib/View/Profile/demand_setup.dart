@@ -75,446 +75,479 @@ class _DemandSetupSetupState extends State<DemandSetup> {
     _distanceToField = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      key: _scacffoldKey,
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Container(
+      appBar: AppBar(
+        toolbarHeight: 90,
+        flexibleSpace: SafeArea(
+          child: Container(
+            height: 90,
+            width: double.infinity,
+            decoration: BoxDecoration(
               color: Colors.white,
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    SizedBox(
-                      height: 180,
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 30),
-                      child: PoppinsText(
-                        text: "Upload a banner picture for your Demand",
-                        fontSize: 12,
-                      ),
-                    ),
-                    SizedBox(
-                      height: h * 4.2217,
-                    ),
-                    GestureDetector(
-                      child: _image == null
-                          ? Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              height: 150,
-                              width: MediaQuery.of(context).size.width * 0.80,
-                              decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Color(0xff00AEFF), width: 1),
-                                  borderRadius: BorderRadius.circular(20)),
-                              child: Image.asset("assets/images/image.png"),
-                            )
-                          : ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 0),
-                                height: 150,
-                                width: MediaQuery.of(context).size.width * 0.80,
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Color(0xff00AEFF), width: 1),
-                                    borderRadius: BorderRadius.circular(20)),
-                                child: Image.file(
-                                  _image!,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                      onTap: () {
-                        getImage();
-                      },
-                    ),
-                    SizedBox(
-                      height: h * 4.2217,
-                    ),
-
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Container(
-                              height: 55,
-                              width: MediaQuery.of(context).size.width * 0.85,
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  hintText: "Enter the title of your demand",
-                                  labelText: "Demand Title",
-                                ),
-                                controller: demandTitle,
-                                validator: (value) {
-                                  if (value == "") {
-                                    return "This field must not be empty.";
-                                  }
-                                  if (value!.length > 30) {
-                                    return "Title cannot be more than 30 characters long.";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: h * 4.2217,
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * 0.85,
-                              child: TextFormField(
-                                keyboardType: TextInputType.multiline,
-                                maxLines: 5,
-                                decoration: InputDecoration(
-                                  hintText: "Enter demand description",
-                                  labelText: "Demand Description",
-                                ),
-                                controller: demandDescription,
-                                validator: (value) {
-                                  if (value == "") {
-                                    return "This field must not be empty.";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(
-                      height: h * 4.2217,
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Container(
-                              height: 55,
-                              width: MediaQuery.of(context).size.width * 0.85,
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  hintText: "Price per 30 minutes",
-                                  labelText: "Price",
-                                ),
-                                controller: priceController,
-                                validator: (value) {
-                                  if (value == "") {
-                                    return "This field must not be empty.";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: h * 4.2217,
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Container(
-                              height: 55,
-                              width: MediaQuery.of(context).size.width * 0.85,
-                              child: TextFormField(
-                                decoration: InputDecoration(
-                                  hintText: "Enter Location",
-                                  labelText: "Preferred Location",
-                                ),
-                                controller: location,
-                                validator: (value) {
-                                  if (value == "") {
-                                    return "This field must not be empty.";
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // SizedBox(
-                    //   height: h * 4.2217,
-                    // ),
-                    ListTile(
-                      onTap: () {
-                        setState(() {
-                          this.value = !value;
-                        });
-                      },
-                      leading: Checkbox(
-                        value: value,
-                        onChanged: (value) {
-                          setState(() {
-                            this.value = value!;
-                          });
-                        },
-                      ),
-                      title: Text(
-                        'Available for online meet-up',
-                        style: TextStyle(fontFamily: "poppins", fontSize: 14),
-                      ),
-                    ),
-                    SizedBox(
-                      height: h * 1.2217,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        "Please choose your tags from any of the predefined set of tags. Not case sensitive ",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.blue,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    SizedBox(
-                      height: h * 1.2217,
-                    ),
-                    StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection("DynamicTags")
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          DocumentSnapshot doc = snapshot.data!.docs[0];
-                          List tags = doc['tags'];
-                          return snapshot.hasData
-                              ? Container(
-                                  padding: EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                      color: Colors.white30,
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20))),
-                                  child: Wrap(
-                                    children: tags
-                                        .map((tag) => Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      0, 5, 0, 5),
-                                              child: Text("   $tag",
-                                                  style: TextStyle(
-                                                      color: Colors.blue,
-                                                      fontStyle:
-                                                          FontStyle.italic,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18)),
-                                            ))
-                                        .toList(),
-                                  ),
-                                )
-                              : Container();
-                        }),
-                    SizedBox(
-                      height: h * 1.2217,
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.85,
-                      child: TextFieldTags(
-                        textfieldTagsController: textfieldTagsController,
-                        initialTags: tags,
-                        inputfieldBuilder:
-                            (context, tec, fn, error, onChanged, onSubmitted) {
-                          return ((context, sc, tags, onTagDelete) {
-                            return TextField(
-                              controller: tec,
-                              focusNode: fn,
-                              decoration: InputDecoration(
-                                isDense: true,
-                                border: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.black, width: 1.0),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(30),
-                                  ),
-                                ),
-                                focusedBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Color(0xff00AEFF), width: 2.0),
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(30),
-                                  ),
-                                ),
-                                helperText: "Add category tags max 8",
-                                helperStyle: const TextStyle(
-                                  color: Color.fromRGBO(20, 22, 20, 0.973),
-                                ),
-                                errorText: error,
-                                prefixIconConstraints: BoxConstraints(
-                                    maxWidth: _distanceToField * 0.74),
-                                prefixIcon: tags.isNotEmpty
-                                    ? SingleChildScrollView(
-                                        controller: sc,
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                            children: tags.map((String tag) {
-                                          return Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5.0),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10.0,
-                                                      vertical: 5.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  InkWell(
-                                                    child: Text(
-                                                      '$tag',
-                                                      style: const TextStyle(
-                                                          color:
-                                                              Color(0xff00AEFF),
-                                                          fontSize: 16),
-                                                    ),
-                                                    onTap: () {},
-                                                  ),
-                                                  const SizedBox(width: 4.0),
-                                                  InkWell(
-                                                    child: const Icon(
-                                                      Icons.cancel,
-                                                      size: 25.0,
-                                                      color: Color.fromARGB(
-                                                          255, 245, 42, 42),
-                                                    ),
-                                                    onTap: () {
-                                                      onTagDelete(tag);
-                                                    },
-                                                  )
-                                                ],
-                                              ));
-                                        }).toList()),
-                                      )
-                                    : null,
-                              ),
-                              onChanged: tags.length <= 7
-                                  ? (value) {
-                                      int spaceCounter = 0;
-                                      // searchTerms.add(value.toLowerCase());
-                                      if (value.contains(" ")) {
-                                        var valueList = value.split(" ");
-                                        log("valueList of tags is: $valueList and ");
-                                        spaceCounter = valueList.length - 1;
-                                        log("spaceCounter of tags  is: $spaceCounter and ");
-                                        log("adding ${valueList[spaceCounter]} in if value.contains(' ')");
-                                        searchTerms.add(valueList[spaceCounter]
-                                            .toLowerCase());
-                                        searchTerms.add(value.toLowerCase());
-                                        log("searchTerms in if value.contains(' ') is: $searchTerms");
-                                      } else {
-                                        log("in else of onChange of tags means there's no space.");
-                                        searchTerms.add(value.toLowerCase());
-                                      }
-                                      log("added $value to array: $searchTerms");
-                                      tags = textfieldTagsController.getTags!;
-                                      log("after assigning tags to tags local list in "
-                                          "onchange tags: $tags");
-                                    }
-                                  : (value) {
-                                      // Get.snackbar(
-                                      //   "Enough Tags!",
-                                      //   "Already added 8 tags",
-                                      //   // duration: const Duration(seconds: 3),
-                                      // );
-                                      log("in else of onchanged and tags.length is: ${tags.length}");
-                                    },
-                              onSubmitted: tags.length <= 7
-                                  ? onSubmitted
-                                  : (value) {
-                                      Get.snackbar(
-                                        "Enough Tags!",
-                                        "Already added 8 tags",
-                                        duration: const Duration(seconds: 3),
-                                      );
-                                      log("in else of onSubmitted and tags.length is: ${tags.length}"
-                                          " and  value is: $value");
-                                    },
-                            );
-                          });
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: h * 4.2217,
-                    ),
-                    Container(
-                      width: 270,
-                      height: 50,
-                      child: GradientButton(
-                        title: "Submit",
-                        fontSize: 12,
-                        clrs: const [Color(0xff00AEFF), Color(0xff00AEFF)],
-                        onpressed: () async {
-                          if (_bannerImage != "" &&
-                              _formKey.currentState!.validate()) {
-                            textfieldTagsController.getTags?.forEach((element) {
-                              tagssss.add(element.toLowerCase());
-                            });
-                            log("tags in Go are: $tagssss");
-                            log("searchTerms are in Go before merging are: $searchTerms");
-                            searchTerms.addAll(tagssss);
-                            log("searchTerms are in Go after merging are: $searchTerms");
-                            searchTerms.removeWhere(
-                                (element) => element == " " || element == "");
-                            log("searchTerms after deleting spaces is in Go after merging are: $searchTerms");
-                            await uploadDataToDb();
-                            Navigator.pop(context);
-                          } else {
-                            _scacffoldKey.currentState!.showSnackBar(SnackBar(
-                              backgroundColor: Colors.red,
-                              content: Text(
-                                  'All fields are compulsory except the tags field which is optional'),
-                            ));
-                          }
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: h * 4.2217,
-                    ),
-                  ],
-                ),
+              border: Border.all(
+                color: Color(0xff00AEFF),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
               ),
             ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Demand Setup",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xff00AEFF),
+                        fontSize: w * 6.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          MeeterAppbar(
-            title: "Demand Setup",
-            icon: Icons.arrow_back_rounded,
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
+      ),
+      key: _scacffoldKey,
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Container(
+          color: Colors.white,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                SizedBox(
+                  height: 30,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  child: PoppinsText(
+                    text: "Upload a banner picture for your Demand",
+                    fontSize: 12,
+                  ),
+                ),
+                SizedBox(
+                  height: h * 4.2217,
+                ),
+                GestureDetector(
+                  child: _image == null
+                      ? Container(
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          height: 150,
+                          width: MediaQuery.of(context).size.width * 0.80,
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Color(0xff00AEFF), width: 1),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Image.asset("assets/images/image.png"),
+                        )
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 0),
+                            height: 150,
+                            width: MediaQuery.of(context).size.width * 0.80,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Color(0xff00AEFF), width: 1),
+                                borderRadius: BorderRadius.circular(20)),
+                            child: Image.file(
+                              _image!,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                  onTap: () {
+                    getImage();
+                  },
+                ),
+                SizedBox(
+                  height: h * 4.2217,
+                ),
+
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Container(
+                          height: 55,
+                          width: MediaQuery.of(context).size.width * 0.85,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              hintText: "Enter the title of your demand",
+                              labelText: "Demand Title",
+                            ),
+                            controller: demandTitle,
+                            validator: (value) {
+                              if (value == "") {
+                                return "This field must not be empty.";
+                              }
+                              if (value!.length > 30) {
+                                return "Title cannot be more than 30 characters long.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: h * 4.2217,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.85,
+                          child: TextFormField(
+                            keyboardType: TextInputType.multiline,
+                            maxLines: 5,
+                            decoration: InputDecoration(
+                              hintText: "Enter demand description",
+                              labelText: "Demand Description",
+                            ),
+                            controller: demandDescription,
+                            validator: (value) {
+                              if (value == "") {
+                                return "This field must not be empty.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(
+                  height: h * 4.2217,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Container(
+                          height: 55,
+                          width: MediaQuery.of(context).size.width * 0.85,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              hintText: "Price per 30 minutes",
+                              labelText: "Price",
+                            ),
+                            controller: priceController,
+                            validator: (value) {
+                              if (value == "") {
+                                return "This field must not be empty.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: h * 4.2217,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Container(
+                          height: 55,
+                          width: MediaQuery.of(context).size.width * 0.85,
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                              hintText: "Enter Location",
+                              labelText: "Preferred Location",
+                            ),
+                            controller: location,
+                            validator: (value) {
+                              if (value == "") {
+                                return "This field must not be empty.";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // SizedBox(
+                //   height: h * 4.2217,
+                // ),
+                ListTile(
+                  onTap: () {
+                    setState(() {
+                      this.value = !value;
+                    });
+                  },
+                  leading: Checkbox(
+                    value: value,
+                    onChanged: (value) {
+                      setState(() {
+                        this.value = value!;
+                      });
+                    },
+                  ),
+                  title: Text(
+                    'Available for online meet-up',
+                    style: TextStyle(fontFamily: "poppins", fontSize: 14),
+                  ),
+                ),
+                SizedBox(
+                  height: h * 1.2217,
+                ),
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("DynamicTags")
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      List tagz = [];
+                      if (snapshot.hasData) {
+                        DocumentSnapshot doc = snapshot.data!.docs[0];
+                        tagz = doc['tags'];
+                      }
+                      return snapshot.hasData
+                          ? Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                  color: Colors.white30,
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20))),
+                              child: tagz.isNotEmpty
+                                  ? Wrap(
+                                      children: tagz
+                                          .map((tag) => Padding(
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        0, 5, 0, 5),
+                                                child: Text("   $tag",
+                                                    style: TextStyle(
+                                                        color: Colors.blue,
+                                                        fontStyle:
+                                                            FontStyle.italic,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 18)),
+                                              ))
+                                          .toList(),
+                                    )
+                                  : Container(),
+                            )
+                          : Container();
+                    }),
+                SizedBox(
+                  height: h * 1.2217,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    "Please choose your tags from any of the predefined set of tags above. Not case sensitive ",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.blue,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(
+                  height: h * 1.2217,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  child: TextFieldTags(
+                    textfieldTagsController: textfieldTagsController,
+                    initialTags: tags,
+                    inputfieldBuilder:
+                        (context, tec, fn, error, onChanged, onSubmitted) {
+                      return ((context, sc, tags, onTagDelete) {
+                        return TextField(
+                          controller: tec,
+                          focusNode: fn,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            border: const OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.0),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(30),
+                              ),
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color(0xff00AEFF), width: 2.0),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(30),
+                              ),
+                            ),
+                            helperText: "Add category tags max 8",
+                            helperStyle: const TextStyle(
+                              color: Colors.blue,
+                            ),
+                            errorText: error,
+                            prefixIconConstraints: BoxConstraints(
+                                maxWidth: _distanceToField * 0.74),
+                            prefixIcon: tags.isNotEmpty
+                                ? SingleChildScrollView(
+                                    controller: sc,
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                        children: tags.map((String tag) {
+                                      return Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 5.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10.0, vertical: 5.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              InkWell(
+                                                child: Text(
+                                                  '$tag',
+                                                  style: const TextStyle(
+                                                      color: Color(0xff00AEFF),
+                                                      fontSize: 16),
+                                                ),
+                                                onTap: () {},
+                                              ),
+                                              const SizedBox(width: 4.0),
+                                              InkWell(
+                                                child: const Icon(
+                                                  Icons.cancel,
+                                                  size: 25.0,
+                                                  color: Color.fromARGB(
+                                                      255, 245, 42, 42),
+                                                ),
+                                                onTap: () {
+                                                  onTagDelete(tag);
+                                                },
+                                              )
+                                            ],
+                                          ));
+                                    }).toList()),
+                                  )
+                                : null,
+                          ),
+                          onChanged: tags.length <= 7
+                              ? (value) {
+                                  int spaceCounter = 0;
+                                  // searchTerms.add(value.toLowerCase());
+                                  if (value.contains(" ")) {
+                                    var valueList = value.split(" ");
+                                    log("valueList of tags is: $valueList and ");
+                                    spaceCounter = valueList.length - 1;
+                                    log("spaceCounter of tags  is: $spaceCounter and ");
+                                    log("adding ${valueList[spaceCounter]} in if value.contains(' ')");
+                                    searchTerms.add(
+                                        valueList[spaceCounter].toLowerCase());
+                                    searchTerms.add(value.toLowerCase());
+                                    log("searchTerms in if value.contains(' ') is: $searchTerms");
+                                  } else {
+                                    log("in else of onChange of tags means there's no space.");
+                                    searchTerms.add(value.toLowerCase());
+                                  }
+                                  log("added $value to array: $searchTerms");
+                                  tags = textfieldTagsController.getTags!;
+                                  log("after assigning tags to tags local list in "
+                                      "onchange tags: $tags");
+                                }
+                              : (value) {
+                                  // Get.snackbar(
+                                  //   "Enough Tags!",
+                                  //   "Already added 8 tags",
+                                  //   // duration: const Duration(seconds: 3),
+                                  // );
+                                  log("in else of onchanged and tags.length is: ${tags.length}");
+                                },
+                          onSubmitted: tags.length <= 7
+                              ? onSubmitted
+                              : (value) {
+                                  Get.snackbar(
+                                    "Enough Tags!",
+                                    "Already added 8 tags",
+                                    duration: const Duration(seconds: 3),
+                                  );
+                                  log("in else of onSubmitted and tags.length is: ${tags.length}"
+                                      " and  value is: $value");
+                                },
+                        );
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: h * 4.2217,
+                ),
+                Container(
+                  width: 270,
+                  height: 50,
+                  child: GradientButton(
+                    title: "Submit",
+                    fontSize: 12,
+                    clrs: const [Color(0xff00AEFF), Color(0xff00AEFF)],
+                    onpressed: () async {
+                      if (_bannerImage != "" &&
+                          _formKey.currentState!.validate()) {
+                        textfieldTagsController.getTags?.forEach((element) {
+                          tagssss.add(element.toLowerCase());
+                        });
+                        log("tags in Go are: $tagssss");
+                        log("searchTerms are in Go before merging are: $searchTerms");
+                        searchTerms.addAll(tagssss);
+                        log("searchTerms are in Go after merging are: $searchTerms");
+                        searchTerms.removeWhere(
+                            (element) => element == " " || element == "");
+                        log("searchTerms after deleting spaces is in Go after merging are: $searchTerms");
+                        await uploadDataToDb();
+                        Navigator.pop(context);
+                      } else {
+                        _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text(
+                              'All fields are compulsory except the tags field which is optional'),
+                        ));
+                      }
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: h * 4.2217,
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -611,7 +644,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
       "demand_person_image": _currentUser.getCurrentUser.avatarUrl,
       "demand_bannerImage": _bannerImage,
       "demand_tags": tagssss,
-      "demand_date": DateTime.now,
+      "demand_date": DateTime.now(),
       "lat": applicationBloc.currentLocation != null
           ? applicationBloc.currentLocation!.latitude
           : 0.0,

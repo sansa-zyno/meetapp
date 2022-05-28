@@ -16,26 +16,31 @@ class _DiscoverInterestedState extends State<DiscoverInterested> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 300,
+        flexibleSpace: Container(
+          //height: 300,
+          width: double.infinity,
+          child: ClipRRect(
+            borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(50),
+              bottomLeft: Radius.circular(50),
+            ),
+            child: Container(
+              child: Image.network(
+                widget.doc["image"],
+                fit: BoxFit.fill,
+              ),
+            ),
+          ),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: Colors.transparent,
+      ),
       body: Container(
         child: SingleChildScrollView(
             child: Column(
           children: [
-            Container(
-              height: 300,
-              width: double.infinity,
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(50),
-                  bottomLeft: Radius.circular(50),
-                ),
-                child: Container(
-                  child: Image.network(
-                    widget.doc["image"],
-                    fit: BoxFit.fill,
-                  ),
-                ),
-              ),
-            ),
             SizedBox(
               height: 20,
             ),

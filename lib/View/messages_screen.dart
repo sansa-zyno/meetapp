@@ -36,51 +36,71 @@ class _MessagesState extends State<Messages> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: Colors.black),
-          //leading: Icon(Icons.notifications, color: Colors.black87,),
-          title: ShaderMask(
-            blendMode: BlendMode.srcIn,
-            shaderCallback: (rect) => LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.indigoAccent, Colors.blue, Colors.green])
-                .createShader(rect),
-            child: Text(
-              'Inbox',
+    final w = MediaQuery.of(context).size.width / 100;
+    final h = MediaQuery.of(context).size.height / 100;
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 90,
+        flexibleSpace: SafeArea(
+          child: Container(
+            height: 90,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: Color(0xff00AEFF),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Inbox",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xff00AEFF),
+                        fontSize: w * 6.0,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          centerTitle: true,
-          backgroundColor: Colors.white54,
         ),
-        body: StreamBuilder(
-            stream: chatroomStream,
-            builder: (ctx, snapshot) {
-              QuerySnapshot? q = snapshot.data as QuerySnapshot?;
-              return snapshot.hasData
-                  ? ListView.separated(
-                      padding: EdgeInsets.all(5),
-                      itemCount: q!.docs.length,
-                      itemBuilder: (cxt, index) {
-                        DocumentSnapshot ds = q.docs[index];
-                        return ChatRoomListTile(
-                            ds["lastMessage"],
-                            ds['type'],
-                            ds['read'],
-                            ds['lastMessageSendBy'],
-                            ds.id,
-                            myName!);
-                      },
-                      separatorBuilder: (ctx, index) => Divider(
-                        thickness: 5,
-                      ),
-                    )
-                  : Center(child: CircularProgressIndicator());
-            }),
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
       ),
+      body: StreamBuilder(
+          stream: chatroomStream,
+          builder: (ctx, snapshot) {
+            QuerySnapshot? q = snapshot.data as QuerySnapshot?;
+            return snapshot.hasData && q!.docs.isNotEmpty
+                ? ListView.separated(
+                    padding: EdgeInsets.all(5),
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                    itemCount: q!.docs.length,
+                    itemBuilder: (cxt, index) {
+                      DocumentSnapshot ds = q.docs[index];
+                      return ChatRoomListTile(ds["lastMessage"], ds['type'],
+                          ds['read'], ds['lastMessageSendBy'], ds.id, myName!);
+                    },
+                    separatorBuilder: (ctx, index) => Divider(
+                      thickness: 5,
+                    ),
+                  )
+                : Center(child: Container(child: Text("No chat history")));
+          }),
     );
   }
 }

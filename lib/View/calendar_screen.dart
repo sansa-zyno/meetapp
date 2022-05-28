@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meeter/Widgets/MeeterAppBar/meeterAppBar.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -54,43 +53,75 @@ class _CalendarScreenState extends State<CalendarScreen> {
     var w = MediaQuery.of(context).size.width / 100;
     var h = MediaQuery.of(context).size.height / 100;
     return Scaffold(
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Column(
+      appBar: AppBar(
+        toolbarHeight: 90,
+        flexibleSpace: SafeArea(
+          child: Container(
+            height: 90,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: Color(0xff00AEFF),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                SizedBox(
-                  height: h * 16.8,
-                ),
-                Container(
-                  height: h * 56.1,
-                  child: SfCalendar(
-                    view: CalendarView.month,
-                    dataSource: MeetingDataSource(_getDataSource(requests)),
-                    cellBorderColor: Colors.white,
-                    headerHeight: 50,
-                    onTap: (CalendarTapDetails details) {},
-                    viewHeaderStyle: ViewHeaderStyle(),
-                    monthViewSettings: MonthViewSettings(
-                      showAgenda: true,
-                      agendaItemHeight: 70,
-                      appointmentDisplayCount: 2,
-                      showTrailingAndLeadingDates: false,
-                      numberOfWeeksInView: 4,
-                      appointmentDisplayMode:
-                          MonthAppointmentDisplayMode.indicator,
+                Expanded(
+                  flex: 3,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Calendar",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Color(0xff00AEFF),
+                        fontSize: w * 6.0,
+                      ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
-          MeeterAppbar(
-            title: "Calendar",
-            icon: Icons.menu_outlined,
-          ),
-        ],
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
+      ),
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            SizedBox(
+              height: h * 3.8,
+            ),
+            Container(
+              height: h * 56.1,
+              child: SfCalendar(
+                view: CalendarView.month,
+                dataSource: MeetingDataSource(_getDataSource(requests)),
+                cellBorderColor: Colors.white,
+                headerHeight: 50,
+                onTap: (CalendarTapDetails details) {},
+                viewHeaderStyle: ViewHeaderStyle(),
+                monthViewSettings: MonthViewSettings(
+                  showAgenda: true,
+                  agendaItemHeight: 70,
+                  appointmentDisplayCount: 2,
+                  showTrailingAndLeadingDates: false,
+                  numberOfWeeksInView: 4,
+                  appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
