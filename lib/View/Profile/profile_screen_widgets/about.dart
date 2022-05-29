@@ -124,7 +124,7 @@ class About extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          /*SizedBox(
             height: 20,
           ),
           Align(
@@ -150,7 +150,7 @@ class About extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-          ),
+          ),*/
           SizedBox(
             height: 20,
           ),
@@ -159,7 +159,7 @@ class About extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: PoppinsText(
-                text: "Last Seen",
+                text: "Last Active",
                 clr: Colors.grey,
                 fontSize: 12,
                 fontWeight: FontWeight.w400,
@@ -171,7 +171,7 @@ class About extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: PoppinsText(
-                text: "${_currentUser.getCurrentUser.lastSeen}",
+                text: "${_currentUser.getCurrentUser.lastActive}",
                 clr: Colors.black,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,

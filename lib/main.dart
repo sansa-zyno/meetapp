@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date_format/date_format.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -72,12 +71,18 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   setStatusOnline() async {
     final currentUser = FirebaseAuth.instance.currentUser;
-    String date = formatDate(
-        DateTime.now(), [MM, ' ', d, ', ', yyyy, ' ', hh, ':', nn, ' ', am]);
     await FirebaseFirestore.instance
         .collection("users")
         .doc(currentUser!.uid)
-        .update({"lastSeen": date});
+        .update({"lastActive": "Online"});
+  }
+
+  setStatusAway() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUser!.uid)
+        .update({"lastActive": "Away"});
   }
 
   saveUsertoSharedPref(String displayName) async {
@@ -148,6 +153,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed) {
       setStatusOnline();
+    } else {
+      setStatusAway();
     }
   }
 

@@ -49,14 +49,14 @@ class _ActivityScreenState extends State<ActivityScreen> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: ClampingScrollPhysics(),
             child: Column(
               children: [
                 SizedBox(
                   height: h * 16.8,
                 ),
                 Container(
-                  height: h * 70,
+                  height: h * 100,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,

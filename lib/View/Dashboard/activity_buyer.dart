@@ -57,7 +57,7 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
                   height: h * 16.8,
                 ),
                 Container(
-                  height: h * 70,
+                  height: h * 100,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.white,

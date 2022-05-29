@@ -7,12 +7,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:meeter/View/common_problems.dart';
+import 'package:meeter/View/emergency.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../Constants/controllers.dart';
 import '../Constants/get_token.dart';
 import '../Providers/user_controller.dart';
-
 
 class Timer extends StatefulWidget {
   final DocumentSnapshot request;
@@ -133,7 +134,7 @@ class _TimerState extends State<Timer> {
                                   "startAt": ServerValue.timestamp,
                                   "seconds": -2,
                                   "start_requester_id":
-                                  UserController().auth.currentUser?.uid,
+                                      UserController().auth.currentUser?.uid,
                                   "pause_requester_id": ""
                                 });
                                 log("in on Tap passed a start/stop request");
@@ -190,7 +191,7 @@ class _TimerState extends State<Timer> {
                                   "seconds": 2,
                                   "start_requester_id": "",
                                   "pause_requester_id":
-                                  UserController().auth.currentUser?.uid
+                                      UserController().auth.currentUser?.uid
                                 });
                                 log("in on long press passing a pause request");
                               });
@@ -475,7 +476,14 @@ class _TimerState extends State<Timer> {
                                 constraints: BoxConstraints.tightFor(
                                     width: w * 38.0, height: h * 5.0),
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              CommonProblems()),
+                                    );
+                                  },
                                   child: Text(
                                     'Common Problems',
                                     textAlign: TextAlign.center,
@@ -496,7 +504,13 @@ class _TimerState extends State<Timer> {
                                 constraints: BoxConstraints.tightFor(
                                     width: w * 38.0, height: h * 5.0),
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Emergency()),
+                                    );
+                                  },
                                   child: Text(
                                     'Emergency',
                                     style: TextStyle(

@@ -63,7 +63,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
     super.initState();
     getBuyerDetails();
     getSellerDetails();
-    FirebaseFirestore.instance
+    /*FirebaseFirestore.instance
         .collection("requests")
         .doc(widget.request['seller_id'])
         .collection('request')
@@ -89,7 +89,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
               isCircle: true,
             ).show();
       event.data() != null ? {} : Navigator.pop(context);
-    });
+    });*/
   }
 
   @override

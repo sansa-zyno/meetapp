@@ -196,6 +196,11 @@ class _MenuState extends State<Menu> {
                     ),
                   ),
                   onTap: () async {
+                    await FirebaseFirestore.instance
+                        .collection("users")
+                        .doc(user.uid)
+                        .update({"lastActive": "Offline"});
+
                     await FirebaseAuth.instance.signOut();
                     Navigator.pushAndRemoveUntil(
                         context,

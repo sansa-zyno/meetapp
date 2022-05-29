@@ -83,12 +83,11 @@ class _AuthMainState extends State<AuthMain> {
             .get();
         if (snap.docs.isNotEmpty) {
           setStatusOnline() async {
-            String date = formatDate(DateTime.now(),
-                [MM, ' ', d, ', ', yyyy, ' ', hh, ':', nn, ' ', am]);
+            final currentUser = FirebaseAuth.instance.currentUser;
             await FirebaseFirestore.instance
                 .collection("users")
-                .doc(uid)
-                .update({"lastSeen": date});
+                .doc(currentUser!.uid)
+                .update({"lastActive": "Online"});
           }
 
           if (snap.docs[0]['displayName'] != "" &&
@@ -141,7 +140,7 @@ class _AuthMainState extends State<AuthMain> {
               "token": fcmToken,
               "userType": _user.userType,
               "verified": _user.verified,
-              "lastSeen": date
+              "lastActive": "Online"
             });
             log("in new user before navigation");
             Navigator.pushAndRemoveUntil(
@@ -262,12 +261,11 @@ class _AuthMainState extends State<AuthMain> {
             .get();
         if (snap.docs.isNotEmpty) {
           setStatusOnline() async {
-            String date = formatDate(DateTime.now(),
-                [MM, ' ', d, ', ', yyyy, ' ', hh, ':', nn, ' ', am]);
+            final currentUser = FirebaseAuth.instance.currentUser;
             await FirebaseFirestore.instance
                 .collection("users")
-                .doc(uid)
-                .update({"lastSeen": date});
+                .doc(currentUser!.uid)
+                .update({"lastActive": "Online"});
           }
 
           if (snap.docs[0]['displayName'] != "" &&
@@ -320,7 +318,7 @@ class _AuthMainState extends State<AuthMain> {
               "token": fcmToken,
               "userType": _user.userType,
               "verified": _user.verified,
-              "lastSeen": date
+              "lastActive": "Online"
             });
             log("in new user before navigation");
             Navigator.pushAndRemoveUntil(
