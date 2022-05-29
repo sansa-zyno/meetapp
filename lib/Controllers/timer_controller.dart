@@ -25,9 +25,13 @@ class TimerController extends GetxController {
   RxBool isMeetingRunning = false.obs;
   RxBool isMeetingPaused = false.obs;
   RxBool isMeetingStarted = false.obs;
+  bool isDialogShown = false;
 
   RxString minutes = '00'.obs;
   RxString seconds = '00'.obs;
+
+  String lMinutes = "00";
+  String lSeconds = "00";
 
   Duration duration = Duration();
   late Timer timer;
@@ -35,6 +39,7 @@ class TimerController extends GetxController {
   RxBool isStartAnswered = false.obs;
   RxBool isEndAnswered = false.obs;
   RxBool isPauseAnswered = false.obs;
+
 
   void addTime() {
     final addSeconds = 1;
@@ -80,6 +85,7 @@ class TimerController extends GetxController {
       // buildTime();
     } else {
       log("the time is:: ${minutes.value}:${seconds.value}");
+      log("in meeting mode else resetting time is::");
       timer.cancel();
       resetTimer();
     }
@@ -160,7 +166,7 @@ class TimerController extends GetxController {
       // log("jsonData is: $jsonData");
       Map<String, dynamic>? dataMap = data ?? {};
       // log("jsonData is: $jsonData");
-      // log("dataMap is: ${dataMap['seconds'].runtimeType}");
+      // log("dataMap is: ${dataMap['lSeconds'].runtimeType}");
       log("dataMap is: ${dataMap['seconds']}");
       log("data is: $data");
       // Timestamp tmp = dataMap['startAt'] ?? Timestamp(0, 0);
@@ -172,48 +178,58 @@ class TimerController extends GetxController {
         //+ 0 means nothing for the other user -> means the timer won't start
         //+ when page is opened and 0 is in RTDB
         log("inside 0 wala");
-        isMeetingRunning.value = false;
-        if(timer.isActive){
-          log("inside timer is active");
-          timer.cancel();
-          resetTimer();
-        }
-      } else if (timerSeconds.value == -1) {
+        // isMeetingRunning.value = false;
+        // if(timer.isActive){
+        //   log("inside timer is active");
+        //   timer.cancel();
+        //   resetTimer();
+        // }
+      }
+      else if (timerSeconds.value == -1) {
         //+ -1 means the meeting is ended and  timer is reset and the value
         //+ in RTDB is changed to 0.
         log("is meeting end called ");
-        String minutes = this.minutes.value;
-        String seconds = this.seconds.value;
-        meetingMode();
-        // resetTimer();
+        // lMinutes = this.minutes.value;
+        // lSeconds = this.seconds.value;
+        // meetingMode();
+        isMeetingRunning.value = false;
+        log("cancel timer called.");
+        timer.cancel();
+        log("cancel timer called.");
         // meetingMode(); //+ I added this 23-4
-        log("local values are: minutes: $minutes and "
-            "seconds: $seconds");
+        log("local values are: lMinutes: $lMinutes and "
+            "lSeconds: $lSeconds");
         totalCharge = 0;
         extraMinutes = 0;
         extraSeconds = 0;
         extraTimeCharge = 0;
-        if (int.parse(minutes) > request["duration"] ||
-            (int.parse(minutes) == request["duration"])) {
+        currentCharge = request["price"] / request["duration"];
+
+        if (int.parse(lMinutes) > request["duration"] ||
+            (int.parse(lMinutes) == request["duration"])) {
+          log("inside lMinutes less if request['duration']: ${request["duration"]} \n\n "
+              " int.parse(lMinutes): ${int.parse(lMinutes)}");
           totalCharge = request["duration"] * currentCharge;
-          extraMinutes = (int.parse(minutes) - request["duration"]).toInt();
-          extraSeconds = int.parse(seconds);
+          extraMinutes = (int.parse(lMinutes) - request["duration"]).toInt();
+          extraSeconds = int.parse(lSeconds);
+          log("total charge is: $totalCharge");
           extraTimeCharge = extraMinutes * extraCharge;
           extraTimeCharge += extraSeconds * (extraCharge / 60);
           totalCharge += extraTimeCharge;
         } else {
-          totalCharge = int.parse(minutes) * currentCharge;
+          log("inside else less if");
+          totalCharge = int.parse(lMinutes) * currentCharge;
           totalCharge +=
-              ((int.parse(seconds) * (currentCharge / 60)).toPrecision(3))
+              ((int.parse(lSeconds) * (currentCharge / 60)).toPrecision(3))
                   .toPrecision(2);
         }
         // resetTimer();
         log("after refreshing minutes: $minutes"
-            " seconds: $seconds");
+            " Seconds: $seconds");
         log("returnVValue of leaveChannel is:");
         log("\n\n\n"
             "You were in the meeting for "
-            "$minutes minutes and $seconds seconds. "
+            "$lMinutes minutes and $seconds lSeconds. "
             "You are being charged \$$totalCharge for "
             "this meeting."
             "\n\n\n");
@@ -227,44 +243,49 @@ class TimerController extends GetxController {
           pronoun = "You";
         }
 
-        Get.defaultDialog(
-            barrierDismissible: false,
-            title: "Attention!",
-            middleText: "$name "
-                "${name == "You" ? "were" : "was"} in the meeting for "
-                "$minutes minutes and $seconds seconds. "
-                "$pronoun ${pronoun == "You" ? "are" : "is"} being charged "
-                "\$$totalCharge for "
-                "this meeting.",
-            confirmTextColor: Colors.white,
-            textConfirm: "Ok",
-            onConfirm: () async {
-              //+HANDLE THIS HERE PLEASE IN WHATEVER WAY YOU WANT. yOU MIGHT ALSO WANT tO
-              //+DELETE THIS MEETING FRoM THE RECENT ONES OR THE REQUESTS AFTER THIS MEETING
-              //+ IS ENDED hERE
-              DateTime date = DateTime.now();
-              await FirebaseFirestore.instance
-                  .collection("connections")
-                  .add({
-                "title": request["title"],
-                "seller_id": request["seller_id"],
-                "seller_name": request["seller_name"],
-                "seller_image": request["seller_image"],
-                "buyer_id": request["buyer_id"],
-                "buyer_name": request["buyer_name"],
-                "buyer_image": request["buyer_image"],
-                "date":
-                    "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
-                "meeters": ["${request["seller_id"]}", "${request["buyer_id"]}"]
+        if (!isDialogShown) {
+          log("inside showing dialog");
+          Get.defaultDialog(
+              barrierDismissible: false,
+              title: "Attention!",
+              middleText: "$name "
+                  "${name == "You" ? "were" : "was"} in the meeting for "
+                  "$lMinutes minutes and $lSeconds seconds. "
+                  "$pronoun ${pronoun == "You" ? "are" : "is"} being charged "
+                  "\$${totalCharge.toPrecision(2)} for "
+                  "this meeting.",
+              confirmTextColor: Colors.white,
+              textConfirm: "Ok",
+              onConfirm: () async {
+                //+HANDLE THIS HERE PLEASE IN WHATEVER WAY YOU WANT. yOU MIGHT ALSO WANT tO
+                //+DELETE THIS MEETING FRoM THE RECENT ONES OR THE REQUESTS AFTER THIS MEETING
+                //+ IS ENDED hERE
+                DateTime date = DateTime.now();
+                await FirebaseFirestore.instance
+                    .collection("connections")
+                    .add({
+                  "title": request["title"],
+                  "seller_id": request["seller_id"],
+                  "seller_name": request["seller_name"],
+                  "seller_image": request["seller_image"],
+                  "buyer_id": request["buyer_id"],
+                  "buyer_name": request["buyer_name"],
+                  "buyer_image": request["buyer_image"],
+                  "date":
+                  "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
+                  "meeters": ["${request["seller_id"]}", "${request["buyer_id"]}"]
+                });
+                isDialogShown = true;
+                Get.back();
+                ref2.update({
+                  // "startAt": FieldValue.serverTimestamp(),
+                  "seconds": 0,
+                  "start_requester_id": dataMap["start_requester_id"],
+                  "pause_requester_id": dataMap["pause_requester_id"]
+                });
               });
-              Get.back();
-              ref2.set({
-                // "startAt": FieldValue.serverTimestamp(),
-                "seconds": 0,
-                "start_requester_id": dataMap["start_requester_id"],
-                "pause_requester_id": dataMap["pause_requester_id"]
-              });
-            });
+        }
+        resetTimer();
         // showDialog(
         //     context: context,
         //     builder: (BuildContext context) =>
@@ -272,7 +293,7 @@ class TimerController extends GetxController {
         //           title: Text(
         //               "${widget.request["buyer_name"]} "
         //                   "was in the meeting for "
-        //                   "$minutes minutes and $seconds seconds. "
+        //                   "$lMinutes lMinutes and $lSeconds lSeconds. "
         //                   "He is being charged \$$totalCharge for "
         //                   "this meeting."),
         //           actions: [
@@ -313,11 +334,12 @@ class TimerController extends GetxController {
         //         ));
         // ref2.set({
         //   // "startAt": FieldValue.serverTimestamp(),
-        //   "seconds": 0,
+        //   "lSeconds": 0,
         //   "start_requester_id": dataMap["start_requester_id"],
         //   "pause_requester_id": dataMap["pause_requester_id"]
         // });
-      } else if (timerSeconds.value == 1) {
+      }
+      else if (timerSeconds.value == 1) {
         //+means it is paused
         //+ 1 means the timer is to be paused for the both the users.
         // timer.cancel();
@@ -326,7 +348,7 @@ class TimerController extends GetxController {
         // if (!isMeetingPaused.value) {
         // isMeetingPaused.value = true;
         pauseMode();
-        ref2.set({
+        ref2.update({
           // "startAt": FieldValue.serverTimestamp(),
           "seconds": 0,
           "start_requester_id": dataMap["start_requester_id"],
@@ -341,9 +363,15 @@ class TimerController extends GetxController {
         //+ setting or putting '0' in RTDB
 
         //+ let's also add a requested by ID in the data in RTDB
+        isDialogShown = false;
+        lMinutes = minutes.value;
+        lSeconds = seconds.value;
 
         log("current user id in -2 is: ${UserController().auth.currentUser?.uid} "
             "and other id is: ");
+
+        // if(request.id == dataMap){}
+
         if (UserController().auth.currentUser?.uid !=
             dataMap["start_requester_id"]) {
           //+ this means I am the buyer and I should see the dialog regarding start of meeting
@@ -368,8 +396,8 @@ class TimerController extends GetxController {
               isStartAnswered.value = true;
               if (!isMeetingRunning.value) {
                 log("in -2 in yes !isMeetingRunning else");
-                // meetingMode();
-                ref2.set({
+                meetingMode();
+                ref2.update({
                   // "startAt": FieldValue.serverTimestamp(),
                   "seconds": request["duration"],
                   "start_requester_id": dataMap["start_requester_id"],
@@ -378,7 +406,10 @@ class TimerController extends GetxController {
                 Get.back();
               } else {
                 log("in -2 !isMeetingRunning else");
-                ref2.set({
+                lMinutes = minutes.value;
+                lSeconds = seconds.value;
+                meetingMode();
+                ref2.update({
                   // "startAt": FieldValue.serverTimestamp(),
                   "seconds": -1,
                   "start_requester_id": dataMap["start_requester_id"],
@@ -391,7 +422,7 @@ class TimerController extends GetxController {
             textCancel: "No",
             onCancel: () {
               isStartAnswered.value = true;
-              ref2.set({
+              ref2.update({
                 // "startAt": FieldValue.serverTimestamp(),
                 "seconds": 0,
                 "start_requester_id": dataMap["start_requester_id"],
@@ -400,22 +431,30 @@ class TimerController extends GetxController {
             },
           );
 
+          log("isStartAnswered after the dialog is: ${isStartAnswered.value}");
+
           Future.delayed(const Duration(minutes: 1), () {
             log("inside delayed !isStartAnswered.value) checking.");
             // Get.back();
+            log("inside delayed !isStartAnswered.value) checking is: ${isStartAnswered.value}");
+
             if (!isStartAnswered.value) {
               log("inside delayed check if");
-              Get.back();
+              // Get.back();
               if (isMeetingRunning.value) {
-                log("inside delayed check if");
-                ref2.set({
+                log("inside delayed check if in is meeting running");
+                ref2.update({
                   // "startAt": FieldValue.serverTimestamp(),
                   "seconds": -1,
                   "start_requester_id": dataMap["start_requester_id"],
                   "pause_requester_id": dataMap["pause_requester_id"]
                 });
+                if(dataMap["start_requester_id"] != UserController().auth.currentUser?.uid){
+                  log("inside the start requester id check if");
+                  Get.back();
+                }
               } else {
-                ref2.set({
+                ref2.update({
                   // "startAt": FieldValue.serverTimestamp(),
                   "seconds": 0,
                   "start_requester_id": dataMap["start_requester_id"],
@@ -460,7 +499,7 @@ class TimerController extends GetxController {
             onConfirm: () {
               isPauseAnswered.value = true;
               if (!isMeetingPaused.value) {
-                ref2.set({
+                ref2.update({
                   // "startAt": FieldValue.serverTimestamp(),
                   "seconds": 1,
                   "start_requester_id": dataMap["start_requester_id"],
@@ -468,7 +507,7 @@ class TimerController extends GetxController {
                 });
                 Get.back();
               } else {
-                ref2.set({
+                ref2.update({
                   // "startAt": FieldValue.serverTimestamp(),
                   "seconds": request["duration"],
                   "start_requester_id": dataMap["start_requester_id"],
@@ -481,7 +520,7 @@ class TimerController extends GetxController {
             textCancel: "No",
             onCancel: () {
               isPauseAnswered.value = true;
-              ref2.set({
+              ref2.update({
                 // "startAt": FieldValue.serverTimestamp(),
                 "seconds": 0,
                 "start_requester_id": dataMap["start_requester_id"],
@@ -491,9 +530,9 @@ class TimerController extends GetxController {
           );
           Future.delayed(Duration(minutes: 1), () {
             log("is pause answered delayed checking");
-            Get.back();
+            // Get.back();
             if (!isPauseAnswered.value) {
-              ref2.set({
+              ref2.update({
                 // "startAt": FieldValue.serverTimestamp(),
                 "seconds": 1,
                 "start_requester_id": dataMap["start_requester_id"],

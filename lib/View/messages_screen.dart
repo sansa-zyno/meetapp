@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/Services/database.dart';
@@ -13,12 +15,12 @@ class Messages extends StatefulWidget {
 }
 
 class _MessagesState extends State<Messages> {
-  String? myName;
+  /*String? myName;
   getMyName() async {
     SharedPreferences _pref = await SharedPreferences.getInstance();
     myName = _pref.getString('userName')!;
     setState(() {});
-  }
+  }*/
 
   Stream? chatroomStream;
   getChatRooms() async {
@@ -30,7 +32,7 @@ class _MessagesState extends State<Messages> {
   void initState() {
     // TODO: implement initState
     getChatRooms();
-    getMyName();
+   // getMyName();
     super.initState();
   }
 
@@ -92,8 +94,13 @@ class _MessagesState extends State<Messages> {
                     itemCount: q!.docs.length,
                     itemBuilder: (cxt, index) {
                       DocumentSnapshot ds = q.docs[index];
-                      return ChatRoomListTile(ds["lastMessage"], ds['type'],
-                          ds['read'], ds['lastMessageSendBy'], ds.id, myName!);
+                      return ChatRoomListTile(
+                          ds["lastMessage"],
+                          ds['type'],
+                          ds['lastMessageSendByUid'],
+                          ds.id,
+                          ds['read'],
+                          ds["users"]);
                     },
                     separatorBuilder: (ctx, index) => Divider(
                       thickness: 5,
@@ -106,10 +113,10 @@ class _MessagesState extends State<Messages> {
 }
 
 class ChatRoomListTile extends StatefulWidget {
-  final String lastMessage, type, chatRoomId, myUsername, sentBy;
+  final String lastMessage, type, sentByUid, chatRoomId;
   final bool read;
-  ChatRoomListTile(this.lastMessage, this.type, this.read, this.sentBy,
-      this.chatRoomId, this.myUsername);
+  final List users;
+  ChatRoomListTile(this.lastMessage, this.type, this.sentByUid, this.chatRoomId, this.read, this.users);
   @override
   _ChatRoomListTileState createState() => _ChatRoomListTileState();
 }
@@ -121,21 +128,26 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   getOtherPersonInfoAndProductName() async {
     String productId =
         widget.chatRoomId.substring(widget.chatRoomId.length - 20);
-    print(productId);
+        setState(() {});
+    /*print(productId);
     String username = widget.chatRoomId
         .replaceAll(widget.myUsername, "")
         .replaceAll("_", "")
-        .replaceAll(productId, "");
+        .replaceAll(productId, "");*/
 
-    QuerySnapshot _doc = await FirebaseFirestore.instance
-        .collection('users')
-        .where('displayName', isEqualTo: username)
-        .get();
+    for (int i = 0; i < widget.users.length; i++) {
+      if (widget.users[i] != FirebaseAuth.instance.currentUser!.uid) {
+        QuerySnapshot _doc = await FirebaseFirestore.instance
+            .collection('users')
+            .where('uid', isEqualTo: widget.users[i])
+            .get();
+        user = OurUser.fromFireStore(_doc.docs[0]);
+        profilePicUrl = user!.avatarUrl!;
+        //name = username;
+        setState(() {});
+      }
+    }
 
-    user = OurUser.fromFireStore(_doc.docs[0]);
-    profilePicUrl = user!.avatarUrl!;
-    //name = username;
-    setState(() {});
     QuerySnapshot q1 =
         await FirebaseFirestore.instance.collectionGroup("meeter").get();
     QuerySnapshot q2 =
@@ -170,7 +182,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     return user != null
         ? GestureDetector(
             onTap: () async {
-              if (widget.sentBy != widget.myUsername) {
+              if (widget.sentByUid != FirebaseAuth.instance.currentUser!.uid) {
                 //get all messages that havent been read
                 QuerySnapshot q = await FirebaseFirestore.instance
                     .collection("chatrooms")
@@ -218,7 +230,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           ),
                         ),
                       ),
-                      widget.sentBy != widget.myUsername
+                      widget.sentByUid != FirebaseAuth.instance.currentUser!.uid
                           ? StreamBuilder(
                               stream: FirebaseFirestore.instance
                                   .collection("chatrooms")

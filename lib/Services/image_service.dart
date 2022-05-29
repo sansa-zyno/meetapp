@@ -41,6 +41,7 @@ class ImageService {
         "read": false,
         "photoUrl": url,
         "sendBy": username,
+        "sendByUid": user!.uid,
         "ts": lastMessageTs,
         "imgUrl": user!.avatarUrl
       };
@@ -52,6 +53,7 @@ class ImageService {
           "lastMessage": url,
           "lastMessageSendTs": lastMessageTs,
           "lastMessageSendBy": username,
+          "lastMessageSendByUid": user!.uid,
           "lastMessageSendByImgUrl": user!.avatarUrl
         };
         Database().updateLastMessageSend(chatRoomId, lastMessageInfoMap);

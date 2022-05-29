@@ -63,7 +63,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
     super.initState();
     getBuyerDetails();
     getSellerDetails();
-    /*FirebaseFirestore.instance
+    FirebaseFirestore.instance
         .collection("requests")
         .doc(widget.request['seller_id'])
         .collection('request')
@@ -89,7 +89,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
               isCircle: true,
             ).show();
       event.data() != null ? {} : Navigator.pop(context);
-    });*/
+    });
   }
 
   @override
@@ -464,8 +464,8 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       userName, buyerDetails.displayName!);
                                   Map<String, dynamic> chatroomInfo = {
                                     "users": [
-                                      userName,
-                                      buyerDetails.displayName
+                                      FirebaseAuth.instance.currentUser!.uid,
+                                      buyerDetails.uid
                                     ]
                                   };
                                   Database()
@@ -479,9 +479,9 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                   Map<String, dynamic>? map =
                                       doc.data() as Map<String, dynamic>?;
                                   if (map != null) {
-                                    if (map.containsKey("lastMessageSendBy")) {
-                                      if (doc['lastMessageSendBy'] !=
-                                          userName) {
+                                    if (map.containsKey("lastMessageSendByUid")) {
+                                      if (doc['lastMessageSendByUid'] !=
+                                          FirebaseAuth.instance.currentUser!.uid) {
                                         //get all messages that havent been read
                                         QuerySnapshot q =
                                             await FirebaseFirestore.instance
@@ -530,12 +530,52 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       userName, sellerDetails.displayName!);
                                   Map<String, dynamic> chatroomInfo = {
                                     "users": [
-                                      userName,
-                                      sellerDetails.displayName
+                                      FirebaseAuth.instance.currentUser!.uid,
+                                      sellerDetails.uid
                                     ]
                                   };
                                   Database()
                                       .createChatRoom(chatroomId, chatroomInfo);
+
+                                  DocumentSnapshot doc = await FirebaseFirestore
+                                      .instance
+                                      .collection("chatrooms")
+                                      .doc(chatroomId)
+                                      .get();
+                                  Map<String, dynamic>? map =
+                                      doc.data() as Map<String, dynamic>?;
+                                  if (map != null) {
+                                    if (map.containsKey("lastMessageSendByUid")) {
+                                      if (doc['lastMessageSendByUid'] !=
+                                          FirebaseAuth.instance.currentUser!.uid) {
+                                        //get all messages that havent been read
+                                        QuerySnapshot q =
+                                            await FirebaseFirestore.instance
+                                                .collection("chatrooms")
+                                                .doc(chatroomId)
+                                                .collection('chats')
+                                                .where("read", isEqualTo: false)
+                                                .get();
+                                        //turn to read to pevent showing as unread in chat history
+                                        for (int i = 0;
+                                            i < q.docs.length;
+                                            i++) {
+                                          await FirebaseFirestore.instance
+                                              .collection("chatrooms")
+                                              .doc(chatroomId)
+                                              .collection('chats')
+                                              .doc(q.docs[i].id)
+                                              .update({"read": true});
+                                        }
+
+                                        //turn to read to prevent showing here again
+                                        await FirebaseFirestore.instance
+                                            .collection("chatrooms")
+                                            .doc(chatroomId)
+                                            .update({"read": true});
+                                      }
+                                    }
+                                  }
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -567,45 +607,6 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                   widget.request["accepted"] == true
                               ? GestureDetector(
                                   onTap: () async {
-                                    /* SharedPreferences preferences =
-                                        await SharedPreferences
-                                            .getInstance();
-                                    String userName =
-                                        preferences.getString('userName')!;
-
-                                    if (widget.request['seller_id'] ==
-                                        FirebaseAuth
-                                            .instance.currentUser!.uid) {
-                                      var connectionRoomId =
-                                          getChatRoomIdByUsernames(userName,
-                                              widget.request['buyer_id']);
-                                      Map<String, dynamic>
-                                          connectionRoomInfo = {
-                                        "users": [
-                                          userName,
-                                          widget.request['buyer_name']
-                                        ]
-                                      };
-                                      Database().createChatRoom(
-                                          connectionRoomId,
-                                          connectionRoomInfo);
-                                    } else if (widget.request['buyer_id'] ==
-                                        FirebaseAuth
-                                            .instance.currentUser!.uid) {
-                                      var connectionRoomId =
-                                          getChatRoomIdByUsernames(userName,
-                                              widget.request['seller_id']);
-                                      Map<String, dynamic>
-                                          connectionRoomInfo = {
-                                        "users": [
-                                          userName,
-                                          widget.request['seller_name']
-                                        ]
-                                      };
-                                      Database().createChatRoom(
-                                          connectionRoomId,
-                                          connectionRoomInfo);
-                                    }*/
 
                                     Navigator.of(context).push(
                                       MaterialPageRoute(

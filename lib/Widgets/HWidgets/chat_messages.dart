@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/Services/database.dart';
@@ -18,12 +19,12 @@ class ChatMessages extends StatefulWidget {
 
 class _ChatMessagesState extends State<ChatMessages> {
   Stream? messageStream;
-  String myUserName = "";
+  /*String myUserName = "";
 
   getMyInfoFromSharedPreference() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     myUserName = prefs.getString('userName')!;
-  }
+  }*/
 
   getAndSetMessages() async {
     messageStream = await Database().getChatRoomMessages(widget.chatRoomId);
@@ -197,18 +198,18 @@ class _ChatMessagesState extends State<ChatMessages> {
                   print(time.toString());
                   return element['type'] == 'text'
                       ? Column(
-                          crossAxisAlignment: myUserName == element["sendBy"]
+                          crossAxisAlignment: FirebaseAuth.instance.currentUser!.uid == element["sendByUid"]
                               ? CrossAxisAlignment.end
                               : CrossAxisAlignment.start,
                           children: [
                             chatMessageTile(
                               element["message"],
-                              myUserName == element["sendBy"],
+                              FirebaseAuth.instance.currentUser!.uid == element["sendByUid"],
                               h,
                               w,
                             ),
                             Padding(
-                              padding: myUserName == element["sendBy"]
+                              padding: FirebaseAuth.instance.currentUser!.uid == element["sendByUid"]
                                   ? const EdgeInsets.only(right: 15.0)
                                   : const EdgeInsets.only(left: 15.0),
                               child: Text(
@@ -221,7 +222,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                       : Column(
                           children: [
                             imageMessageTile(element['photoUrl'],
-                                myUserName == element["sendBy"]),
+                                FirebaseAuth.instance.currentUser!.uid == element["sendByUid"]),
                           ],
                         );
                 },
@@ -234,7 +235,7 @@ class _ChatMessagesState extends State<ChatMessages> {
   }
 
   doThisOnLaunch() async {
-    await getMyInfoFromSharedPreference();
+   // await getMyInfoFromSharedPreference();
     await getAndSetMessages();
   }
 

@@ -18,12 +18,12 @@ class ChatBottomBar extends StatefulWidget {
 class _ChatBottomBarState extends State<ChatBottomBar> {
   TextEditingController messageTextEdittingController = TextEditingController();
 
-  String messageId = "";
   String myUserName = "";
 
   getMyInfoFromSharedPreference() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     myUserName = prefs.getString('userName')!;
+    setState(() {});
   }
 
   addMessage(bool sendClicked, context) {
@@ -39,6 +39,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
         "read": false,
         "message": message,
         "sendBy": user.displayName,
+        "sendByUid": user.uid,
         "ts": lastMessageTs,
         "imgUrl": user.avatarUrl
       };
@@ -50,6 +51,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
           "lastMessage": message,
           "lastMessageSendTs": "${lastMessageTs}",
           "lastMessageSendBy": myUserName,
+          "lastMessageSendByUid": user.uid,
           "lastMessageSendByImgUrl": user.avatarUrl
         };
 

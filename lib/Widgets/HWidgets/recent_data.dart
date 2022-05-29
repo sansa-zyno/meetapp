@@ -118,7 +118,7 @@ class RecentData extends StatelessWidget {
               )
             : Container()
         : text == "msg"
-            ? msg!["lastMessageSendBy"] != username
+            ? msg!["lastMessageSendByUid"] != FirebaseAuth.instance.currentUser!.uid
                 ? Padding(
                     padding:
                         EdgeInsets.all(MediaQuery.of(context).size.width / 60),
@@ -126,8 +126,8 @@ class RecentData extends StatelessWidget {
                       onTap: () async {
                         QuerySnapshot _doc = await FirebaseFirestore.instance
                             .collection('users')
-                            .where('displayName',
-                                isEqualTo: msg!["lastMessageSendBy"])
+                            .where('uid',
+                                isEqualTo: msg!["lastMessageSendByUid"])
                             .get();
                         OurUser user = OurUser.fromFireStore(_doc.docs[0]);
                         //get all messages that havent been read

@@ -52,12 +52,10 @@ class Database {
 
   //get all the people the user has chatted with
   Future<Stream<QuerySnapshot>> getChatRooms() async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    String myUsername = _pref.getString('userName')!;
     return FirebaseFirestore.instance
         .collection("chatrooms")
         .orderBy("lastMessageSendTs", descending: true)
-        .where("users", arrayContains: myUsername)
+        .where("users", arrayContains: FirebaseAuth.instance.currentUser!.uid)
         .snapshots();
   }
 

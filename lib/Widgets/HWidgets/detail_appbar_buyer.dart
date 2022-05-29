@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/Model/demand_data.dart';
 import 'package:meeter/Model/user.dart';
@@ -144,7 +145,7 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
                     var chatroomId = getChatRoomIdByUsernames(
                         userName, widget.personDetails.displayName!);
                     Map<String, dynamic> chatroomInfo = {
-                      "users": [userName, widget.personDetails.displayName]
+                      "users": [FirebaseAuth.instance.currentUser!.uid, widget.personDetails.uid]
                     };
                     Database().createChatRoom(chatroomId, chatroomInfo);
                     DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -154,8 +155,8 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
                     Map<String, dynamic>? map =
                         doc.data() as Map<String, dynamic>?;
                     if (map != null) {
-                      if (map.containsKey("lastMessageSendBy")) {
-                        if (doc['lastMessageSendBy'] != userName) {
+                      if (map.containsKey("lastMessageSendByUid")) {
+                        if (doc['lastMessageSendByUid'] != FirebaseAuth.instance.currentUser!.uid) {
                           //get all messages that havent been read
                           QuerySnapshot q = await FirebaseFirestore.instance
                               .collection("chatrooms")
