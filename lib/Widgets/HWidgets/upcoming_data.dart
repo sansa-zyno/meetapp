@@ -33,9 +33,8 @@ class _UpcomingDataState extends State<UpcomingData> {
         .toList();
     return ListView.builder(
         itemCount: requests.length,
-        physics: NeverScrollableScrollPhysics(),
+        physics: ClampingScrollPhysics(),
         shrinkWrap: true,
-        reverse: true,
         padding: EdgeInsets.all(0),
         itemBuilder: (context, index) {
           return Padding(

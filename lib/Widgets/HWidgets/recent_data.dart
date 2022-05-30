@@ -10,13 +10,12 @@ class RecentData extends StatelessWidget {
   final DocumentSnapshot? request;
   final DocumentSnapshot? msg;
   final String text;
-  final String? username;
-  RecentData(
-      {required this.clr,
-      this.request,
-      this.msg,
-      required this.text,
-      this.username});
+  RecentData({
+    required this.clr,
+    this.request,
+    this.msg,
+    required this.text,
+  });
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -118,7 +117,8 @@ class RecentData extends StatelessWidget {
               )
             : Container()
         : text == "msg"
-            ? msg!["lastMessageSendByUid"] != FirebaseAuth.instance.currentUser!.uid
+            ? msg!["lastMessageSendByUid"] !=
+                    FirebaseAuth.instance.currentUser!.uid
                 ? Padding(
                     padding:
                         EdgeInsets.all(MediaQuery.of(context).size.width / 60),

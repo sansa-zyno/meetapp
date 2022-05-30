@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/Services/database.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'chat_screen.dart';
 
@@ -32,7 +30,7 @@ class _MessagesState extends State<Messages> {
   void initState() {
     // TODO: implement initState
     getChatRooms();
-   // getMyName();
+    // getMyName();
     super.initState();
   }
 
@@ -116,7 +114,8 @@ class ChatRoomListTile extends StatefulWidget {
   final String lastMessage, type, sentByUid, chatRoomId;
   final bool read;
   final List users;
-  ChatRoomListTile(this.lastMessage, this.type, this.sentByUid, this.chatRoomId, this.read, this.users);
+  ChatRoomListTile(this.lastMessage, this.type, this.sentByUid, this.chatRoomId,
+      this.read, this.users);
   @override
   _ChatRoomListTileState createState() => _ChatRoomListTileState();
 }
@@ -128,7 +127,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
   getOtherPersonInfoAndProductName() async {
     String productId =
         widget.chatRoomId.substring(widget.chatRoomId.length - 20);
-        setState(() {});
+    setState(() {});
     /*print(productId);
     String username = widget.chatRoomId
         .replaceAll(widget.myUsername, "")
