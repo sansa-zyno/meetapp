@@ -20,6 +20,7 @@ class Database {
         .snapshots();
   }
 
+
   //create chatting session between two people if they havent chatted before
   createChatRoom(
       String chatRoomId, Map<String, dynamic> chatRoomInfoMap) async {
