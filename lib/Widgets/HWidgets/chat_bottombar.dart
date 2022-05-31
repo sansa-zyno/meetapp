@@ -18,14 +18,6 @@ class ChatBottomBar extends StatefulWidget {
 class _ChatBottomBarState extends State<ChatBottomBar> {
   TextEditingController messageTextEdittingController = TextEditingController();
 
-  String myUserName = "";
-
-  getMyInfoFromSharedPreference() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    myUserName = prefs.getString('userName')!;
-    setState(() {});
-  }
-
   addMessage(bool sendClicked, context) {
     if (messageTextEdittingController.text != "") {
       String message = messageTextEdittingController.text;
@@ -49,8 +41,8 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
           "type": 'text',
           "read": false,
           "lastMessage": message,
-          "lastMessageSendTs": "${lastMessageTs}",
-          "lastMessageSendBy": myUserName,
+          "lastMessageSendTs": lastMessageTs,
+          "lastMessageSendBy": user.displayName,
           "lastMessageSendByUid": user.uid,
           "lastMessageSendByImgUrl": user.avatarUrl
         };
@@ -71,7 +63,6 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getMyInfoFromSharedPreference();
   }
 
   @override
@@ -124,7 +115,7 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
               ),
               IconButton(
                 onPressed: () {
-                  ImageService().uploadImage(widget.chatRoomId, myUserName);
+                  ImageService().uploadImage(widget.chatRoomId);
                 },
                 icon: Icon(
                   Icons.camera_alt_outlined,

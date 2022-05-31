@@ -160,82 +160,75 @@ class _ActivityScreenState extends State<ActivityScreen> {
                                 padding: EdgeInsets.all(0),
                                 physics: ClampingScrollPhysics(),
                                 children: [
-                                  Flexible(
-                                    child: StreamBuilder<QuerySnapshot>(
-                                        stream: chatroomStream,
-                                        builder: (context, snapshot) {
-                                          return snapshot.hasData
-                                              ? ListView.builder(
-                                                  shrinkWrap: true,
-                                                  physics:
-                                                      NeverScrollableScrollPhysics(),
-                                                  padding: EdgeInsets.all(0),
-                                                  itemCount: snapshot
-                                                      .data!.docs.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return RecentData(
-                                                      clr: Colors.blue,
-                                                      msg: snapshot
-                                                          .data!.docs[index],
-                                                      text: "msg",
-                                                    );
-                                                  })
-                                              : Container();
-                                        }),
-                                  ),
-                                  Flexible(
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        padding: EdgeInsets.all(0),
-                                        itemCount: widget.requests.length,
-                                        reverse: true,
-                                        itemBuilder: (context, index) {
-                                          return widget.requests[index]
-                                                          ["accepted"] ==
-                                                      null &&
-                                                  widget.requests[index]
-                                                          ["modified"] ==
-                                                      null
-                                              ? RecentData(
-                                                  clr: Colors.blue,
-                                                  request:
-                                                      widget.requests[index],
-                                                  text: "new",
-                                                )
-                                              : widget.requests[index]
-                                                          ["accepted"] ??
-                                                      false
-                                                  ? RecentData(
-                                                      clr: Colors.blue,
-                                                      request: widget
-                                                          .requests[index],
-                                                      text: "accepted",
-                                                    )
-                                                  : widget.requests[index]
-                                                              ["modified"] ??
-                                                          false
-                                                      ? RecentData(
-                                                          clr: Colors.blue,
-                                                          request: widget
-                                                              .requests[index],
-                                                          text: "modified",
-                                                        )
-                                                      : !(widget.requests[index]
-                                                                  [
-                                                                  "accepted"] ??
-                                                              true)
-                                                          ? RecentData(
-                                                              clr: Colors.blue,
-                                                              request: widget
-                                                                      .requests[
-                                                                  index],
-                                                              text: "cancelled",
-                                                            )
-                                                          : Container();
-                                        }),
-                                  ),
+                                  StreamBuilder<QuerySnapshot>(
+                                      stream: chatroomStream,
+                                      builder: (context, snapshot) {
+                                        return snapshot.hasData
+                                            ? ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                padding: EdgeInsets.all(0),
+                                                itemCount:
+                                                    snapshot.data!.docs.length,
+                                                itemBuilder: (context, index) {
+                                                  return RecentData(
+                                                    clr: Colors.blue,
+                                                    msg: snapshot
+                                                        .data!.docs[index],
+                                                    text: "msg",
+                                                  );
+                                                })
+                                            : Container();
+                                      }),
+                                  ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      padding: EdgeInsets.all(0),
+                                      itemCount: widget.requests.length,
+                                      reverse: true,
+                                      itemBuilder: (context, index) {
+                                        return widget.requests[index]
+                                                        ["accepted"] ==
+                                                    null &&
+                                                widget.requests[index]
+                                                        ["modified"] ==
+                                                    null
+                                            ? RecentData(
+                                                clr: Colors.blue,
+                                                request: widget.requests[index],
+                                                text: "new",
+                                              )
+                                            : widget.requests[index]
+                                                        ["accepted"] ??
+                                                    false
+                                                ? RecentData(
+                                                    clr: Colors.blue,
+                                                    request:
+                                                        widget.requests[index],
+                                                    text: "accepted",
+                                                  )
+                                                : widget.requests[index]
+                                                            ["modified"] ??
+                                                        false
+                                                    ? RecentData(
+                                                        clr: Colors.blue,
+                                                        request: widget
+                                                            .requests[index],
+                                                        text: "modified",
+                                                      )
+                                                    : !(widget.requests[index]
+                                                                ["accepted"] ??
+                                                            true)
+                                                        ? RecentData(
+                                                            clr: Colors.blue,
+                                                            request:
+                                                                widget.requests[
+                                                                    index],
+                                                            text: "cancelled",
+                                                          )
+                                                        : Container();
+                                      }),
                                 ],
                               ),
                             )

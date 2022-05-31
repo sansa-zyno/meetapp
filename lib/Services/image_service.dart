@@ -33,14 +33,14 @@ class ImageService {
     }
   }
 
-  void setImageMsg(String url, String chatRoomId, String username) async {
+  void setImageMsg(String url, String chatRoomId) async {
     var lastMessageTs = DateTime.now();
     if (user != null) {
       Map<String, dynamic> messageInfoMap = {
         "type": 'image',
         "read": false,
         "photoUrl": url,
-        "sendBy": username,
+        "sendBy": user!.displayName,
         "sendByUid": user!.uid,
         "ts": lastMessageTs,
         "imgUrl": user!.avatarUrl
@@ -52,7 +52,7 @@ class ImageService {
           "read": false,
           "lastMessage": url,
           "lastMessageSendTs": lastMessageTs,
-          "lastMessageSendBy": username,
+          "lastMessageSendBy": user!.displayName,
           "lastMessageSendByUid": user!.uid,
           "lastMessageSendByImgUrl": user!.avatarUrl
         };
@@ -61,10 +61,10 @@ class ImageService {
     }
   }
 
-  void uploadImage(String chatRoomId, String username) async {
+  void uploadImage(String chatRoomId) async {
     String? url = await getImage();
     if (url != null) {
-      setImageMsg(url, chatRoomId, username);
+      setImageMsg(url, chatRoomId);
     }
   }
 }

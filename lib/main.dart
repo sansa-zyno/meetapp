@@ -71,18 +71,22 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
 
   setStatusOnline() async {
     final currentUser = FirebaseAuth.instance.currentUser;
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(currentUser!.uid)
-        .update({"lastActive": "Online"});
+    if (currentUser != null) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUser.uid)
+          .update({"lastActive": "Online"});
+    }
   }
 
   setStatusAway() async {
     final currentUser = FirebaseAuth.instance.currentUser;
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc(currentUser!.uid)
-        .update({"lastActive": "Away"});
+    if (currentUser != null) {
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(currentUser.uid)
+          .update({"lastActive": "Away"});
+    }
   }
 
   saveUsertoSharedPref(String displayName) async {

@@ -162,80 +162,72 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
                                 padding: EdgeInsets.all(0),
                                 physics: ClampingScrollPhysics(),
                                 children: [
-                                  Flexible(
-                                    child: StreamBuilder<QuerySnapshot>(
-                                        stream: chatroomStream,
-                                        builder: (context, snapshot) {
-                                          return snapshot.hasData
-                                              ? ListView.builder(
-                                                  shrinkWrap: true,
-                                                  physics:
-                                                      NeverScrollableScrollPhysics(),
-                                                  padding: EdgeInsets.all(0),
-                                                  itemCount: snapshot
-                                                      .data!.docs.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    return RecentData(
-                                                      clr: Colors.green,
-                                                      msg: snapshot
-                                                          .data!.docs[index],
-                                                      text: "msg",
-                                                    );
-                                                  })
-                                              : Container();
-                                        }),
-                                  ),
-                                  Flexible(
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        padding: EdgeInsets.all(0),
-                                        reverse: true,
-                                        itemCount: widget.requests.length,
-                                        itemBuilder: (context, index) {
-                                          return widget.requests[index]
-                                                          ["accepted"] ==
-                                                      null &&
-                                                  widget.requests[index]
-                                                          ["modified"] ==
-                                                      null
-                                              ? RecentData(
-                                                  clr: Colors.green,
-                                                  request:
-                                                      widget.requests[index],
-                                                  text: "new",
-                                                )
-                                              : widget.requests[index]
-                                                      ["accepted"]
-                                                  ? RecentData(
-                                                      clr: Colors.green,
-                                                      request: widget
-                                                          .requests[index],
-                                                      text: "accepted",
-                                                    )
-                                                  : widget.requests[index]
-                                                          ["modified"]
-                                                      ? RecentData(
-                                                          clr: Colors.green,
-                                                          request: widget
-                                                              .requests[index],
-                                                          text: "modified",
-                                                        )
-                                                      : !(widget.requests[index]
-                                                                  [
-                                                                  "accepted"] ??
-                                                              true)
-                                                          ? RecentData(
-                                                              clr: Colors.green,
-                                                              request: widget
-                                                                      .requests[
-                                                                  index],
-                                                              text: "cancelled",
-                                                            )
-                                                          : Container();
-                                        }),
-                                  )
+                                  StreamBuilder<QuerySnapshot>(
+                                      stream: chatroomStream,
+                                      builder: (context, snapshot) {
+                                        return snapshot.hasData
+                                            ? ListView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                padding: EdgeInsets.all(0),
+                                                itemCount:
+                                                    snapshot.data!.docs.length,
+                                                itemBuilder: (context, index) {
+                                                  return RecentData(
+                                                    clr: Colors.green,
+                                                    msg: snapshot
+                                                        .data!.docs[index],
+                                                    text: "msg",
+                                                  );
+                                                })
+                                            : Container();
+                                      }),
+                                  ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      padding: EdgeInsets.all(0),
+                                      reverse: true,
+                                      itemCount: widget.requests.length,
+                                      itemBuilder: (context, index) {
+                                        return widget.requests[index]
+                                                        ["accepted"] ==
+                                                    null &&
+                                                widget.requests[index]
+                                                        ["modified"] ==
+                                                    null
+                                            ? RecentData(
+                                                clr: Colors.green,
+                                                request: widget.requests[index],
+                                                text: "new",
+                                              )
+                                            : widget.requests[index]["accepted"]
+                                                ? RecentData(
+                                                    clr: Colors.green,
+                                                    request:
+                                                        widget.requests[index],
+                                                    text: "accepted",
+                                                  )
+                                                : widget.requests[index]
+                                                        ["modified"]
+                                                    ? RecentData(
+                                                        clr: Colors.green,
+                                                        request: widget
+                                                            .requests[index],
+                                                        text: "modified",
+                                                      )
+                                                    : !(widget.requests[index]
+                                                                ["accepted"] ??
+                                                            true)
+                                                        ? RecentData(
+                                                            clr: Colors.green,
+                                                            request:
+                                                                widget.requests[
+                                                                    index],
+                                                            text: "cancelled",
+                                                          )
+                                                        : Container();
+                                      })
                                 ],
                               ),
                             )
