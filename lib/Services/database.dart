@@ -16,7 +16,7 @@ class Database {
         .collection("chatrooms")
         .doc(chatRoomId)
         .collection("chats")
-        .orderBy("ts", descending: true)
+        .orderBy("ts", descending: false)
         .snapshots();
   }
 

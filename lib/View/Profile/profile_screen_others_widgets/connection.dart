@@ -71,7 +71,7 @@ class _ConnectionState extends State<Connection> {
             QuerySnapshot? qdocs = snapshot.data as QuerySnapshot?;
             return snapshot.hasData && qdocs!.docs.isNotEmpty
                 ? ListView.builder(
-                    itemCount: qdocs!.docs.length,
+                    itemCount: qdocs.docs.length,
                     padding: EdgeInsets.symmetric(vertical: 8),
                     shrinkWrap: true,
                     physics: ClampingScrollPhysics(),

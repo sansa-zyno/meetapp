@@ -89,7 +89,7 @@ class _MessagesState extends State<Messages> {
                     padding: EdgeInsets.all(5),
                     shrinkWrap: true,
                     physics: ClampingScrollPhysics(),
-                    itemCount: q!.docs.length,
+                    itemCount: q.docs.length,
                     itemBuilder: (cxt, index) {
                       DocumentSnapshot ds = q.docs[index];
                       return ChatRoomListTile(
