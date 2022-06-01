@@ -240,7 +240,7 @@ class _TimerState extends State<Timer> {
                           );
                         }),
                         SizedBox(
-                          height: h * 1.1,
+                          height: h * 0.1,
                         ),
                         // if (timerController.isMeetingRunning.value)
                         //   Row(
@@ -349,20 +349,22 @@ class _TimerState extends State<Timer> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Touch to Start or End the meeting & "
-                                "Long-Press to Pause or Resume the meeting.",
-                              style: TextStyle(
-                                fontSize: w * 3.8,
-                                fontWeight: FontWeight.w400,
+                             Expanded(
+                              child: Text("Touch to Start or End the meeting & "
+                                  "Long-Press to Pause or Resume the meeting.",
+                                style: TextStyle(
+                                  fontSize: w * 3.8,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                maxLines: 3,
+                                softWrap: true,
+                                overflow: TextOverflow.fade,
                               ),
-                              maxLines: 3,
-                              softWrap: true,
-                              overflow: TextOverflow.fade,
                             ),
                           ],
                         ),
                         SizedBox(
-                          height: h * 1.1,
+                          height: h * 1.9,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
