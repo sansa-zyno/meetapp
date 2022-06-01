@@ -11,6 +11,7 @@ import '../Providers/user_controller.dart';
 class TimerController extends GetxController {
   static TimerController instance = Get.find();
 
+  bool isStreamCalled = false;
   double currentCharge = 0.0;
   double extraCharge = 0.0;
   double extraTimeCharge = 0.0;
@@ -154,6 +155,7 @@ class TimerController extends GetxController {
   // }
   startStream(DocumentSnapshot request) {
     log("startStream called ....................");
+    isStreamCalled = true;
     var directory =
         getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
     log("request: ${request.data()}");

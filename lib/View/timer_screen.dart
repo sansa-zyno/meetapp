@@ -51,7 +51,11 @@ class _TimerState extends State<Timer> {
     currentCharge = widget.request["price"] / widget.request["duration"];
     extraCharge = currentCharge + (currentCharge * 0.3);
     log("currentCharge is: $currentCharge and extraCharge is: $extraCharge");
-    // timerController.startStream(widget.request);
+    if(!timerController.isStreamCalled){
+      timerController.startStream(widget.request);
+    }else{
+      log("\n\n\n\n\n\n\n\n\n\n\nseems like stream called again\n\n\n\n\n\n\n\n");
+    }
     directory = getChatRoomIdByUsernames(widget.request['seller_id'], widget.request['buyer_id']);
 
     ref = FirebaseDatabase.instance.ref().child('$directory/');
