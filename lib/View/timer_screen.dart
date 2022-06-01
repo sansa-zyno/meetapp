@@ -85,13 +85,16 @@ class _TimerState extends State<Timer> {
           log("in on Tap passed a start/stop request");
           // timerController.meetingMode();
         });
+        Get.back();
         endDialogAnswer = true;
         // return true;
-      },
+      },onCancel: () {
+      endDialogAnswer = false;
+    }
     );
     return endDialogAnswer;
   }
-
+  bool answer = true;
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +102,12 @@ class _TimerState extends State<Timer> {
     var h = MediaQuery.of(context).size.height / 100;
     return WillPopScope(
       onWillPop: () async {
-        bool answer = callEndDialog();
+        log("in will pop scope and answer $answer and endDialogAnswer $endDialogAnswer");
+        if(timerController.isMeetingRunning.value){
+          log("inside if meeting is running");
+          answer = callEndDialog();
+        }
+        log("in will pop scope after if and answer $answer and endDialogAnswer $endDialogAnswer");
         return answer;
       },
       child: Scaffold(
