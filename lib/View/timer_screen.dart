@@ -90,6 +90,7 @@ class _TimerState extends State<Timer> {
           // timerController.meetingMode();
         });
         Get.back();
+        Get.back();
         endDialogAnswer = true;
         // return true;
       },onCancel: () {

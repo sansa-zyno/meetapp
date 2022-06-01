@@ -300,6 +300,9 @@ class TimerController extends GetxController {
                   });
                 });
           }
+          if(timer.isActive){
+            timer.cancel();
+          }
           resetTimer();
         }
         else{
