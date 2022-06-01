@@ -62,42 +62,11 @@ class _TimerState extends State<Timer> {
     ref2 = FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
   }
 
-  bool callEndDialog() {
+  callEndDialog() {
     Get.defaultDialog(
       title: "Caution!",
-      middleText: "Are you sure you want to end the meeting?",
-      textConfirm: "Yes",
-      textCancel: "No",
-      buttonColor: Colors.white,
-      confirmTextColor: Colors.red,
-      cancelTextColor: Colors.blue,
-      onConfirm: () async {
-        await ref2.set({
-          // "startAt": FieldValue.serverTimestamp(),
-          "meetId": directory,
-          "seconds": -1,
-          "start_requester_id": UserController().auth.currentUser?.uid,
-          "pause_requester_id": ""
-        }).then((value) {
-          ref.set({
-            "meetId": directory,
-            "startAt": ServerValue.timestamp,
-            "seconds": -2,
-            "start_requester_id": UserController().auth.currentUser?.uid,
-            "pause_requester_id": ""
-          });
-          log("in on Tap passed a start/stop request");
-          // timerController.meetingMode();
-        });
-        Get.back();
-        Get.back();
-        endDialogAnswer = true;
-        // return true;
-      },onCancel: () {
-      endDialogAnswer = false;
-    }
+      middleText: "Please end the meeting before going out.",
     );
-    return endDialogAnswer;
   }
   bool answer = true;
 
@@ -110,10 +79,10 @@ class _TimerState extends State<Timer> {
         log("in will pop scope and answer $answer and endDialogAnswer $endDialogAnswer");
         if(timerController.isMeetingRunning.value){
           log("inside if meeting is running");
-          answer = callEndDialog();
+          callEndDialog();
         }
         log("in will pop scope after if and answer $answer and endDialogAnswer $endDialogAnswer");
-        return answer;
+        return true;
       },
       child: Scaffold(
         body: Stack(
