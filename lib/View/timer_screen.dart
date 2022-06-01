@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:meeter/View/common_problems.dart';
 import 'package:meeter/View/emergency.dart';
+import 'package:meeter/Widgets/dialog_utils.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../Constants/controllers.dart';
@@ -222,8 +223,8 @@ class _TimerState extends State<Timer> {
 
                           if (!timerController.isDialogShown) {
                             log("inside showing dialog");
-                            Get.defaultDialog(
-                                barrierDismissible: false,
+                            DialogUtils.showCustomDialog(
+                                context,
                                 title: "Attention!",
                                 middleText: "$name "
                                     "${name == "You" ? "were" : "was"} in the meeting for "
@@ -231,12 +232,7 @@ class _TimerState extends State<Timer> {
                                     "$pronoun ${pronoun == "You" ? "are" : "is"} being charged "
                                     "\$${timerController.totalChargeT.toPrecision(2)} for "
                                     "this meeting.",
-                                confirmTextColor: Colors.white,
-                                textConfirm: "Ok",
-                                onConfirm: () async {
-                                  //+HANDLE THIS HERE PLEASE IN WHATEVER WAY YOU WANT. yOU MIGHT ALSO WANT tO
-                                  //+DELETE THIS MEETING FRoM THE RECENT ONES OR THE REQUESTS AFTER THIS MEETING
-                                  //+ IS ENDED hERE
+                                okBtnFunction: () async {
                                   DateTime date = DateTime.now();
                                   await FirebaseFirestore.instance
                                       .collection("connections")
@@ -260,7 +256,53 @@ class _TimerState extends State<Timer> {
                                     "start_requester_id": dataMap["start_requester_id"],
                                     "pause_requester_id": dataMap["pause_requester_id"]
                                   });
-                                });
+                                },
+                                cancelBtnFunction: () {
+                                  Get.back();
+                                }
+                            );
+                            //+
+                            //+
+                            // Get.defaultDialog(
+                            //     barrierDismissible: false,
+                            //     title: "Attention!",
+                            //     middleText: "$name "
+                            //         "${name == "You" ? "were" : "was"} in the meeting for "
+                            //         "${timerController.lMinutes} minutes and ${timerController.lSeconds} seconds. "
+                            //         "$pronoun ${pronoun == "You" ? "are" : "is"} being charged "
+                            //         "\$${timerController.totalChargeT.toPrecision(2)} for "
+                            //         "this meeting.",
+                            //     confirmTextColor: Colors.white,
+                            //     textConfirm: "Ok",
+                            //     onConfirm: () async {
+                            //       //+HANDLE THIS HERE PLEASE IN WHATEVER WAY YOU WANT. yOU MIGHT ALSO WANT tO
+                            //       //+DELETE THIS MEETING FRoM THE RECENT ONES OR THE REQUESTS AFTER THIS MEETING
+                            //       //+ IS ENDED hERE
+                            //       DateTime date = DateTime.now();
+                            //       await FirebaseFirestore.instance
+                            //           .collection("connections")
+                            //           .add({
+                            //         "title": widget.request["title"],
+                            //         "seller_id": widget.request["seller_id"],
+                            //         "seller_name": widget.request["seller_name"],
+                            //         "seller_image": widget.request["seller_image"],
+                            //         "buyer_id": widget.request["buyer_id"],
+                            //         "buyer_name": widget.request["buyer_name"],
+                            //         "buyer_image": widget.request["buyer_image"],
+                            //         "date":
+                            //         "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
+                            //         "meeters": ["${widget.request["seller_id"]}", "${widget.request["buyer_id"]}"]
+                            //       });
+                            //       timerController.isDialogShown = true;
+                            //       Get.back();
+                            //       ref2.update({
+                            //         // "startAt": FieldValue.serverTimestamp(),
+                            //         "seconds": 0,
+                            //         "start_requester_id": dataMap["start_requester_id"],
+                            //         "pause_requester_id": dataMap["pause_requester_id"]
+                            //       });
+                            //     },
+                            // );
                           }
                           timerController.resetTimer();
                         }
@@ -381,42 +423,37 @@ class _TimerState extends State<Timer> {
                             }
                             log("right before the default dialog the name if: $name");
 
-                            Get.defaultDialog(
-                              barrierDismissible: false,
-                              title: "Attention!",
-                              middleText:
-                              "$name has requested to ${!timerController.isMeetingRunning.value ? 'start' : 'stop'} the meeting. Do you agree?",
-                              confirmTextColor: Colors.white,
-                              textConfirm: "Yes",
-                              onConfirm: () {
-                                timerController.isStartAnswered.value = true;
-                                if (!timerController.isMeetingRunning.value) {
-                                  log("in -2 in yes !timerController.isMeetingRunning else");
-                                  timerController.meetingMode();
-                                  ref2.update({
-                                    // "startAt": FieldValue.serverTimestamp(),
-                                    "seconds": widget.request["duration"],
-                                    "start_requester_id": dataMap["start_requester_id"],
-                                    "pause_requester_id": dataMap["pause_requester_id"]
-                                  });
-                                  Get.back();
-                                } else {
-                                  log("in -2 !timerController.isMeetingRunning else");
-                                  timerController.lMinutes = timerController.minutes.value;
-                                  timerController.lSeconds = timerController.seconds.value;
-                                  timerController.meetingMode();
-                                  ref2.update({
-                                    // "startAt": FieldValue.serverTimestamp(),
-                                    "seconds": -1,
-                                    "start_requester_id": dataMap["start_requester_id"],
-                                    "pause_requester_id": dataMap["pause_requester_id"]
-                                  });
-                                  Get.back();
-                                }
-                              },
-                              cancelTextColor: Colors.red,
-                              textCancel: "No",
-                              onCancel: () {
+                            DialogUtils.showCustomDialog(
+                                context,
+                                title: "Attention!",
+                                middleText: "$name has requested to ${!timerController.isMeetingRunning.value ? 'start' : 'stop'} the meeting. Do you agree?",
+                                okBtnFunction: () {
+                                  timerController.isStartAnswered.value = true;
+                                  if (!timerController.isMeetingRunning.value) {
+                                    log("in -2 in yes !timerController.isMeetingRunning else");
+                                    timerController.meetingMode();
+                                    ref2.update({
+                                      // "startAt": FieldValue.serverTimestamp(),
+                                      "seconds": widget.request["duration"],
+                                      "start_requester_id": dataMap["start_requester_id"],
+                                      "pause_requester_id": dataMap["pause_requester_id"]
+                                    });
+                                    Get.back();
+                                  } else {
+                                    log("in -2 !timerController.isMeetingRunning else");
+                                    timerController.lMinutes = timerController.minutes.value;
+                                    timerController.lSeconds = timerController.seconds.value;
+                                    timerController.meetingMode();
+                                    ref2.update({
+                                      // "startAt": FieldValue.serverTimestamp(),
+                                      "seconds": -1,
+                                      "start_requester_id": dataMap["start_requester_id"],
+                                      "pause_requester_id": dataMap["pause_requester_id"]
+                                    });
+                                    Get.back();
+                                  }
+                                },
+                              cancelBtnFunction: () {
                                 timerController.isStartAnswered.value = true;
                                 ref2.update({
                                   // "startAt": FieldValue.serverTimestamp(),
@@ -424,8 +461,54 @@ class _TimerState extends State<Timer> {
                                   "start_requester_id": dataMap["start_requester_id"],
                                   "pause_requester_id": dataMap["pause_requester_id"]
                                 });
-                              },
+                              }
                             );
+
+                            // Get.defaultDialog(
+                            //   barrierDismissible: false,
+                            //   title: "Attention!",
+                            //   middleText:
+                            //   "$name has requested to ${!timerController.isMeetingRunning.value ? 'start' : 'stop'} the meeting. Do you agree?",
+                            //   confirmTextColor: Colors.white,
+                            //   textConfirm: "Yes",
+                            //   onConfirm: () {
+                            //     timerController.isStartAnswered.value = true;
+                            //     if (!timerController.isMeetingRunning.value) {
+                            //       log("in -2 in yes !timerController.isMeetingRunning else");
+                            //       timerController.meetingMode();
+                            //       ref2.update({
+                            //         // "startAt": FieldValue.serverTimestamp(),
+                            //         "seconds": widget.request["duration"],
+                            //         "start_requester_id": dataMap["start_requester_id"],
+                            //         "pause_requester_id": dataMap["pause_requester_id"]
+                            //       });
+                            //       Get.back();
+                            //     } else {
+                            //       log("in -2 !timerController.isMeetingRunning else");
+                            //       timerController.lMinutes = timerController.minutes.value;
+                            //       timerController.lSeconds = timerController.seconds.value;
+                            //       timerController.meetingMode();
+                            //       ref2.update({
+                            //         // "startAt": FieldValue.serverTimestamp(),
+                            //         "seconds": -1,
+                            //         "start_requester_id": dataMap["start_requester_id"],
+                            //         "pause_requester_id": dataMap["pause_requester_id"]
+                            //       });
+                            //       Get.back();
+                            //     }
+                            //   },
+                            //   cancelTextColor: Colors.red,
+                            //   textCancel: "No",
+                            //   onCancel: () {
+                            //     timerController.isStartAnswered.value = true;
+                            //     ref2.update({
+                            //       // "startAt": FieldValue.serverTimestamp(),
+                            //       "seconds": 0,
+                            //       "start_requester_id": dataMap["start_requester_id"],
+                            //       "pause_requester_id": dataMap["pause_requester_id"]
+                            //     });
+                            //   },
+                            // );
 
                             log("isStartAnswered after the dialog is: ${timerController.isStartAnswered.value}");
 
@@ -491,45 +574,82 @@ class _TimerState extends State<Timer> {
                             } else {
                               name = widget.request["buyer_name"];
                             }
-                            Get.defaultDialog(
-                              barrierDismissible: false,
-                              title: "Attention!",
-                              middleText:
-                              "$name has requested to ${!timerController.isMeetingPaused.value ? 'pause' : 'continue'} the meeting. Do you agree?",
-                              confirmTextColor: Colors.white,
-                              textConfirm: "Yes",
-                              onConfirm: () {
-                                timerController.isPauseAnswered.value = true;
-                                if (!timerController.isMeetingPaused.value) {
+                            DialogUtils.showCustomDialog(
+                                context,
+                                title: "Attention!",
+                                middleText: "$name has requested to ${!timerController.isMeetingPaused.value ? 'pause' : 'continue'} the meeting. Do you agree?",
+                                okBtnFunction: () {
+                                  timerController.isPauseAnswered.value = true;
+                                  if (!timerController.isMeetingPaused.value) {
+                                    ref2.update({
+                                      // "startAt": FieldValue.serverTimestamp(),
+                                      "seconds": 1,
+                                      "start_requester_id": dataMap["start_requester_id"],
+                                      "pause_requester_id": dataMap["pause_requester_id"]
+                                    });
+                                    Get.back();
+                                  }
+                                  else {
+                                    ref2.update({
+                                      // "startAt": FieldValue.serverTimestamp(),
+                                      "seconds": widget.request["duration"],
+                                      "start_requester_id": dataMap["start_requester_id"],
+                                      "pause_requester_id": dataMap["pause_requester_id"]
+                                    });
+                                    Get.back();
+                                  }
+                                },
+                                cancelBtnFunction: () {
+                                  timerController.isPauseAnswered.value = true;
                                   ref2.update({
                                     // "startAt": FieldValue.serverTimestamp(),
-                                    "seconds": 1,
+                                    "seconds": 0,
                                     "start_requester_id": dataMap["start_requester_id"],
                                     "pause_requester_id": dataMap["pause_requester_id"]
                                   });
-                                  Get.back();
-                                } else {
-                                  ref2.update({
-                                    // "startAt": FieldValue.serverTimestamp(),
-                                    "seconds": widget.request["duration"],
-                                    "start_requester_id": dataMap["start_requester_id"],
-                                    "pause_requester_id": dataMap["pause_requester_id"]
-                                  });
-                                  Get.back();
                                 }
-                              },
-                              cancelTextColor: Colors.red,
-                              textCancel: "No",
-                              onCancel: () {
-                                timerController.isPauseAnswered.value = true;
-                                ref2.update({
-                                  // "startAt": FieldValue.serverTimestamp(),
-                                  "seconds": 0,
-                                  "start_requester_id": dataMap["start_requester_id"],
-                                  "pause_requester_id": dataMap["pause_requester_id"]
-                                });
-                              },
                             );
+
+                            // Get.defaultDialog(
+                            //   barrierDismissible: false,
+                            //   title: "Attention!",
+                            //   middleText:
+                            //   "$name has requested to ${!timerController.isMeetingPaused.value ? 'pause' : 'continue'} the meeting. Do you agree?",
+                            //   confirmTextColor: Colors.white,
+                            //   textConfirm: "Yes",
+                            //   onConfirm: () {
+                            //     timerController.isPauseAnswered.value = true;
+                            //     if (!timerController.isMeetingPaused.value) {
+                            //       ref2.update({
+                            //         // "startAt": FieldValue.serverTimestamp(),
+                            //         "seconds": 1,
+                            //         "start_requester_id": dataMap["start_requester_id"],
+                            //         "pause_requester_id": dataMap["pause_requester_id"]
+                            //       });
+                            //       Get.back();
+                            //     }
+                            //     else {
+                            //       ref2.update({
+                            //         // "startAt": FieldValue.serverTimestamp(),
+                            //         "seconds": widget.request["duration"],
+                            //         "start_requester_id": dataMap["start_requester_id"],
+                            //         "pause_requester_id": dataMap["pause_requester_id"]
+                            //       });
+                            //       Get.back();
+                            //     }
+                            //   },
+                            //   cancelTextColor: Colors.red,
+                            //   textCancel: "No",
+                            //   onCancel: () {
+                            //     timerController.isPauseAnswered.value = true;
+                            //     ref2.update({
+                            //       // "startAt": FieldValue.serverTimestamp(),
+                            //       "seconds": 0,
+                            //       "start_requester_id": dataMap["start_requester_id"],
+                            //       "pause_requester_id": dataMap["pause_requester_id"]
+                            //     });
+                            //   },
+                            // );
                             Future.delayed(Duration(minutes: 1), () {
                               log("is pause answered delayed checking");
                               // Get.back();
@@ -546,7 +666,6 @@ class _TimerState extends State<Timer> {
                         }else{
                           log("in 2 not the meeting the widget.request was made for.");
                         }
-
 
                         //!! haven't taken care of the timed thingy yet
 
