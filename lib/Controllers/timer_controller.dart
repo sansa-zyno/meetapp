@@ -156,6 +156,7 @@ class TimerController extends GetxController {
     log("startStream called ....................");
     var directory =
         getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
+    log("request: ${request.data()}");
 
     // final ref2 = FirebaseDatabase.instance.ref().child('$directory/');
     final ref2DocSnap = FirebaseFirestore.instance
@@ -186,8 +187,7 @@ class TimerController extends GetxController {
         //+ 0 means nothing for the other user -> means the timer won't start
         //+ when page is opened and 0 is in RTDB
         log("inside 0 wala");
-        log("in 0 with no before if id == request['meetId']and and request['meetId']: ${request['meetId']}");
-
+        log("in 0 with no before if id == request['meetId']and and request['meetId']: ${dataMap['meetId']}");
         // isMeetingRunning.value = false;
         // if(timer.isActive){
         //   log("inside timer is active");
@@ -199,10 +199,12 @@ class TimerController extends GetxController {
         //+ -1 means the meeting is ended and  timer is reset and the value
         //+ in RTDB is changed to 0.
         log("is meeting end called ");
-        var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
-        log("in -1 before if id == request['meetId'] and id: $id and and request['meetId']: ${request['meetId']}");
+        log("request: ${request.data()}");
 
-        if(id == request['meetId']){
+        var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
+        log("in -1 before if id == request['meetId'] and id: $id and and request['meetId']: ${dataMap['meetId']}");
+
+        if(id == dataMap['meetId']){
           isMeetingRunning.value = false;
           log("cancel timer called.");
           timer.cancel();
@@ -369,9 +371,9 @@ class TimerController extends GetxController {
         // isMeetingPaused.value = true;
 
         var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
-        log("in 1 before if id == request['meetId'] and id: $id and and request['meetId']: ${request['meetId']}");
+        log("in 1 before if id == request['meetId'] and id: $id and and request['meetId']: ${dataMap['meetId']}");
 
-        if(id == request['meetId']){
+        if(id == dataMap['meetId']){
           log("inside if id == request['meetId']");
           pauseMode();
           ref2.update({
@@ -511,7 +513,7 @@ class TimerController extends GetxController {
         //+ which means that the meeting is paused.
 
         var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
-        log("in 2 before if id == request['meetId'] and id: $id and and request['meetId']: ${request['meetId']}");
+        log("in 2 before if id == request['meetId'] and id: $id and and request['meetId']: ${dataMap['meetId']}");
         if(id == dataMap['meetId']) {
           log("current user in 2 id is: ${UserController().auth.currentUser?.uid}");
           var name = "";
@@ -621,7 +623,7 @@ class TimerController extends GetxController {
         log("inside if calling the wnd meeting mode");
 
         var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
-        log("in last else before if id == request['meetId'] and id: $id and and request['meetId']: ${request['meetId']}");
+        log("in last else before if id == request['meetId'] and id: $id and and request['meetId']: ${dataMap['meetId']}");
         if(id == dataMap['meetId']) {
           if (!isMeetingRunning.value) {
             // isMeetingRunning.value = true;
