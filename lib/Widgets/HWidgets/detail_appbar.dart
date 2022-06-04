@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -121,12 +123,10 @@ class _DetailBarState extends State<DetailBar> {
                         "meetup_price": widget.meeter.meetup_price,
                         "meetup_location": widget.meeter.meetup_location,
                         "meetup_likes": widget.meeter.meetup_likes,
-                        "meetup_available_online":
-                            widget.meeter.meetup_available_online,
+                        "meetup_available_online": widget.meeter.meetup_available_online,
                         "meetup_seller_uid": widget.meeter.meetup_seller_uid,
                         "meetup_seller_name": widget.meeter.meetup_seller_name,
-                        "meetup_seller_image":
-                            widget.meeter.meetup_seller_image,
+                        "meetup_seller_image": widget.meeter.meetup_seller_image,
                         "meetup_bannerImage": widget.meeter.meetup_bannerImage,
                         "meetup_tags": widget.meeter.meetup_tags,
                         "meetup_date": widget.meeter.meetup_date
@@ -149,29 +149,23 @@ class _DetailBarState extends State<DetailBar> {
                   clrs: [Colors.white, Colors.white],
                   border: Border(bottom: BorderSide(color: Colors.blue)),
                   onpressed: () async {
-                    SharedPreferences preferences =
-                        await SharedPreferences.getInstance();
+                    SharedPreferences preferences = await SharedPreferences.getInstance();
                     String userName = preferences.getString('userName')!;
                     if (widget.sellerDetails != null) {
-                      var chatroomId = getChatRoomIdByUsernames(
-                          userName, widget.sellerDetails.displayName!);
+                      var chatroomId =
+                          getChatRoomIdByUsernames(userName, widget.sellerDetails.displayName!);
                       Map<String, dynamic> chatroomInfo = {
-                        "users": [
-                          FirebaseAuth.instance.currentUser!.uid,
-                          widget.sellerDetails.uid
-                        ],
+                        "users": [FirebaseAuth.instance.currentUser!.uid, widget.sellerDetails.uid],
                       };
                       Database().createChatRoom(chatroomId, chatroomInfo);
                       DocumentSnapshot doc = await FirebaseFirestore.instance
                           .collection("chatrooms")
                           .doc(chatroomId)
                           .get();
-                      Map<String, dynamic>? map =
-                          doc.data() as Map<String, dynamic>?;
+                      Map<String, dynamic>? map = doc.data() as Map<String, dynamic>?;
                       if (map != null) {
                         if (map.containsKey("lastMessageSendByUid")) {
-                          if (doc['lastMessageSendByUid'] !=
-                              FirebaseAuth.instance.currentUser!.uid) {
+                          if (doc['lastMessageSendByUid'] != FirebaseAuth.instance.currentUser!.uid) {
                             //get all messages that havent been read
                             QuerySnapshot q = await FirebaseFirestore.instance
                                 .collection("chatrooms")
@@ -200,8 +194,7 @@ class _DetailBarState extends State<DetailBar> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              ChatScreen(widget.sellerDetails, chatroomId),
+                          builder: (context) => ChatScreen(widget.sellerDetails, chatroomId),
                         ),
                       );
                     } else {}
@@ -217,15 +210,17 @@ class _DetailBarState extends State<DetailBar> {
                       .collectionGroup("request")
                       .where("type", isEqualTo: "service")
                       .where("title", isEqualTo: widget.meeter.meetup_title)
-                      .where("desc",
-                          isEqualTo: widget.meeter.meetup_description)
-                      .where("meeters",
-                          arrayContains: FirebaseAuth.instance.currentUser!.uid)
+                      .where("desc", isEqualTo: widget.meeter.meetup_description)
+                      .where("meeters", arrayContains: FirebaseAuth.instance.currentUser!.uid)
                       .get();
-                  List meeters = snap.docs[0]["meeters"];
 
-                  if (meeters
-                      .contains(FirebaseAuth.instance.currentUser!.uid)) {
+                  List meeters = snap.docs.length>0?snap.docs[0]["meeters"]:[];
+                  snap.docs.forEach((element) {
+                    print("element");
+                    log("element.data() ${element.data()}");
+                  });
+
+                  if (meeters.contains(FirebaseAuth.instance.currentUser!.uid)) {
                     Scaffold.of(context).showSnackBar(SnackBar(
                       backgroundColor: Colors.red,
                       content: Text(
@@ -239,9 +234,7 @@ class _DetailBarState extends State<DetailBar> {
                       PageRouteBuilder(
                         opaque: false,
                         pageBuilder: (BuildContext context, _, __) =>
-                            RequestOffer(
-                                doc: widget.meeter,
-                                sellerDetails: widget.sellerDetails),
+                            RequestOffer(doc: widget.meeter, sellerDetails: widget.sellerDetails),
                       ),
                     );
                   }
