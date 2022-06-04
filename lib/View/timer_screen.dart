@@ -34,6 +34,7 @@ class _TimerState extends State<Timer> {
   late DatabaseReference ref;
   late DocumentReference ref2;
   var directory;
+  bool endDialogAnswer = false;
 
   getChatRoomIdByUsernames(String a, String b) {
     if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
@@ -50,485 +51,522 @@ class _TimerState extends State<Timer> {
     currentCharge = widget.request["price"] / widget.request["duration"];
     extraCharge = currentCharge + (currentCharge * 0.3);
     log("currentCharge is: $currentCharge and extraCharge is: $extraCharge");
-    timerController.startStream(widget.request);
+    if(!timerController.isStreamCalled){
+      timerController.startStream(widget.request);
+    }else{
+      log("\n\n\n\n\n\n\n\n\n\n\nseems like stream called again\n\n\n\n\n\n\n\n");
+    }
     directory = getChatRoomIdByUsernames(widget.request['seller_id'], widget.request['buyer_id']);
 
     ref = FirebaseDatabase.instance.ref().child('$directory/');
     ref2 = FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
   }
 
+  callEndDialog() {
+    Get.defaultDialog(
+      title: "Caution!",
+      middleText: "Please end the meeting before going out.",
+    );
+  }
+  bool answer = true;
+
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width / 100;
     var h = MediaQuery.of(context).size.height / 100;
-    return Scaffold(
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Center(
-              child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: h * 3.3, horizontal: w * 7.3),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: h * 3.2,
-                      ),
-                      Obx(() {
-                        return InkWell(
-                          child: Container(
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  bottom: h * 1.6,
-                                  right: w * 2.4,
-                                ),
-                                child: Text(
-                                  timerController.isMeetingRunning.value
-                                      ? '${timerController.minutes}:${timerController.seconds}'
-                                          '\n Long press\nto pause or\nresume &'
-                                      '\n Touch to end.'
-                                      : 'Touch to\nbegin/end your\nmeeting',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: w * 4.8,
-                                    fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () async {
+        log("in will pop scope and answer $answer and endDialogAnswer $endDialogAnswer");
+        if(timerController.isMeetingRunning.value){
+          log("inside if meeting is running");
+          callEndDialog();
+        }
+        log("in will pop scope after if and answer $answer and endDialogAnswer $endDialogAnswer");
+        return true;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Center(
+                child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: h * 3.3, horizontal: w * 7.3),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: h * 3.2,
+                        ),
+                        Obx(() {
+                          return InkWell(
+                            child: Container(
+                              child: Center(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: h * 1.6,
+                                    right: w * 2.4,
                                   ),
-                                  textAlign: TextAlign.center,
+                                  child: Text(
+                                    timerController.isMeetingRunning.value
+                                        ? '${timerController.minutes}:${timerController.seconds}'
+                                            '\n Long press\nto pause or\nresume &'
+                                            '\n Touch to end.'
+                                        : 'Touch to\nbegin/end your\nmeeting',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: w * 4.8,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
                               ),
+                              height: h * 45,
+                              width: w * 85.3,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(500),
+                                image: const DecorationImage(
+                                    image: AssetImage('assets/images/data/clock.png'), fit: BoxFit.cover),
+                              ),
                             ),
-                            height: h * 45,
-                            width: w * 85.3,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(500),
-                              image: const DecorationImage(
-                                  image: AssetImage('assets/images/data/clock.png'), fit: BoxFit.cover),
-                            ),
-                          ),
-                          onTap: () async {
-                            //+start the timer here.
-                            log("current user id is: ${UserController().auth.currentUser}");
-                            log("current user id is: ${UserController().auth.currentUser?.uid}");
-                            timerController.isStartAnswered.value = false;
-                            timerController.isPauseAnswered.value = false;
-                            //+ the above line is working and fetching the user alright
+                            onTap: () async {
+                              //+start the timer here.
+                              log("current user id is: ${UserController().auth.currentUser}");
+                              log("current user id is: ${UserController().auth.currentUser?.uid}");
+                              timerController.isStartAnswered.value = false;
+                              timerController.isPauseAnswered.value = false;
+                              //+ the above line is working and fetching the user alright
 
-                            try {
-                              // if (!timerController.isMeetingRunning.value
-                              // && UserController().auth.currentUser?.uid == widget.request["seller_id"]
-                              // ) {
-                              log("\n\n started the timer in then after "
-                                  "joining the channel.\n\n");
-                              //+ requesting meeting start or stop.
-                              ref2.set({
-                                // "startAt": FieldValue.serverTimestamp(),
-                                "meetId": directory,
-                                "seconds": -2,
-                                "start_requester_id": UserController().auth.currentUser?.uid,
-                                "pause_requester_id": ""
-                              }).then((value) {
-                                ref.set({
+                              try {
+                                // if (!timerController.isMeetingRunning.value
+                                // && UserController().auth.currentUser?.uid == widget.request["seller_id"]
+                                // ) {
+                                log("\n\n started the timerController.timer in then after "
+                                    "joining the channel.\n\n");
+                                //+ requesting meeting start or stop.
+                                ref2.set({
+                                  // "startAt": FieldValue.serverTimestamp(),
                                   "meetId": directory,
-                                  "startAt": ServerValue.timestamp,
                                   "seconds": -2,
                                   "start_requester_id": UserController().auth.currentUser?.uid,
                                   "pause_requester_id": ""
+                                }).then((value) {
+                                  ref.set({
+                                    "meetId": directory,
+                                    "startAt": ServerValue.timestamp,
+                                    "seconds": -2,
+                                    "start_requester_id": UserController().auth.currentUser?.uid,
+                                    "pause_requester_id": ""
+                                  });
+                                  log("in on Tap passed a start/stop request");
+                                  // timerController.meetingMode();
                                 });
-                                log("in on Tap passed a start/stop request");
-                                // timerController.meetingMode();
-                              });
 
+                                // }
+                              } catch (e) {
+                                // showDialog(
+                                //     context: context,
+                                //     builder: (BuildContext context) =>
+                                //         AlertDialog(
+                                //           title: Text(
+                                //               "Following error was thrown while "
+                                //                   "starting the meeting timer: ${e.toString()}"),
+                                //           actions: [
+                                //             TextButton(
+                                //               child: const Text("Ok"),
+                                //               onPressed: () async {
+                                //                 Navigator.pop(context);
+                                //               },
+                                //             ),
+                                //             // FlatButton(
+                                //             //   child:
+                                //             //   const Text("No"),
+                                //             //   onPressed: () {
+                                //             //     Navigator.pop(
+                                //             //         context);
+                                //             //   },
+                                //             // )
+                                //           ],
+                                //         ));
+                                Get.defaultDialog(
+                                    title: "Error!",
+                                    middleText: "Following error was thrown while "
+                                        "starting the meeting timerController.timer: ${e.toString()}");
+                              }
+                              // } else {
+                              //   log("token is null.");
                               // }
-                            } catch (e) {
-                              // showDialog(
-                              //     context: context,
-                              //     builder: (BuildContext context) =>
-                              //         AlertDialog(
-                              //           title: Text(
-                              //               "Following error was thrown while "
-                              //                   "starting the meeting timer: ${e.toString()}"),
-                              //           actions: [
-                              //             TextButton(
-                              //               child: const Text("Ok"),
-                              //               onPressed: () async {
-                              //                 Navigator.pop(context);
-                              //               },
-                              //             ),
-                              //             // FlatButton(
-                              //             //   child:
-                              //             //   const Text("No"),
-                              //             //   onPressed: () {
-                              //             //     Navigator.pop(
-                              //             //         context);
-                              //             //   },
-                              //             // )
-                              //           ],
-                              //         ));
-                              Get.defaultDialog(
-                                  title: "Error!",
-                                  middleText: "Following error was thrown while "
-                                      "starting the meeting timer: ${e.toString()}");
-                            }
-                            // } else {
-                            //   log("token is null.");
-                            // }
-                          },
-                          onLongPress: () {
-                            if (timerController.isMeetingRunning.value) {
-                              ref2.set({
-                                // "startAt": FieldValue.serverTimestamp(),
-                                "meetId": directory,
-                                "seconds": 2,
-                                "start_requester_id": "",
-                                "pause_requester_id": UserController().auth.currentUser?.uid
-                              }).then((value) {
-                                ref.set({
+                            },
+                            onLongPress: () {
+                              if (timerController.isMeetingRunning.value) {
+                                ref2.set({
+                                  // "startAt": FieldValue.serverTimestamp(),
                                   "meetId": directory,
-                                  "startAt": ServerValue.timestamp,
                                   "seconds": 2,
                                   "start_requester_id": "",
                                   "pause_requester_id": UserController().auth.currentUser?.uid
+                                }).then((value) {
+                                  ref.set({
+                                    "meetId": directory,
+                                    "startAt": ServerValue.timestamp,
+                                    "seconds": 2,
+                                    "start_requester_id": "",
+                                    "pause_requester_id": UserController().auth.currentUser?.uid
+                                  });
+                                  log("in on long press passing a pause request");
                                 });
-                                log("in on long press passing a pause request");
-                              });
-                            } else {
-                              log("onLongPress meeting not running and not not paused ");
-                            }
-                          },
-                        );
-                      }),
-                      SizedBox(
-                        height: h * 1.1,
-                      ),
-                      // if (timerController.isMeetingRunning.value)
-                      //   Row(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       FloatingActionButton(
-                      //         heroTag: "endCallButton",
-                      //         onPressed: () async {
-                      //           log("before refreshing minutes: ${timerController.minutes}"
-                      //               " seconds: ${timerController.seconds}");
-                      //           timerController.meetingMode();
-                      //           String minutes = timerController.minutes.value;
-                      //           String seconds = timerController.seconds.value;
-                      //           log("local values are: minutes: $minutes and "
-                      //               "seconds: $seconds");
-                      //           totalCharge = 0;
-                      //           extraMinutes = 0;
-                      //           extraSeconds = 0;
-                      //           extraTimeCharge = 0;
-                      //           if (int.parse(minutes) >
-                      //               widget.request["duration"] ||
-                      //               (int.parse(minutes) ==
-                      //                   widget.request["duration"])) {
-                      //             totalCharge = widget.request["duration"] *
-                      //                 currentCharge;
-                      //             extraMinutes = (int.parse(minutes) -
-                      //                 widget.request["duration"])
-                      //                 .toInt();
-                      //             extraSeconds = int.parse(seconds);
-                      //             extraTimeCharge = extraMinutes * extraCharge;
-                      //             extraTimeCharge +=
-                      //                 extraSeconds * (extraCharge / 60);
-                      //             totalCharge += extraTimeCharge;
-                      //           } else {
-                      //             totalCharge =
-                      //                 int.parse(minutes) * currentCharge;
-                      //             totalCharge += ((int.parse(seconds) *
-                      //                 (currentCharge / 60))
-                      //                 .toPrecision(3)).toPrecision(2);
-                      //           }
-                      //           timerController.resetTimer();
-                      //           log("after refreshing minutes: ${timerController.minutes}"
-                      //               " seconds: ${timerController.seconds}");
-                      //           log("returnVValue of leaveChannel is:");
-                      //           log("\n\n\n"
-                      //               "You were in the meeting for "
-                      //               "$minutes minutes and $seconds seconds. "
-                      //               "You are being charged \$$totalCharge for "
-                      //               "this meeting."
-                      //               "\n\n\n");
-                      //           showDialog(
-                      //               context: context,
-                      //               builder: (BuildContext context) =>
-                      //                   AlertDialog(
-                      //                     title: Text(
-                      //                         "${widget.request["buyer_name"]} "
-                      //                             "was in the meeting for "
-                      //                             "$minutes minutes and $seconds seconds. "
-                      //                             "He is being charged \$$totalCharge for "
-                      //                             "this meeting."),
-                      //                     actions: [
-                      //                       TextButton(
-                      //                         child: const Text("Ok"),
-                      //                         onPressed: () async {
-                      //                           // AchievementView(
-                      //                           //   context,
-                      //                           //   color: Colors
-                      //                           //       .green,
-                      //                           //   icon: const Icon(
-                      //                           //     FontAwesomeIcons
-                      //                           //         .check,
-                      //                           //     color: Colors
-                      //                           //         .white,
-                      //                           //   ),
-                      //                           //   title:
-                      //                           //   "Succesfull!",
-                      //                           //   elevation:
-                      //                           //   20,
-                      //                           //   subTitle:
-                      //                           //   "Request Cancelled succesfully",
-                      //                           //   isCircle:
-                      //                           //   true,
-                      //                           // ).show();
-                      //                           Navigator.pop(context);
-                      //                         },
-                      //                       ),
-                      //                       // FlatButton(
-                      //                       //   child:
-                      //                       //   const Text("No"),
-                      //                       //   onPressed: () {
-                      //                       //     Navigator.pop(
-                      //                       //         context);
-                      //                       //   },
-                      //                       // )
-                      //                     ],
-                      //                   ));
-                      //         },
-                      //         child: const Icon(
-                      //           Icons.local_phone_rounded,
-                      //           color: Colors.white,
-                      //         ),
-                      //         backgroundColor: Colors.red,
-                      //       ),
-                      //     ],
-                      //   ),
-                      SizedBox(
-                        height: h * 1.1,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.person,
-                            color: Colors.blue,
-                          ),
-                          SizedBox(
-                            width: w * 2.4,
-                          ),
-                          Text(
-                            'You are Meeting: '
-                            '${UserController().auth.currentUser?.uid == widget.request["seller_id"] ? widget.request["buyer_name"] : widget.request["seller_name"]}',
-                            style: TextStyle(
-                              fontSize: w * 4.8,
-                              fontWeight: FontWeight.w500,
+                              } else {
+                                log("onLongPress meeting not running and not not paused ");
+                              }
+                            },
+                          );
+                        }),
+                        SizedBox(
+                          height: h * 0.1,
+                        ),
+                        // if (timerController.isMeetingRunning.value)
+                        //   Row(
+                        //     mainAxisAlignment: MainAxisAlignment.center,
+                        //     children: [
+                        //       FloatingActionButton(
+                        //         heroTag: "endCallButton",
+                        //         onPressed: () async {
+                        //           log("before refreshing minutes: ${timerController.minutes}"
+                        //               " seconds: ${timerController.seconds}");
+                        //           timerController.meetingMode();
+                        //           String minutes = timerController.minutes.value;
+                        //           String seconds = timerController.seconds.value;
+                        //           log("local values are: minutes: $minutes and "
+                        //               "seconds: $seconds");
+                        //           totalCharge = 0;
+                        //           extraMinutes = 0;
+                        //           extraSeconds = 0;
+                        //           extraTimeCharge = 0;
+                        //           if (int.parse(minutes) >
+                        //               widget.request["duration"] ||
+                        //               (int.parse(minutes) ==
+                        //                   widget.request["duration"])) {
+                        //             totalCharge = widget.request["duration"] *
+                        //                 currentCharge;
+                        //             extraMinutes = (int.parse(minutes) -
+                        //                 widget.request["duration"])
+                        //                 .toInt();
+                        //             extraSeconds = int.parse(seconds);
+                        //             extraTimeCharge = extraMinutes * extraCharge;
+                        //             extraTimeCharge +=
+                        //                 extraSeconds * (extraCharge / 60);
+                        //             totalCharge += extraTimeCharge;
+                        //           } else {
+                        //             totalCharge =
+                        //                 int.parse(minutes) * currentCharge;
+                        //             totalCharge += ((int.parse(seconds) *
+                        //                 (currentCharge / 60))
+                        //                 .toPrecision(3)).toPrecision(2);
+                        //           }
+                        //           timerController.resetTimer();
+                        //           log("after refreshing minutes: ${timerController.minutes}"
+                        //               " seconds: ${timerController.seconds}");
+                        //           log("returnVValue of leaveChannel is:");
+                        //           log("\n\n\n"
+                        //               "You were in the meeting for "
+                        //               "$minutes minutes and $seconds seconds. "
+                        //               "You are being charged \$$totalCharge for "
+                        //               "this meeting."
+                        //               "\n\n\n");
+                        //           showDialog(
+                        //               context: context,
+                        //               builder: (BuildContext context) =>
+                        //                   AlertDialog(
+                        //                     title: Text(
+                        //                         "${widget.request["buyer_name"]} "
+                        //                             "was in the meeting for "
+                        //                             "$minutes minutes and $seconds seconds. "
+                        //                             "He is being charged \$$totalCharge for "
+                        //                             "this meeting."),
+                        //                     actions: [
+                        //                       TextButton(
+                        //                         child: const Text("Ok"),
+                        //                         onPressed: () async {
+                        //                           // AchievementView(
+                        //                           //   context,
+                        //                           //   color: Colors
+                        //                           //       .green,
+                        //                           //   icon: const Icon(
+                        //                           //     FontAwesomeIcons
+                        //                           //         .check,
+                        //                           //     color: Colors
+                        //                           //         .white,
+                        //                           //   ),
+                        //                           //   title:
+                        //                           //   "Succesfull!",
+                        //                           //   elevation:
+                        //                           //   20,
+                        //                           //   subTitle:
+                        //                           //   "Request Cancelled succesfully",
+                        //                           //   isCircle:
+                        //                           //   true,
+                        //                           // ).show();
+                        //                           Navigator.pop(context);
+                        //                         },
+                        //                       ),
+                        //                       // FlatButton(
+                        //                       //   child:
+                        //                       //   const Text("No"),
+                        //                       //   onPressed: () {
+                        //                       //     Navigator.pop(
+                        //                       //         context);
+                        //                       //   },
+                        //                       // )
+                        //                     ],
+                        //                   ));
+                        //         },
+                        //         child: const Icon(
+                        //           Icons.local_phone_rounded,
+                        //           color: Colors.white,
+                        //         ),
+                        //         backgroundColor: Colors.red,
+                        //       ),
+                        //     ],
+                        //   ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                             Expanded(
+                              child: Text("Touch to Start or End the meeting & "
+                                  "Long-Press to Pause or Resume the meeting.",
+                                style: TextStyle(
+                                  fontSize: w * 3.8,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                maxLines: 3,
+                                softWrap: true,
+                                overflow: TextOverflow.fade,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: h * 2.2,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: w * 0.2,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
+                          ],
                         ),
-                        height: h * 6.7,
-                        width: w * 80.4,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Requested Time:',
-                                style: TextStyle(
-                                  fontSize: w * 4.8,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                        SizedBox(
+                          height: h * 1.9,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.person,
+                              color: Colors.blue,
+                            ),
+                            SizedBox(
+                              width: w * 2.4,
+                            ),
+                            Text(
+                              'You are Meeting: '
+                              '${UserController().auth.currentUser?.uid == widget.request["seller_id"] ? widget.request["buyer_name"] : widget.request["seller_name"]}',
+                              style: TextStyle(
+                                fontSize: w * 4.8,
+                                fontWeight: FontWeight.w500,
                               ),
-                              Expanded(
-                                child: Text(
-                                  '${widget.request["duration"]} min/\$${widget.request["price"]}',
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: h * 2.2,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.blue,
+                              width: w * 0.2,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          height: h * 6.7,
+                          width: w * 80.4,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Requested Time:',
                                   style: TextStyle(
                                     fontSize: w * 4.8,
-                                    color: Colors.grey,
+                                    color: Colors.blue,
                                     fontWeight: FontWeight.w500,
                                   ),
-                                  textAlign: TextAlign.right,
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: h * 2.2,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: w * 0.2,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        height: h * 6.7,
-                        width: w * 80.4,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: w * 7.3),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Extra Charge:',
-                                style: TextStyle(
-                                  fontSize: w * 4.8,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Expanded(
-                                child: Text(
-                                  '\$${extraCharge.toPrecision(2)}/1 min',
-                                  style: TextStyle(
-                                    fontSize: w * 4.8,
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: h * 2.2,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: w * 0.2,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        height: h * 6.7,
-                        width: w * 80.4,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: w * 7.3),
-                          child: Row(
-                            children: [
-                              Text(
-                                'Current Charge:',
-                                style: TextStyle(
-                                  fontSize: w * 4.8,
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              Expanded(
-                                child: Obx(() {
-                                  return Text(
-                                    '\$${getCurrentCharge()}',
+                                Expanded(
+                                  child: Text(
+                                    '${widget.request["duration"]} min/\$${widget.request["price"]}',
                                     style: TextStyle(
                                       fontSize: w * 4.8,
                                       color: Colors.grey,
                                       fontWeight: FontWeight.w500,
                                     ),
                                     textAlign: TextAlign.right,
-                                  );
-                                }),
-                              ),
-                            ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Text(
-                        'Having a issue?',
-                        style: TextStyle(fontSize: w * 4.8, fontWeight: FontWeight.w500, color: Colors.black),
-                      ),
-                      SizedBox(
-                        height: h * 2.2,
-                      ),
-                      Row(
-                        children: [
-                          ButtonBar(
-                            alignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              ConstrainedBox(
-                                constraints: BoxConstraints.tightFor(width: w * 38.0, height: h * 5.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              CommonProblems()),
-                                    );
-                                  },
-                                  child: Text(
-                                    'Common Problems',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: w * 3.5,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.blue,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              ConstrainedBox(
-                                constraints: BoxConstraints.tightFor(width: w * 38.0, height: h * 5.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Emergency()),
-                                    );
-                                  },
-                                  child: Text(
-                                    'Emergency',
-                                    style: TextStyle(
-                                      fontSize: w * 4.3,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    primary: Colors.red[900],
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                        SizedBox(
+                          height: h * 2.2,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.blue,
+                              width: w * 0.2,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ],
-                      ),
-                    ],
-                  )),
+                          height: h * 6.7,
+                          width: w * 80.4,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: w * 7.3),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Extra Charge:',
+                                  style: TextStyle(
+                                    fontSize: w * 4.8,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    '\$${extraCharge.toPrecision(2)}/1 min',
+                                    style: TextStyle(
+                                      fontSize: w * 4.8,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    textAlign: TextAlign.right,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: h * 2.2,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.blue,
+                              width: w * 0.2,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          height: h * 6.7,
+                          width: w * 80.4,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: w * 7.3),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Current Charge:',
+                                  style: TextStyle(
+                                    fontSize: w * 4.8,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Obx(() {
+                                    return Text(
+                                      '\$${getCurrentCharge()}',
+                                      style: TextStyle(
+                                        fontSize: w * 4.8,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      textAlign: TextAlign.right,
+                                    );
+                                  }),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'Having a issue?',
+                          style: TextStyle(fontSize: w * 4.8, fontWeight: FontWeight.w500, color: Colors.black),
+                        ),
+                        SizedBox(
+                          height: h * 2.2,
+                        ),
+                        Row(
+                          children: [
+                            ButtonBar(
+                              alignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                ConstrainedBox(
+                                  constraints: BoxConstraints.tightFor(width: w * 38.0, height: h * 5.0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => CommonProblems()),
+                                      );
+                                    },
+                                    child: Text(
+                                      'Common Problems',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: w * 3.5,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.blue,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                ConstrainedBox(
+                                  constraints: BoxConstraints.tightFor(width: w * 38.0, height: h * 5.0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => Emergency()),
+                                      );
+                                    },
+                                    child: Text(
+                                      'Emergency',
+                                      style: TextStyle(
+                                        fontSize: w * 4.3,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      primary: Colors.red[900],
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    )),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

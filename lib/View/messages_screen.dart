@@ -76,6 +76,7 @@ class _MessagesState extends State<Messages> {
           stream: chatroomStream,
           builder: (ctx, snapshot) {
             QuerySnapshot? q = snapshot.data as QuerySnapshot?;
+<<<<<<< HEAD
             return snapshot.hasData
                 ? q!.docs.isNotEmpty
                     ? ListView.separated(
@@ -101,6 +102,29 @@ class _MessagesState extends State<Messages> {
                 : Center(
                     child: CircularProgressIndicator(),
                   );
+=======
+            return snapshot.hasData && q!.docs.isNotEmpty
+                ? ListView.separated(
+                    padding: EdgeInsets.all(5),
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                    itemCount: q.docs.length,
+                    itemBuilder: (cxt, index) {
+                      DocumentSnapshot ds = q.docs[index];
+                      return ChatRoomListTile(
+                          ds["lastMessage"],
+                          ds['type'],
+                          ds['lastMessageSendByUid'],
+                          ds.id,
+                          ds['read'],
+                          ds["users"]);
+                    },
+                    separatorBuilder: (ctx, index) => Divider(
+                      thickness: 5,
+                    ),
+                  )
+                : Center(child: Container(child: Text("No chat history")));
+>>>>>>> ab42009eebeb719801c1c60e2864f4222fb5b12c
           }),
     );
   }

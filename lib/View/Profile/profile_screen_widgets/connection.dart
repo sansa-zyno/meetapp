@@ -78,7 +78,7 @@ class _ConnectionState extends State<Connection> {
             return snapshot.hasData && qdocs!.docs.isNotEmpty
                 ? ListView.builder(
                     physics: ClampingScrollPhysics(),
-                    itemCount: qdocs!.docs.length,
+                    itemCount: qdocs.docs.length,
                     padding: EdgeInsets.symmetric(vertical: 8),
                     shrinkWrap: true,
                     itemBuilder: (ctx, index) => qdocs.docs[index]
