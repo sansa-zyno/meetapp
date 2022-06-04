@@ -68,11 +68,19 @@ class SearchList extends StatelessWidget {
                                   child: clr == Colors.blue
                                       ? ClipRRect(
                                           child: Image.network(
-                                              ldoc[index].meetup_seller_image),
+                                            ldoc[index].meetup_seller_image,
+                                            width: 80,
+                                            height: 70,
+                                            fit: BoxFit.cover,
+                                          ),
                                         )
                                       : ClipRRect(
                                           child: Image.network(
-                                              ldoc[index].demand_person_image),
+                                            ldoc[index].demand_person_image,
+                                            width: 80,
+                                            height: 70,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                 ),
                               ),

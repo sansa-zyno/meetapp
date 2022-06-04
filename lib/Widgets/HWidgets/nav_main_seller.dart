@@ -22,14 +22,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    FirebaseFirestore.instance
-        .collectionGroup('request')
-        .orderBy("ts")
-        .snapshots()
-        .listen((event) {
-      requests = event.docs;
-      setState(() {});
-    });
   }
 
   @override
@@ -37,12 +29,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     final screen = [
       HomeScreen(),
       Discover(),
-      ActivityScreen(
-          requests: requests != null
-              ? requests!
-                  .where((element) => element['type'] == 'service')
-                  .toList()
-              : []),
+      ActivityScreen(),
       ProfileScreen(
         clr: Color(0xff00AEFF),
       ),

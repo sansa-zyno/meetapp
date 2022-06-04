@@ -68,15 +68,13 @@ class _UpcomingMeetingsState extends State<UpcomingMeetings> {
                             ? Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      ActivityScreen(requests: widget.requests),
+                                  builder: (context) => ActivityScreen(),
                                 ),
                               )
                             : Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => BuyerActivityScreen(
-                                      requests: widget.requests),
+                                  builder: (context) => BuyerActivityScreen(),
                                 ),
                               );
                         Container();
@@ -156,10 +154,14 @@ class _UpcomingMeetingsState extends State<UpcomingMeetings> {
                     ],
                   ),
                 )
-              : Container(child: Center(child: Padding(
-                padding: const EdgeInsets.only(top: 10.0),
-                child: Text("No Upcoming Meetings"),
-              ),),),
+              : Container(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Text("No Upcoming Meetings"),
+                    ),
+                  ),
+                ),
         ],
       ),
     );

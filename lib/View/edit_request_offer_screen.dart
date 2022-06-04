@@ -422,6 +422,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                   _startTime.minute +
                                   int.parse(duration));
                           Map<String, dynamic> map = {
+                            "read": false,
                             "modified": true,
                             "accepted": null,
                             "modifiedBy":

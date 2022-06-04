@@ -106,7 +106,11 @@ class _DetailsScreenState extends State<DetailsScreen> {
                 ? Positioned.fill(
                     child: Align(
                       alignment: Alignment.bottomCenter,
-                      child: DetailBar(widget.meeter, sellerDetails!, likes!),
+                      child: DetailBar(
+                        widget.meeter,
+                        sellerDetails!,
+                        likes!,
+                      ),
                     ),
                   )
                 : Container()

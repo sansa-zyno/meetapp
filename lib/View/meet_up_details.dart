@@ -181,30 +181,37 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                       ],
                     ),
                   )
-                  /*Text(" By ${widget.request['seller_name']}",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 18))*/
                 ],
               ),
               SizedBox(height: 20),
-              Text(
-                "${widget.request['title']}",
-                style: TextStyle(
-                    color: widget.clr,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      "${widget.request['title']}",
+                      style: TextStyle(
+                          color: widget.clr,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18),
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 10),
-              Container(
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                    color: Colors.white30,
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.all(Radius.circular(20))),
-                child: Text("${widget.request['question']}",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14)),
-              ),
+              widget.request['question'] == ""
+                  ? Container()
+                  : SizedBox(height: 5),
+              widget.request['question'] == ""
+                  ? Container()
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text("Question: ${widget.request['question']}",
+                              style: TextStyle(fontSize: 14)),
+                        ),
+                      ],
+                    ),
               SizedBox(height: 20),
               Row(children: [
                 Icon(Icons.calendar_view_day),
@@ -233,12 +240,24 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                       child: Row(
                         children: [
                           Expanded(
-                              child: Text(
-                                  "Location: ${widget.request['location_address']}")),
+                            child: Text(
+                              "Location: ${widget.request['location_address']}",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w400, fontSize: 16),
+                            ),
+                          ),
                         ],
                       ),
                     )
-                  : Text("Location: Virtual"),
+                  : Row(
+                      children: [
+                        Text(
+                          "Location: Virtual",
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400, fontSize: 16),
+                        ),
+                      ],
+                    ),
               SizedBox(height: 50),
               widget.request.exists
                   ? Center(
@@ -479,9 +498,11 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                   Map<String, dynamic>? map =
                                       doc.data() as Map<String, dynamic>?;
                                   if (map != null) {
-                                    if (map.containsKey("lastMessageSendByUid")) {
+                                    if (map
+                                        .containsKey("lastMessageSendByUid")) {
                                       if (doc['lastMessageSendByUid'] !=
-                                          FirebaseAuth.instance.currentUser!.uid) {
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid) {
                                         //get all messages that havent been read
                                         QuerySnapshot q =
                                             await FirebaseFirestore.instance
@@ -545,9 +566,11 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                   Map<String, dynamic>? map =
                                       doc.data() as Map<String, dynamic>?;
                                   if (map != null) {
-                                    if (map.containsKey("lastMessageSendByUid")) {
+                                    if (map
+                                        .containsKey("lastMessageSendByUid")) {
                                       if (doc['lastMessageSendByUid'] !=
-                                          FirebaseAuth.instance.currentUser!.uid) {
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid) {
                                         //get all messages that havent been read
                                         QuerySnapshot q =
                                             await FirebaseFirestore.instance
@@ -607,7 +630,6 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                   widget.request["accepted"] == true
                               ? GestureDetector(
                                   onTap: () async {
-
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (ctx) => Timer(widget.request),

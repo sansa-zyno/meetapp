@@ -15,7 +15,11 @@ class DetailBar extends StatefulWidget {
   final MeetupData meeter;
   final OurUser sellerDetails;
   final int likes;
-  DetailBar(this.meeter, this.sellerDetails, this.likes);
+  DetailBar(
+    this.meeter,
+    this.sellerDetails,
+    this.likes,
+  );
 
   @override
   _DetailBarState createState() => _DetailBarState();
@@ -23,6 +27,7 @@ class DetailBar extends StatefulWidget {
 
 class _DetailBarState extends State<DetailBar> {
   bool isLiked = false;
+  bool hasRequested = false;
   late UserController _currentUser;
 
   getChatRoomIdByUsernames(String a, String b) {
@@ -31,6 +36,28 @@ class _DetailBarState extends State<DetailBar> {
     } else {
       return "$a\_$b\_${widget.meeter.meetup_id}";
     }
+  }
+
+  checkIfUserHasRequestedforServiceBefore() async {
+    QuerySnapshot snap = await FirebaseFirestore.instance
+        .collectionGroup("request")
+        .where("type", isEqualTo: "service")
+        .where("title", isEqualTo: widget.meeter.meetup_title)
+        .where("desc", isEqualTo: widget.meeter.meetup_description)
+        .get();
+    List meeters = snap.docs[0]["meeters"];
+    if (meeters.contains(FirebaseAuth.instance.currentUser!.uid)) {
+      hasRequested = true;
+      setState(() {});
+    }
+    print(hasRequested);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkIfUserHasRequestedforServiceBefore();
   }
 
   @override
@@ -125,6 +152,7 @@ class _DetailBarState extends State<DetailBar> {
                             widget.meeter.meetup_seller_image,
                         "meetup_bannerImage": widget.meeter.meetup_bannerImage,
                         "meetup_tags": widget.meeter.meetup_tags,
+                        "meetup_date": widget.meeter.meetup_date
                       });
                     },
                     icon: Container(
@@ -151,7 +179,10 @@ class _DetailBarState extends State<DetailBar> {
                       var chatroomId = getChatRoomIdByUsernames(
                           userName, widget.sellerDetails.displayName!);
                       Map<String, dynamic> chatroomInfo = {
-                        "users": [FirebaseAuth.instance.currentUser!.uid, widget.sellerDetails.uid],
+                        "users": [
+                          FirebaseAuth.instance.currentUser!.uid,
+                          widget.sellerDetails.uid
+                        ],
                       };
                       Database().createChatRoom(chatroomId, chatroomInfo);
                       DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -162,7 +193,8 @@ class _DetailBarState extends State<DetailBar> {
                           doc.data() as Map<String, dynamic>?;
                       if (map != null) {
                         if (map.containsKey("lastMessageSendByUid")) {
-                          if (doc['lastMessageSendByUid'] != FirebaseAuth.instance.currentUser!.uid) {
+                          if (doc['lastMessageSendByUid'] !=
+                              FirebaseAuth.instance.currentUser!.uid) {
                             //get all messages that havent been read
                             QuerySnapshot q = await FirebaseFirestore.instance
                                 .collection("chatrooms")
@@ -204,15 +236,25 @@ class _DetailBarState extends State<DetailBar> {
                 clrs: [Colors.blue, Colors.blue],
                 title: 'Make Offer',
                 onpressed: () {
-                  Navigator.of(context).push(
-                    PageRouteBuilder(
-                      opaque: false,
-                      pageBuilder: (BuildContext context, _, __) =>
-                          RequestOffer(
-                              doc: widget.meeter,
-                              sellerDetails: widget.sellerDetails),
-                    ),
-                  );
+                  !hasRequested
+                      ? Navigator.of(context).push(
+                          PageRouteBuilder(
+                            opaque: false,
+                            pageBuilder: (BuildContext context, _, __) =>
+                                RequestOffer(
+                                    doc: widget.meeter,
+                                    sellerDetails: widget.sellerDetails),
+                          ),
+                        )
+                      : Scaffold.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            'You already requested for this service',
+                            textAlign: TextAlign.center,
+                            //style: TextStyle(color: Colors.white),
+                          ),
+                        ));
+                  ;
                 },
               ),
             ),

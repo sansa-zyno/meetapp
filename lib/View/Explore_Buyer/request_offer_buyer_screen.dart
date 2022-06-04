@@ -412,6 +412,7 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                                   _startTime.minute +
                                   int.parse(duration!));
                           Map<String, dynamic> map = {
+                            "read": false,
                             "type": "demand",
                             "accepted": null,
                             "modified": null,
@@ -460,6 +461,15 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                                   .doc(widget.personDetails.uid)
                                   .collection('request')
                                   .add(map);
+                              /* await FirebaseFirestore.instance
+                                    .collection('notifications')
+                                    .doc(widget.personDetails.uid)
+                                    .set({"n": "n"});
+                                await FirebaseFirestore.instance
+                                    .collection('notifications')
+                                    .doc(widget.personDetails.uid)
+                                    .collection('notification')
+                                    .add(map);*/
 
                               AchievementView(
                                 context,
@@ -493,6 +503,15 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                                 .doc(widget.personDetails.uid)
                                 .collection('request')
                                 .add(map);
+                            /* await FirebaseFirestore.instance
+                                    .collection('notifications')
+                                    .doc(widget.personDetails.uid)
+                                    .set({"n": "n"});
+                                await FirebaseFirestore.instance
+                                    .collection('notifications')
+                                    .doc(widget.personDetails.uid)
+                                    .collection('notification')
+                                    .add(map);*/
 
                             AchievementView(
                               context,

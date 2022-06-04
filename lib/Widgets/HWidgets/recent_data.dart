@@ -25,7 +25,13 @@ class RecentData extends StatelessWidget {
             ? Padding(
                 padding: EdgeInsets.all(MediaQuery.of(context).size.width / 60),
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    await FirebaseFirestore.instance
+                        .collection("requests")
+                        .doc(request!['seller_id'])
+                        .collection("request")
+                        .doc(request!.id)
+                        .update({"read": true});
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -73,6 +79,9 @@ class RecentData extends StatelessWidget {
                                           child: Text(
                                             'Meet up request',
                                             style: TextStyle(
+                                              color: request!["read"]
+                                                  ? Colors.grey
+                                                  : Colors.black,
                                               fontWeight: FontWeight.w700,
                                               fontSize: width / 21,
                                             ),
@@ -86,6 +95,11 @@ class RecentData extends StatelessWidget {
                                               width: 500,
                                               child: Text(
                                                 '🕒${request!['time']}',
+                                                style: TextStyle(
+                                                  color: request!["read"]
+                                                      ? Colors.grey
+                                                      : Colors.black,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -100,6 +114,9 @@ class RecentData extends StatelessWidget {
                                       'You received a meet up request from ${request!["buyer_name"]}',
                                       //overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
+                                        color: request!["read"]
+                                            ? Colors.grey
+                                            : Colors.black,
                                         fontWeight: FontWeight.w300,
                                         fontSize: width / 24,
                                       ),
@@ -146,15 +163,15 @@ class RecentData extends StatelessWidget {
                               .doc(q.docs[i].id)
                               .update({"read": true});
                         }
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) => ChatScreen(user, msg!.id)));
                         //turn to read to prevent showing here again
                         await FirebaseFirestore.instance
                             .collection("chatrooms")
                             .doc(msg!.id)
                             .update({"read": true});
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (ctx) => ChatScreen(user, msg!.id)));
                       },
                       child: Container(
                         alignment: Alignment.centerLeft,
@@ -199,6 +216,9 @@ class RecentData extends StatelessWidget {
                                               child: Text(
                                                 'New message',
                                                 style: TextStyle(
+                                                  color: msg!["read"]
+                                                      ? Colors.grey
+                                                      : Colors.black,
                                                   fontWeight: FontWeight.w700,
                                                   fontSize: width / 21,
                                                 ),
@@ -214,6 +234,9 @@ class RecentData extends StatelessWidget {
                                           'You received a new message from ${msg!["lastMessageSendBy"]}',
                                           //overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
+                                            color: msg!["read"]
+                                                ? Colors.grey
+                                                : Colors.black,
                                             fontWeight: FontWeight.w300,
                                             fontSize: width / 24,
                                           ),
@@ -239,7 +262,13 @@ class RecentData extends StatelessWidget {
                         padding: EdgeInsets.all(
                             MediaQuery.of(context).size.width / 60),
                         child: GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            await FirebaseFirestore.instance
+                                .collection("requests")
+                                .doc(request!['seller_id'])
+                                .collection("request")
+                                .doc(request!.id)
+                                .update({"read": true});
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -291,6 +320,9 @@ class RecentData extends StatelessWidget {
                                                   child: Text(
                                                     'Meet up request modified',
                                                     style: TextStyle(
+                                                      color: request!["read"]
+                                                          ? Colors.grey
+                                                          : Colors.black,
                                                       fontWeight:
                                                           FontWeight.w700,
                                                       fontSize: width / 21,
@@ -305,6 +337,11 @@ class RecentData extends StatelessWidget {
                                                                 width / 60),
                                                     child: Text(
                                                       '🕒${request!['time']}',
+                                                      style: TextStyle(
+                                                        color: request!["read"]
+                                                            ? Colors.grey
+                                                            : Colors.black,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
@@ -318,6 +355,9 @@ class RecentData extends StatelessWidget {
                                               'You received a meet up modification from ${request!["seller_name"]}',
                                               //overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
+                                                color: request!["read"]
+                                                    ? Colors.grey
+                                                    : Colors.black,
                                                 fontWeight: FontWeight.w300,
                                                 fontSize: width / 24,
                                               ),
@@ -341,7 +381,13 @@ class RecentData extends StatelessWidget {
                             padding: EdgeInsets.all(
                                 MediaQuery.of(context).size.width / 60),
                             child: GestureDetector(
-                              onTap: () {
+                              onTap: () async {
+                                await FirebaseFirestore.instance
+                                    .collection("requests")
+                                    .doc(request!['seller_id'])
+                                    .collection("request")
+                                    .doc(request!.id)
+                                    .update({"read": true});
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -394,6 +440,11 @@ class RecentData extends StatelessWidget {
                                                       child: Text(
                                                         'Meet up request modified',
                                                         style: TextStyle(
+                                                          color:
+                                                              request!["read"]
+                                                                  ? Colors.grey
+                                                                  : Colors
+                                                                      .black,
                                                           fontWeight:
                                                               FontWeight.w700,
                                                           fontSize: width / 21,
@@ -408,6 +459,12 @@ class RecentData extends StatelessWidget {
                                                                     width / 60),
                                                         child: Text(
                                                           '🕒${request!['time']}',
+                                                          style: TextStyle(
+                                                            color: request![
+                                                                    "read"]
+                                                                ? Colors.grey
+                                                                : Colors.black,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -421,6 +478,9 @@ class RecentData extends StatelessWidget {
                                                   'You received a meet up modification from ${request!["buyer_name"]}',
                                                   //overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
+                                                    color: request!["read"]
+                                                        ? Colors.grey
+                                                        : Colors.black,
                                                     fontWeight: FontWeight.w300,
                                                     fontSize: width / 24,
                                                   ),
@@ -446,7 +506,13 @@ class RecentData extends StatelessWidget {
                             padding: EdgeInsets.all(
                                 MediaQuery.of(context).size.width / 60),
                             child: GestureDetector(
-                              onTap: () {
+                              onTap: () async {
+                                await FirebaseFirestore.instance
+                                    .collection("requests")
+                                    .doc(request!['seller_id'])
+                                    .collection("request")
+                                    .doc(request!.id)
+                                    .update({"read": true});
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -499,6 +565,11 @@ class RecentData extends StatelessWidget {
                                                       child: Text(
                                                         'Meet up request accepted',
                                                         style: TextStyle(
+                                                          color:
+                                                              request!["read"]
+                                                                  ? Colors.grey
+                                                                  : Colors
+                                                                      .black,
                                                           fontWeight:
                                                               FontWeight.w700,
                                                           fontSize: width / 21,
@@ -513,6 +584,12 @@ class RecentData extends StatelessWidget {
                                                                     width / 60),
                                                         child: Text(
                                                           '🕒${request!['time']}',
+                                                          style: TextStyle(
+                                                            color: request![
+                                                                    "read"]
+                                                                ? Colors.grey
+                                                                : Colors.black,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -526,6 +603,9 @@ class RecentData extends StatelessWidget {
                                                   'Your meet up request was accepted by ${request!["seller_name"]}',
                                                   //overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
+                                                    color: request!["read"]
+                                                        ? Colors.grey
+                                                        : Colors.black,
                                                     fontWeight: FontWeight.w300,
                                                     fontSize: width / 24,
                                                   ),
@@ -549,7 +629,13 @@ class RecentData extends StatelessWidget {
                                 padding: EdgeInsets.all(
                                     MediaQuery.of(context).size.width / 60),
                                 child: GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    await FirebaseFirestore.instance
+                                        .collection("requests")
+                                        .doc(request!['seller_id'])
+                                        .collection("request")
+                                        .doc(request!.id)
+                                        .update({"read": true});
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -603,6 +689,11 @@ class RecentData extends StatelessWidget {
                                                           child: Text(
                                                             'Meet up request accepted',
                                                             style: TextStyle(
+                                                              color: request![
+                                                                      "read"]
+                                                                  ? Colors.grey
+                                                                  : Colors
+                                                                      .black,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w700,
@@ -619,8 +710,16 @@ class RecentData extends StatelessWidget {
                                                                         width /
                                                                             60),
                                                             child: Text(
-                                                              '🕒${request!['time']}',
-                                                            ),
+                                                                '🕒${request!['time']}',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: request![
+                                                                          "read"]
+                                                                      ? Colors
+                                                                          .grey
+                                                                      : Colors
+                                                                          .black,
+                                                                )),
                                                           ),
                                                         ),
                                                       ],
@@ -633,6 +732,9 @@ class RecentData extends StatelessWidget {
                                                       'Meet up request was re-accepted by ${request!["buyer_name"]}',
                                                       //overflow: TextOverflow.ellipsis,
                                                       style: TextStyle(
+                                                        color: request!["read"]
+                                                            ? Colors.grey
+                                                            : Colors.black,
                                                         fontWeight:
                                                             FontWeight.w300,
                                                         fontSize: width / 24,
@@ -659,7 +761,13 @@ class RecentData extends StatelessWidget {
                                 padding: EdgeInsets.all(
                                     MediaQuery.of(context).size.width / 60),
                                 child: GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    await FirebaseFirestore.instance
+                                        .collection("requests")
+                                        .doc(request!['seller_id'])
+                                        .collection("request")
+                                        .doc(request!.id)
+                                        .update({"read": true});
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -713,6 +821,11 @@ class RecentData extends StatelessWidget {
                                                           child: Text(
                                                             'Meet up request cancelled',
                                                             style: TextStyle(
+                                                              color: request![
+                                                                      "read"]
+                                                                  ? Colors.grey
+                                                                  : Colors
+                                                                      .black,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w700,
@@ -730,6 +843,14 @@ class RecentData extends StatelessWidget {
                                                                             60),
                                                             child: Text(
                                                               '🕒${request!['time']}',
+                                                              style: TextStyle(
+                                                                color: request![
+                                                                        "read"]
+                                                                    ? Colors
+                                                                        .grey
+                                                                    : Colors
+                                                                        .black,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
@@ -743,6 +864,9 @@ class RecentData extends StatelessWidget {
                                                       'Your meet up request was declined by ${request!["seller_name"]}',
                                                       //overflow: TextOverflow.ellipsis,
                                                       style: TextStyle(
+                                                        color: request!["read"]
+                                                            ? Colors.grey
+                                                            : Colors.black,
                                                         fontWeight:
                                                             FontWeight.w300,
                                                         fontSize: width / 24,
@@ -768,7 +892,13 @@ class RecentData extends StatelessWidget {
                                     padding: EdgeInsets.all(
                                         MediaQuery.of(context).size.width / 60),
                                     child: GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
+                                        await FirebaseFirestore.instance
+                                            .collection("requests")
+                                            .doc(request!['seller_id'])
+                                            .collection("request")
+                                            .doc(request!.id)
+                                            .update({"read": true});
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -823,6 +953,12 @@ class RecentData extends StatelessWidget {
                                                                 'Meet up request cancelled',
                                                                 style:
                                                                     TextStyle(
+                                                                  color: request![
+                                                                          "read"]
+                                                                      ? Colors
+                                                                          .grey
+                                                                      : Colors
+                                                                          .black,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w700,
@@ -841,6 +977,15 @@ class RecentData extends StatelessWidget {
                                                                                 60),
                                                                 child: Text(
                                                                   '🕒${request!['time']}',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: request![
+                                                                            "read"]
+                                                                        ? Colors
+                                                                            .grey
+                                                                        : Colors
+                                                                            .black,
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),
@@ -854,6 +999,10 @@ class RecentData extends StatelessWidget {
                                                           'Meet up declined by ${request!["buyer_name"]}',
                                                           //overflow: TextOverflow.ellipsis,
                                                           style: TextStyle(
+                                                            color: request![
+                                                                    "read"]
+                                                                ? Colors.grey
+                                                                : Colors.black,
                                                             fontWeight:
                                                                 FontWeight.w300,
                                                             fontSize:

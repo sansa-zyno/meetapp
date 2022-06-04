@@ -1,12 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:meeter/Services/database.dart';
 import 'package:meeter/Widgets/HWidgets/upcoming_data.dart';
 import 'package:meeter/Widgets/HWidgets/recent_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BuyerActivityScreen extends StatefulWidget {
-  final List<QueryDocumentSnapshot> requests;
-  BuyerActivityScreen({required this.requests});
   @override
   _BuyerActivityScreenState createState() => _BuyerActivityScreenState();
 }
@@ -14,36 +12,39 @@ class BuyerActivityScreen extends StatefulWidget {
 class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
   bool recent = true;
   bool upcomming = false;
-  Stream<QuerySnapshot>? chatroomStream;
-
-  Future<Stream<QuerySnapshot>> getChatRooms() async {
-    setState(() {});
-    Stream<QuerySnapshot> chatroomStream = FirebaseFirestore.instance
-        .collection("chatrooms")
-        .orderBy("lastMessageSendTs", descending: true)
-        .where("users", arrayContains: FirebaseAuth.instance.currentUser!.uid)
-        .where("read", isEqualTo: false)
-        .snapshots();
-
-    return chatroomStream;
-  }
-
-  getChatRoomStream() async {
-    chatroomStream = await getChatRooms();
-    setState(() {});
-  }
+  List<QueryDocumentSnapshot> requestDoc = [];
+  List<QueryDocumentSnapshot> messageDoc = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getChatRoomStream();
+    FirebaseFirestore.instance
+        .collectionGroup("request")
+        .orderBy("ts")
+        .where("type", isEqualTo: "demand")
+        .snapshots()
+        .listen((event) {
+      requestDoc = event.docs;
+      setState(() {});
+    });
+    Database().getChatRooms().listen((event) {
+      messageDoc = event.docs;
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width / 100;
     var h = MediaQuery.of(context).size.height / 100;
+    List<QueryDocumentSnapshot> combinedDoc = [];
+    combinedDoc = [...requestDoc, ...messageDoc];
+    combinedDoc.sort((a, b) {
+      DateTime adate = a['ts'].toDate();
+      DateTime bdate = b['ts'].toDate();
+      return bdate.compareTo(adate);
+    });
     return Scaffold(
       body: Stack(
         children: [
@@ -157,86 +158,65 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
                       ),
                       recent
                           ? Expanded(
-                              child: ListView(
-                                shrinkWrap: true,
-                                padding: EdgeInsets.all(0),
-                                physics: ClampingScrollPhysics(),
-                                children: [
-                                  StreamBuilder<QuerySnapshot>(
-                                      stream: chatroomStream,
-                                      builder: (context, snapshot) {
-                                        return snapshot.hasData
-                                            ? ListView.builder(
-                                                shrinkWrap: true,
-                                                physics:
-                                                    NeverScrollableScrollPhysics(),
-                                                padding: EdgeInsets.all(0),
-                                                itemCount:
-                                                    snapshot.data!.docs.length,
-                                                itemBuilder: (context, index) {
-                                                  return RecentData(
-                                                    clr: Colors.green,
-                                                    msg: snapshot
-                                                        .data!.docs[index],
-                                                    text: "msg",
-                                                  );
-                                                })
-                                            : Container();
-                                      }),
-                                  ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      padding: EdgeInsets.all(0),
-                                      reverse: true,
-                                      itemCount: widget.requests.length,
-                                      itemBuilder: (context, index) {
-                                        return widget.requests[index]
-                                                        ["accepted"] ==
+                              child: ListView.builder(
+                                  itemCount: combinedDoc.length,
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.all(0),
+                                  physics: ClampingScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return combinedDoc[index]["type"] ==
+                                                "text" ||
+                                            combinedDoc[index]["type"] ==
+                                                "image"
+                                        ? RecentData(
+                                            clr: Colors.blue,
+                                            msg: combinedDoc[index],
+                                            text: "msg",
+                                          )
+                                        : combinedDoc[index]["accepted"] ==
                                                     null &&
-                                                widget.requests[index]
+                                                combinedDoc[index]
                                                         ["modified"] ==
                                                     null
                                             ? RecentData(
-                                                clr: Colors.green,
-                                                request: widget.requests[index],
+                                                clr: Colors.blue,
+                                                request: combinedDoc[index],
                                                 text: "new",
                                               )
-                                            : widget.requests[index]["accepted"]
+                                            : combinedDoc[index]["accepted"] ??
+                                                    false
                                                 ? RecentData(
-                                                    clr: Colors.green,
-                                                    request:
-                                                        widget.requests[index],
+                                                    clr: Colors.blue,
+                                                    request: combinedDoc[index],
                                                     text: "accepted",
                                                   )
-                                                : widget.requests[index]
-                                                        ["modified"]
+                                                : combinedDoc[index]
+                                                            ["modified"] ??
+                                                        false
                                                     ? RecentData(
-                                                        clr: Colors.green,
-                                                        request: widget
-                                                            .requests[index],
+                                                        clr: Colors.blue,
+                                                        request:
+                                                            combinedDoc[index],
                                                         text: "modified",
                                                       )
-                                                    : !(widget.requests[index]
+                                                    : !(combinedDoc[index]
                                                                 ["accepted"] ??
                                                             true)
                                                         ? RecentData(
-                                                            clr: Colors.green,
+                                                            clr: Colors.blue,
                                                             request:
-                                                                widget.requests[
+                                                                combinedDoc[
                                                                     index],
                                                             text: "cancelled",
                                                           )
                                                         : Container();
-                                      })
-                                ],
-                              ),
+                                  }),
                             )
                           : Container(),
                       upcomming
                           ? Expanded(
                               child: UpcomingData(
-                                  clr: Colors.green, requests: widget.requests),
-                            )
+                                  clr: Colors.green, requests: requestDoc))
                           : Container(),
                     ],
                   ),

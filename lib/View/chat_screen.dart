@@ -21,13 +21,15 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: h * 13.7),
-                ChatMessages(widget.recipient, widget.chatRoomid),
-              ],
-            ),
+          Column(
+            children: [
+              SizedBox(height: h * 13.7),
+              Expanded(
+                  child: ChatMessages(
+                widget.recipient,
+                widget.chatRoomid,
+              )),
+            ],
           ),
           ChatAppBar(
             recipient: widget.recipient,
@@ -35,7 +37,10 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: ChatBottomBar(widget.recipient, widget.chatRoomid),
+            child: ChatBottomBar(
+              widget.recipient,
+              widget.chatRoomid,
+            ),
           ),
         ],
       ),

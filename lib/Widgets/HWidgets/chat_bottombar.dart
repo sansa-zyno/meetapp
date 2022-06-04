@@ -4,7 +4,6 @@ import 'package:meeter/Model/user.dart';
 import 'package:meeter/Services/database.dart';
 import 'package:meeter/Services/image_service.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ChatBottomBar extends StatefulWidget {
   final OurUser recipient;
@@ -36,12 +35,14 @@ class _ChatBottomBarState extends State<ChatBottomBar> {
         "imgUrl": user.avatarUrl
       };
 
-      Database().addMessage(widget.chatRoomId, messageInfoMap).then((value) {
+      Database()
+          .addMessage(widget.chatRoomId, messageInfoMap)
+          .then((value) async {
         Map<String, dynamic> lastMessageInfoMap = {
           "type": 'text',
           "read": false,
           "lastMessage": message,
-          "lastMessageSendTs": lastMessageTs,
+          "ts": lastMessageTs,
           "lastMessageSendBy": user.displayName,
           "lastMessageSendByUid": user.uid,
           "lastMessageSendByImgUrl": user.avatarUrl

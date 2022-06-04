@@ -22,14 +22,6 @@ class _BuyerBottomNavBarState extends State<BuyerBottomNavBar> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    FirebaseFirestore.instance
-        .collectionGroup('request')
-        .orderBy("ts")
-        .snapshots()
-        .listen((event) {
-      requests = event.docs;
-      setState(() {});
-    });
   }
 
   @override
@@ -37,12 +29,7 @@ class _BuyerBottomNavBarState extends State<BuyerBottomNavBar> {
     final screen = [
       HomeBuyerScreen(),
       SellerDiscover(),
-      BuyerActivityScreen(
-          requests: requests != null
-              ? requests!
-                  .where((element) => element['type'] == 'demand')
-                  .toList()
-              : []),
+      BuyerActivityScreen(),
       ProfileScreen(
         clr: Color(0xff4CAF50),
       ),

@@ -23,6 +23,7 @@ class DetailBarBuyer extends StatefulWidget {
 
 class _DetailBarBuyerState extends State<DetailBarBuyer> {
   bool isLiked = false;
+  bool hasRequested = false;
   late UserController _currentUser;
 
   getChatRoomIdByUsernames(String a, String b) {
@@ -31,6 +32,29 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
     } else {
       return "$a\_$b\_${widget.demand.demand_id}";
     }
+  }
+
+  checkIfUserHasRequestedforServiceBefore() async {
+    QuerySnapshot snap = await FirebaseFirestore.instance
+        .collectionGroup("request")
+        .where("type", isEqualTo: "demand")
+        .where("title", isEqualTo: widget.demand.demand_title)
+        .where("desc", isEqualTo: widget.demand.demand_description)
+        .get();
+    if (snap.docs.isNotEmpty) {
+      List meeters = snap.docs[0]["meeters"];
+      if (meeters.contains(FirebaseAuth.instance.currentUser!.uid)) {
+        hasRequested = true;
+        setState(() {});
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkIfUserHasRequestedforServiceBefore();
   }
 
   @override
@@ -121,7 +145,8 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
                         "demand_person_image":
                             widget.demand.demand_person_image,
                         "demand_bannerImage": widget.demand.demand_bannerImage,
-                        "demand_tags": widget.demand.demand_tags
+                        "demand_tags": widget.demand.demand_tags,
+                        "demand_date": widget.demand.demand_date
                       });
                     },
                     icon: Icon(
@@ -145,7 +170,10 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
                     var chatroomId = getChatRoomIdByUsernames(
                         userName, widget.personDetails.displayName!);
                     Map<String, dynamic> chatroomInfo = {
-                      "users": [FirebaseAuth.instance.currentUser!.uid, widget.personDetails.uid]
+                      "users": [
+                        FirebaseAuth.instance.currentUser!.uid,
+                        widget.personDetails.uid
+                      ]
                     };
                     Database().createChatRoom(chatroomId, chatroomInfo);
                     DocumentSnapshot doc = await FirebaseFirestore.instance
@@ -156,7 +184,8 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
                         doc.data() as Map<String, dynamic>?;
                     if (map != null) {
                       if (map.containsKey("lastMessageSendByUid")) {
-                        if (doc['lastMessageSendByUid'] != FirebaseAuth.instance.currentUser!.uid) {
+                        if (doc['lastMessageSendByUid'] !=
+                            FirebaseAuth.instance.currentUser!.uid) {
                           //get all messages that havent been read
                           QuerySnapshot q = await FirebaseFirestore.instance
                               .collection("chatrooms")
@@ -198,15 +227,24 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
                 clrs: [Colors.green, Colors.green],
                 title: 'Make Offer',
                 onpressed: () {
-                  Navigator.of(context).push(
-                    PageRouteBuilder(
-                      opaque: false,
-                      pageBuilder: (BuildContext context, _, __) =>
-                          RequestOfferBuyer(
-                              doc: widget.demand,
-                              personDetails: widget.personDetails),
-                    ),
-                  );
+                  !hasRequested
+                      ? Navigator.of(context).push(
+                          PageRouteBuilder(
+                            opaque: false,
+                            pageBuilder: (BuildContext context, _, __) =>
+                                RequestOfferBuyer(
+                                    doc: widget.demand,
+                                    personDetails: widget.personDetails),
+                          ),
+                        )
+                      : Scaffold.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Colors.red,
+                          content: Text(
+                            'You already requested for this service',
+                            textAlign: TextAlign.center,
+                            //style: TextStyle(color: Colors.white),
+                          ),
+                        ));
                 },
               ),
             ),

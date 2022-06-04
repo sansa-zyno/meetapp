@@ -46,12 +46,12 @@ class ImageService {
         "imgUrl": user!.avatarUrl
       };
 
-      Database().addMessage(chatRoomId, messageInfoMap).then((value) {
+      Database().addMessage(chatRoomId, messageInfoMap).then((value) async {
         Map<String, dynamic> lastMessageInfoMap = {
           "type": 'image',
           "read": false,
           "lastMessage": url,
-          "lastMessageSendTs": lastMessageTs,
+          "ts": lastMessageTs,
           "lastMessageSendBy": user!.displayName,
           "lastMessageSendByUid": user!.uid,
           "lastMessageSendByImgUrl": user!.avatarUrl

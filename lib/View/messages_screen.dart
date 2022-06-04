@@ -13,13 +13,6 @@ class Messages extends StatefulWidget {
 }
 
 class _MessagesState extends State<Messages> {
-  /*String? myName;
-  getMyName() async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    myName = _pref.getString('userName')!;
-    setState(() {});
-  }*/
-
   Stream? chatroomStream;
   getChatRooms() async {
     chatroomStream = await Database().getChatRooms();
@@ -29,9 +22,8 @@ class _MessagesState extends State<Messages> {
   @override
   void initState() {
     // TODO: implement initState
-    getChatRooms();
-    // getMyName();
     super.initState();
+    getChatRooms();
   }
 
   @override
@@ -84,27 +76,31 @@ class _MessagesState extends State<Messages> {
           stream: chatroomStream,
           builder: (ctx, snapshot) {
             QuerySnapshot? q = snapshot.data as QuerySnapshot?;
-            return snapshot.hasData && q!.docs.isNotEmpty
-                ? ListView.separated(
-                    padding: EdgeInsets.all(5),
-                    shrinkWrap: true,
-                    physics: ClampingScrollPhysics(),
-                    itemCount: q!.docs.length,
-                    itemBuilder: (cxt, index) {
-                      DocumentSnapshot ds = q.docs[index];
-                      return ChatRoomListTile(
-                          ds["lastMessage"],
-                          ds['type'],
-                          ds['lastMessageSendByUid'],
-                          ds.id,
-                          ds['read'],
-                          ds["users"]);
-                    },
-                    separatorBuilder: (ctx, index) => Divider(
-                      thickness: 5,
-                    ),
-                  )
-                : Center(child: Container(child: Text("No chat history")));
+            return snapshot.hasData
+                ? q!.docs.isNotEmpty
+                    ? ListView.separated(
+                        padding: EdgeInsets.all(5),
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemCount: q.docs.length,
+                        itemBuilder: (cxt, index) {
+                          DocumentSnapshot ds = q.docs[index];
+                          return ChatRoomListTile(
+                              ds["lastMessage"],
+                              ds['type'],
+                              ds['lastMessageSendByUid'],
+                              ds.id,
+                              ds['read'],
+                              ds["users"]);
+                        },
+                        separatorBuilder: (ctx, index) => Divider(
+                          thickness: 5,
+                        ),
+                      )
+                    : Center(child: Container(child: Text("No chat history")))
+                : Center(
+                    child: CircularProgressIndicator(),
+                  );
           }),
     );
   }
@@ -128,11 +124,6 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     String productId =
         widget.chatRoomId.substring(widget.chatRoomId.length - 20);
     setState(() {});
-    /*print(productId);
-    String username = widget.chatRoomId
-        .replaceAll(widget.myUsername, "")
-        .replaceAll("_", "")
-        .replaceAll(productId, "");*/
 
     for (int i = 0; i < widget.users.length; i++) {
       if (widget.users[i] != FirebaseAuth.instance.currentUser!.uid) {

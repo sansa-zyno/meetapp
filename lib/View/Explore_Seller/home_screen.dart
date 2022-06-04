@@ -53,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
     FirebaseFirestore.instance
         .collectionGroup("request")
         .orderBy("ts")
+        .where("type", isEqualTo: "service")
         .snapshots()
         .listen((event) {
       requests = event.docs;
@@ -226,11 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: UpcomingMeetings(
                             clr: Colors.blue,
                             clr1: Colors.blue,
-                            requests: requests!
-                                .where(
-                                    (element) => element['type'] == 'service')
-                                .toList()),
-                      )
+                            requests: requests!))
                     : Container(),
                 listMeetupData != null
                     ? Container(

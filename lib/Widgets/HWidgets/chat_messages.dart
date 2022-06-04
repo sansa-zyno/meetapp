@@ -1,17 +1,20 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/Services/database.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sticky_grouped_list/sticky_grouped_list.dart';
 import 'package:date_format/date_format.dart';
 
 class ChatMessages extends StatefulWidget {
   final OurUser recipient;
   final String chatRoomId;
 
-  ChatMessages(this.recipient, this.chatRoomId);
+  ChatMessages(
+    this.recipient,
+    this.chatRoomId,
+  );
 
   @override
   _ChatMessagesState createState() => _ChatMessagesState();
@@ -19,17 +22,7 @@ class ChatMessages extends StatefulWidget {
 
 class _ChatMessagesState extends State<ChatMessages> {
   Stream? messageStream;
-  /*String myUserName = "";
-
-  getMyInfoFromSharedPreference() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    myUserName = prefs.getString('userName')!;
-  }*/
-
-  getAndSetMessages() async {
-    messageStream = await Database().getChatRoomMessages(widget.chatRoomId);
-    setState(() {});
-  }
+  ScrollController? scrollController;
 
   Widget chatMessageTile(String message, bool sendByMe, h, w) {
     return !sendByMe
@@ -157,93 +150,225 @@ class _ChatMessagesState extends State<ChatMessages> {
       stream: messageStream,
       builder: (context, snapshot) {
         QuerySnapshot? q = snapshot.data as QuerySnapshot?;
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          if (scrollController!.hasClients) {
+            scrollController!.animateTo(
+              scrollController!.position.maxScrollExtent,
+              duration: Duration(seconds: 1),
+              curve: Curves.fastOutSlowIn,
+            );
+          }
+        });
+
         return snapshot.hasData
-            ? /*ListView.builder(
-                shrinkWrap: true,
-                padding: EdgeInsets.only(bottom: 70, top: 16),
-                itemCount: q!.docs.length,
-                physics: ClampingScrollPhysics(),
-                reverse: true,
-                itemBuilder: (context, index) {
-                  DocumentSnapshot ds = q.docs[index];
-                  return ds['type'] == 'text'
-                      ? chatMessageTile(
-                          ds["message"],
-                          myUserName == ds["sendBy"],
-                          h,
-                          w,
-                        )
-                      : imageMessageTile(
-                          ds['photoUrl'], myUserName == ds["sendBy"]);
-                })*/
-            StickyGroupedListView<dynamic, DateTime>(
-                elements: q!.docs,
-                shrinkWrap: true,
-                floatingHeader: true,
-                groupBy: (dynamic element) {
-                  DateTime dt = DateTime.parse(
-                      element['ts'].toDate().toString().substring(0, 10));
-                  return dt;
-                },
-                groupSeparatorBuilder: (dynamic element) {
-                  DateTime dt =
-                      DateTime.parse(element['ts'].toDate().toString());
-                  String date = formatDate(dt, [MM, ' ', d, ', ', yyyy]);
-                  return Center(child: Text(date));
-                },
-                itemBuilder: (context, dynamic element) {
-                  DateTime dt =
-                      DateTime.parse(element['ts'].toDate().toString());
-                  String time = formatDate(dt, [hh, ':', nn, ' ', am]);
-                  print(time.toString());
-                  return element['type'] == 'text'
-                      ? Column(
-                          crossAxisAlignment: FirebaseAuth.instance.currentUser!.uid == element["sendByUid"]
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
-                          children: [
-                            chatMessageTile(
-                              element["message"],
-                              FirebaseAuth.instance.currentUser!.uid == element["sendByUid"],
-                              h,
-                              w,
-                            ),
-                            Padding(
-                              padding: FirebaseAuth.instance.currentUser!.uid == element["sendByUid"]
-                                  ? const EdgeInsets.only(right: 15.0)
-                                  : const EdgeInsets.only(left: 15.0),
-                              child: Text(
-                                time,
-                                style: TextStyle(color: Colors.blue),
-                              ),
-                            )
-                          ],
-                        )
-                      : Column(
-                          children: [
-                            imageMessageTile(element['photoUrl'],
-                                FirebaseAuth.instance.currentUser!.uid == element["sendByUid"]),
-                          ],
+            ? q!.docs.isNotEmpty
+                ? ListView.builder(
+                    itemCount: q.docs.length + 1,
+                    physics: ClampingScrollPhysics(),
+                    padding: EdgeInsets.all(0),
+                    controller: scrollController,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      if (index == q.docs.length) {
+                        return Container(
+                          height: 50,
                         );
-                },
-                itemScrollController:
-                    GroupedItemScrollController(), // optional // optional
-              )
-            : Center(child: CircularProgressIndicator());
+                      }
+                      bool isSameDate = true;
+                      DateTime dt = DateTime.parse(q.docs[index]['ts']
+                          .toDate()
+                          .toString()
+                          .substring(0, 10));
+                      if (index == 0) {
+                        isSameDate = false;
+                      } else {
+                        DateTime dte = DateTime.parse(q.docs[index - 1]['ts']
+                            .toDate()
+                            .toString()
+                            .substring(0, 10));
+                        isSameDate = dt.compareTo(dte) == 0 ? true : false;
+                      }
+
+                      if (index == 0 || !(isSameDate)) {
+                        DateTime dt = DateTime.parse(q.docs[index]['ts']
+                            .toDate()
+                            .toString()
+                            .substring(0, 10));
+                        DateTime dtTime = DateTime.parse(
+                            q.docs[index]['ts'].toDate().toString());
+                        String time =
+                            formatDate(dtTime, [hh, ':', nn, ' ', am]);
+                        DateTime dateNow = DateTime.parse(
+                            DateTime.now().toString().substring(0, 10));
+                        String date = dt.compareTo(dateNow) == 0
+                            ? "Today"
+                            : "${dt.year} ${dt.month} ${dt.day}" ==
+                                    "${dateNow.year} ${dateNow.month} ${(dateNow.day) - 1}"
+                                ? "Yesterday"
+                                : formatDate(dt, [M, ' ', dd, ' ,', yyyy]);
+                        return Column(children: [
+                          Text(
+                            date,
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          SizedBox(height: 8),
+                          //ListTile(title: Text('item $index'))
+                          q.docs[index]['type'] == 'text'
+                              ? Column(
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: FirebaseAuth
+                                                  .instance.currentUser!.uid ==
+                                              q.docs[index]["sendByUid"]
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
+                                      children: [
+                                        chatMessageTile(
+                                          q.docs[index]["message"],
+                                          FirebaseAuth
+                                                  .instance.currentUser!.uid ==
+                                              q.docs[index]["sendByUid"],
+                                          h,
+                                          w,
+                                        ),
+                                        Padding(
+                                          padding: FirebaseAuth.instance
+                                                      .currentUser!.uid ==
+                                                  q.docs[index]["sendByUid"]
+                                              ? const EdgeInsets.only(
+                                                  right: 15.0)
+                                              : const EdgeInsets.only(
+                                                  left: 15.0),
+                                          child: Text(
+                                            time,
+                                            style:
+                                                TextStyle(color: Colors.blue),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : Column(
+                                  crossAxisAlignment:
+                                      FirebaseAuth.instance.currentUser!.uid ==
+                                              q.docs[index]["sendByUid"]
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
+                                  children: [
+                                    imageMessageTile(
+                                        q.docs[index]['photoUrl'],
+                                        FirebaseAuth
+                                                .instance.currentUser!.uid ==
+                                            q.docs[index]["sendByUid"]),
+                                    Padding(
+                                      padding: FirebaseAuth
+                                                  .instance.currentUser!.uid ==
+                                              q.docs[index]["sendByUid"]
+                                          ? const EdgeInsets.only(right: 15.0)
+                                          : const EdgeInsets.only(left: 15.0),
+                                      child: Text(
+                                        time,
+                                        style: TextStyle(color: Colors.blue),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    )
+                                  ],
+                                )
+                        ]);
+                      } else {
+                        DateTime dtTime = DateTime.parse(
+                            q.docs[index]['ts'].toDate().toString());
+                        String time =
+                            formatDate(dtTime, [hh, ':', nn, ' ', am]);
+                        return q.docs[index]['type'] == 'text'
+                            ? Column(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: FirebaseAuth
+                                                .instance.currentUser!.uid ==
+                                            q.docs[index]["sendByUid"]
+                                        ? CrossAxisAlignment.end
+                                        : CrossAxisAlignment.start,
+                                    children: [
+                                      chatMessageTile(
+                                        q.docs[index]["message"],
+                                        FirebaseAuth
+                                                .instance.currentUser!.uid ==
+                                            q.docs[index]["sendByUid"],
+                                        h,
+                                        w,
+                                      ),
+                                      Padding(
+                                        padding: FirebaseAuth.instance
+                                                    .currentUser!.uid ==
+                                                q.docs[index]["sendByUid"]
+                                            ? const EdgeInsets.only(right: 15.0)
+                                            : const EdgeInsets.only(left: 15.0),
+                                        child: Text(
+                                          time,
+                                          style: TextStyle(color: Colors.blue),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment:
+                                    FirebaseAuth.instance.currentUser!.uid ==
+                                            q.docs[index]["sendByUid"]
+                                        ? CrossAxisAlignment.end
+                                        : CrossAxisAlignment.start,
+                                children: [
+                                  imageMessageTile(
+                                      q.docs[index]['photoUrl'],
+                                      FirebaseAuth.instance.currentUser!.uid ==
+                                          q.docs[index]["sendByUid"]),
+                                  Padding(
+                                    padding: FirebaseAuth
+                                                .instance.currentUser!.uid ==
+                                            q.docs[index]["sendByUid"]
+                                        ? const EdgeInsets.only(right: 15.0)
+                                        : const EdgeInsets.only(left: 15.0),
+                                    child: Text(
+                                      time,
+                                      style: TextStyle(color: Colors.blue),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  )
+                                ],
+                              );
+                      }
+                    }, // optional // optional
+                  )
+                : Center(
+                    child: Text("No messages to show"),
+                  )
+            : Center(
+                child: Container(
+                child: CircularProgressIndicator(),
+              ));
       },
     );
-  }
-
-  doThisOnLaunch() async {
-   // await getMyInfoFromSharedPreference();
-    await getAndSetMessages();
   }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    doThisOnLaunch();
+    scrollController = ScrollController();
+    messageStream = Database().getChatRoomMessages(widget.chatRoomId);
   }
 
   @override
@@ -251,16 +376,19 @@ class _ChatMessagesState extends State<ChatMessages> {
     var w = MediaQuery.of(context).size.width / 100;
     var h = MediaQuery.of(context).size.height / 100;
     return SafeArea(
-      child: Column(
-        children: [
-          chatMessages(
+        child: Column(
+      children: [
+        Expanded(
+          child: chatMessages(
             h,
             w,
           ),
-          SizedBox(height: 100)
-        ],
-      ),
-    );
+        ),
+        SizedBox(
+          height: 88.2,
+        )
+      ],
+    ));
   }
 }
 

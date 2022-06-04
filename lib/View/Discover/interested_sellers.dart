@@ -133,11 +133,11 @@ class _InterestedSellersState extends State<InterestedSellers> {
                                             CrossAxisAlignment.center,
                                         children: [
                                           Image.network(
-                                            qdocs!.docs[index]
-                                                ["meetup_seller_image"],
-                                            width: 80,
-                                            height: 70,
-                                          ),
+                                              qdocs!.docs[index]
+                                                  ["meetup_seller_image"],
+                                              width: 80,
+                                              height: 70,
+                                              fit: BoxFit.cover),
                                           SizedBox(
                                             height: 10,
                                           ),

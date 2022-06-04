@@ -11,12 +11,12 @@ class Database {
         .add(messageInfoMap);
   }
 
-  Future<Stream<QuerySnapshot>> getChatRoomMessages(chatRoomId) async {
+  Stream<QuerySnapshot> getChatRoomMessages(chatRoomId) {
     return FirebaseFirestore.instance
         .collection("chatrooms")
         .doc(chatRoomId)
         .collection("chats")
-        .orderBy("ts", descending: true)
+        .orderBy("ts")
         .snapshots();
   }
 
@@ -50,10 +50,10 @@ class Database {
   }
 
   //get all the people the user has chatted with
-  Future<Stream<QuerySnapshot>> getChatRooms() async {
+  Stream<QuerySnapshot> getChatRooms() {
     return FirebaseFirestore.instance
         .collection("chatrooms")
-        .orderBy("lastMessageSendTs", descending: true)
+        .orderBy("ts", descending: true)
         .where("users", arrayContains: FirebaseAuth.instance.currentUser!.uid)
         .snapshots();
   }
@@ -66,10 +66,12 @@ class Database {
         .collection('request')
         .doc(docId)
         .update({
+      "read": false,
       'meeters': meeters,
       "accepted": true,
       "acceptedBy": FirebaseAuth.instance.currentUser!.uid,
-      "modified": false
+      "modified": false,
+      "ts": DateTime.now()
     });
   }
 
@@ -81,40 +83,12 @@ class Database {
         .collection('request')
         .doc(docId)
         .update({
+      "read": false,
       'meeters': meeters,
       "accepted": false,
       "declinedBy": FirebaseAuth.instance.currentUser!.uid,
-      "modified": false
+      "modified": false,
+      "ts": DateTime.now()
     });
   }
-
-  /*//create a connection room
-  createConnectionRoom(String connectionRoomId,
-      Map<String, dynamic> connectionRoomInfoMap) async {
-    final snapShot = await FirebaseFirestore.instance
-        .collection("connections")
-        .doc(connectionRoomId)
-        .get();
-
-    if (snapShot.exists) {
-      // connection already exists
-      return true;
-    } else {
-      // connection does not exists
-      return FirebaseFirestore.instance
-          .collection("connections")
-          .doc(connectionRoomId)
-          .set(connectionRoomInfoMap);
-    }
-  }
-
-  //get all the people the user has connected with
-  Future<Stream<QuerySnapshot>> getConnectionRooms() async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    String myUsername = _pref.getString('userName')!;
-    return FirebaseFirestore.instance
-        .collection("connections")
-        .where("users", arrayContains: myUsername)
-        .snapshots();
-  }*/
 }

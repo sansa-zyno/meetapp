@@ -424,6 +424,7 @@ class _RequestOfferState extends State<RequestOffer> {
                                     _startTime.minute +
                                     int.parse(duration!));
                             Map<String, dynamic> map = {
+                              "read": false,
                               "type": "service",
                               "accepted": null,
                               "modified": null,
@@ -472,6 +473,16 @@ class _RequestOfferState extends State<RequestOffer> {
                                     .doc(widget.sellerDetails.uid)
                                     .collection('request')
                                     .add(map);
+                                /* await FirebaseFirestore.instance
+                                    .collection('notifications')
+                                    .doc(widget.sellerDetails.uid)
+                                    .set({"n": "n"});
+                                await FirebaseFirestore.instance
+                                    .collection('notifications')
+                                    .doc(widget.sellerDetails.uid)
+                                    .collection('notification')
+                                    .add(map);*/
+
                                 AchievementView(
                                   context,
                                   color: Colors.green,
@@ -505,6 +516,15 @@ class _RequestOfferState extends State<RequestOffer> {
                                   .doc(widget.sellerDetails.uid)
                                   .collection('request')
                                   .add(map);
+                              /* await FirebaseFirestore.instance
+                                    .collection('notifications')
+                                    .doc(widget.sellerDetails.uid)
+                                    .set({"n": "n"});
+                                await FirebaseFirestore.instance
+                                    .collection('notifications')
+                                    .doc(widget.sellerDetails.uid)
+                                    .collection('notification')
+                                    .add(map);*/
                               AchievementView(
                                 context,
                                 color: Colors.green,
