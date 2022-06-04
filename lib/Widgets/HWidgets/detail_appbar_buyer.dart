@@ -23,7 +23,6 @@ class DetailBarBuyer extends StatefulWidget {
 
 class _DetailBarBuyerState extends State<DetailBarBuyer> {
   bool isLiked = false;
-  bool hasRequested = false;
   late UserController _currentUser;
 
   getChatRoomIdByUsernames(String a, String b) {
@@ -32,29 +31,6 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
     } else {
       return "$a\_$b\_${widget.demand.demand_id}";
     }
-  }
-
-  checkIfUserHasRequestedforServiceBefore() async {
-    QuerySnapshot snap = await FirebaseFirestore.instance
-        .collectionGroup("request")
-        .where("type", isEqualTo: "demand")
-        .where("title", isEqualTo: widget.demand.demand_title)
-        .where("desc", isEqualTo: widget.demand.demand_description)
-        .get();
-    if (snap.docs.isNotEmpty) {
-      List meeters = snap.docs[0]["meeters"];
-      if (meeters.contains(FirebaseAuth.instance.currentUser!.uid)) {
-        hasRequested = true;
-        setState(() {});
-      }
-    }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    checkIfUserHasRequestedforServiceBefore();
   }
 
   @override
@@ -226,25 +202,38 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
               child: GradientButton(
                 clrs: [Colors.green, Colors.green],
                 title: 'Make Offer',
-                onpressed: () {
-                  !hasRequested
-                      ? Navigator.of(context).push(
-                          PageRouteBuilder(
-                            opaque: false,
-                            pageBuilder: (BuildContext context, _, __) =>
-                                RequestOfferBuyer(
-                                    doc: widget.demand,
-                                    personDetails: widget.personDetails),
-                          ),
-                        )
-                      : Scaffold.of(context).showSnackBar(SnackBar(
-                          backgroundColor: Colors.red,
-                          content: Text(
-                            'You already requested for this service',
-                            textAlign: TextAlign.center,
-                            //style: TextStyle(color: Colors.white),
-                          ),
-                        ));
+                onpressed: () async {
+                  QuerySnapshot snap = await FirebaseFirestore.instance
+                      .collectionGroup("request")
+                      .where("type", isEqualTo: "demand")
+                      .where("title", isEqualTo: widget.demand.demand_title)
+                      .where("desc",
+                          isEqualTo: widget.demand.demand_description)
+                      .where("meeters",
+                          arrayContains: FirebaseAuth.instance.currentUser!.uid)
+                      .get();
+                  List meeters = snap.docs[0]["meeters"];
+                  if (meeters
+                      .contains(FirebaseAuth.instance.currentUser!.uid)) {
+                    Scaffold.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text(
+                        'You already requested for this service',
+                        textAlign: TextAlign.center,
+                        //style: TextStyle(color: Colors.white),
+                      ),
+                    ));
+                  } else {
+                    Navigator.of(context).push(
+                      PageRouteBuilder(
+                        opaque: false,
+                        pageBuilder: (BuildContext context, _, __) =>
+                            RequestOfferBuyer(
+                                doc: widget.demand,
+                                personDetails: widget.personDetails),
+                      ),
+                    );
+                  }
                 },
               ),
             ),

@@ -235,19 +235,16 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
               ]),
               SizedBox(height: 20),
               widget.request['location'] == "Physical"
-                  ? Container(
-                      height: 30,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "Location: ${widget.request['location_address']}",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w400, fontSize: 16),
-                            ),
+                  ? Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Location: ${widget.request['location_address']}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400, fontSize: 16),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     )
                   : Row(
                       children: [

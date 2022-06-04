@@ -16,14 +16,9 @@ class Database {
         .collection("chatrooms")
         .doc(chatRoomId)
         .collection("chats")
-<<<<<<< HEAD
         .orderBy("ts")
-=======
-        .orderBy("ts", descending: false)
->>>>>>> ab42009eebeb719801c1c60e2864f4222fb5b12c
         .snapshots();
   }
-
 
   //create chatting session between two people if they havent chatted before
   createChatRoom(
