@@ -29,7 +29,7 @@ class MainListsBuyer extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(
-                      horizontal: w * 2.3, vertical: h * 2.2),
+                      horizontal: w * 2.3, vertical: h * 2.0),
                   child: Text(
                     mainText!,
                     style: TextStyle(
