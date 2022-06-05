@@ -222,6 +222,7 @@ class _DetailBarState extends State<DetailBar> {
                       .where("meeters",
                           arrayContains: FirebaseAuth.instance.currentUser!.uid)
                       .get();
+
                   List meeters = snap.docs[0]["meeters"];
 
                   if (meeters
