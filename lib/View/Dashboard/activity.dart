@@ -90,9 +90,6 @@ class _ActivityScreenState extends State<ActivityScreen> {
       ),
       body: Column(
         children: [
-          SizedBox(
-            height: h * 16.8,
-          ),
           Expanded(
             child: Container(
               height: h * 72.5,
