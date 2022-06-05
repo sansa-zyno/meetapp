@@ -212,7 +212,8 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
                       .where("meeters",
                           arrayContains: FirebaseAuth.instance.currentUser!.uid)
                       .get();
-                  List meeters = snap.docs[0]["meeters"];
+                  List meeters =
+                      snap.docs.length > 0 ? snap.docs[0]["meeters"] : [];
                   if (meeters
                       .contains(FirebaseAuth.instance.currentUser!.uid)) {
                     Scaffold.of(context).showSnackBar(SnackBar(

@@ -205,7 +205,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                             : "${dt.year} ${dt.month} ${dt.day}" ==
                                     "${dateNow.year} ${dateNow.month} ${(dateNow.day) - 1}"
                                 ? "Yesterday"
-                                : formatDate(dt, [M, ' ', dd, ' ,', yyyy]);
+                                : formatDate(dt, [M, ' ', dd, ', ', yyyy]);
                         return Column(children: [
                           Text(
                             date,

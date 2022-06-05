@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -223,7 +225,12 @@ class _DetailBarState extends State<DetailBar> {
                           arrayContains: FirebaseAuth.instance.currentUser!.uid)
                       .get();
 
-                  List meeters = snap.docs[0]["meeters"];
+                  List meeters =
+                      snap.docs.length > 0 ? snap.docs[0]["meeters"] : [];
+                  snap.docs.forEach((element) {
+                    print("element");
+                    log("element.data() ${element.data()}");
+                  });
 
                   if (meeters
                       .contains(FirebaseAuth.instance.currentUser!.uid)) {

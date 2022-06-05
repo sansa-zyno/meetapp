@@ -46,220 +46,214 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
       return bdate.compareTo(adate);
     });
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              SizedBox(
-                height: h * 16.8,
+      appBar: AppBar(
+        toolbarHeight: 90,
+        flexibleSpace: SafeArea(
+          child: Container(
+            height: 90,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: Colors.green,
+                width: 1,
               ),
-              Expanded(
-                child: Container(
-                  height: h * 72.5,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
-                    ),
-                    border: Border.all(
-                      width: w * 0.2,
-                      color: Colors.green,
-                      style: BorderStyle.solid,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Activity",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: w * 6.0,
+                      ),
                     ),
                   ),
-                  child: Column(
+                ),
+              ],
+            ),
+          ),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
+      ),
+      body: Column(
+        children: [
+          SizedBox(
+            height: h * 16.8,
+          ),
+          Expanded(
+            child: Container(
+              height: h * 72.5,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(40),
+                  topRight: Radius.circular(40),
+                ),
+                border: Border.all(
+                  width: w * 0.2,
+                  color: Colors.green,
+                  style: BorderStyle.solid,
+                ),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: h * 1.1,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      SizedBox(
-                        height: h * 1.1,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              child: Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  border: recent == true
-                                      ? Border(
-                                          bottom: BorderSide(
-                                            color: Colors.green,
-                                            width: w * 0.4,
-                                          ),
-                                        )
-                                      : null,
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: w * 2.4, vertical: h * 1.1),
-                                  child: Text(
-                                    "Recent",
-                                    style: TextStyle(
-                                      fontSize: w * 6.0,
-                                    ),
-                                  ),
+                      Expanded(
+                        child: GestureDetector(
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              border: recent == true
+                                  ? Border(
+                                      bottom: BorderSide(
+                                        color: Colors.green,
+                                        width: w * 0.4,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: w * 2.4, vertical: h * 1.1),
+                              child: Text(
+                                "Recent",
+                                style: TextStyle(
+                                  fontSize: w * 6.0,
                                 ),
                               ),
-                              onTap: () {
-                                setState(() {
-                                  recent = true;
-                                  upcomming = false;
-                                });
-                              },
                             ),
                           ),
-                          Expanded(
-                            child: GestureDetector(
-                              child: Container(
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  border: upcomming == true
-                                      ? Border(
-                                          bottom: BorderSide(
-                                            color: Colors.green,
-                                            width: w * 0.4,
-                                          ),
-                                        )
-                                      : null,
-                                ),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: w * 2.4, vertical: h * 1.1),
-                                  child: Text(
-                                    "Upcoming ",
-                                    style: TextStyle(
-                                      fontSize: w * 6.0,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  recent = false;
-                                  upcomming = true;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        height: h * 2.2,
-                        child: Divider(
-                          thickness: 1,
-                          color: Colors.grey[300],
+                          onTap: () {
+                            setState(() {
+                              recent = true;
+                              upcomming = false;
+                            });
+                          },
                         ),
                       ),
-                      SizedBox(
-                        height: h * 0.5,
+                      Expanded(
+                        child: GestureDetector(
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              border: upcomming == true
+                                  ? Border(
+                                      bottom: BorderSide(
+                                        color: Colors.green,
+                                        width: w * 0.4,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: w * 2.4, vertical: h * 1.1),
+                              child: Text(
+                                "Upcoming ",
+                                style: TextStyle(
+                                  fontSize: w * 6.0,
+                                ),
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              recent = false;
+                              upcomming = true;
+                            });
+                          },
+                        ),
                       ),
-                      recent
-                          ? Expanded(
-                              child: ListView.builder(
-                                  itemCount: combinedDoc.length,
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.all(0),
-                                  physics: ClampingScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    return combinedDoc[index]["type"] ==
-                                                "text" ||
-                                            combinedDoc[index]["type"] ==
-                                                "image"
+                    ],
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: h * 2.2,
+                    child: Divider(
+                      thickness: 1,
+                      color: Colors.grey[300],
+                    ),
+                  ),
+                  SizedBox(
+                    height: h * 0.5,
+                  ),
+                  recent
+                      ? Expanded(
+                          child: ListView.builder(
+                              itemCount: combinedDoc.length,
+                              shrinkWrap: true,
+                              padding: EdgeInsets.all(0),
+                              physics: ClampingScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return combinedDoc[index]["type"] == "text" ||
+                                        combinedDoc[index]["type"] == "image"
+                                    ? RecentData(
+                                        clr: Colors.blue,
+                                        msg: combinedDoc[index],
+                                        text: "msg",
+                                      )
+                                    : combinedDoc[index]["accepted"] == null &&
+                                            combinedDoc[index]["modified"] ==
+                                                null
                                         ? RecentData(
                                             clr: Colors.blue,
-                                            msg: combinedDoc[index],
-                                            text: "msg",
+                                            request: combinedDoc[index],
+                                            text: "new",
                                           )
-                                        : combinedDoc[index]["accepted"] ==
-                                                    null &&
-                                                combinedDoc[index]
-                                                        ["modified"] ==
-                                                    null
+                                        : combinedDoc[index]["accepted"] ??
+                                                false
                                             ? RecentData(
                                                 clr: Colors.blue,
                                                 request: combinedDoc[index],
-                                                text: "new",
+                                                text: "accepted",
                                               )
-                                            : combinedDoc[index]["accepted"] ??
+                                            : combinedDoc[index]["modified"] ??
                                                     false
                                                 ? RecentData(
                                                     clr: Colors.blue,
                                                     request: combinedDoc[index],
-                                                    text: "accepted",
+                                                    text: "modified",
                                                   )
-                                                : combinedDoc[index]
-                                                            ["modified"] ??
-                                                        false
+                                                : !(combinedDoc[index]
+                                                            ["accepted"] ??
+                                                        true)
                                                     ? RecentData(
                                                         clr: Colors.blue,
                                                         request:
                                                             combinedDoc[index],
-                                                        text: "modified",
+                                                        text: "cancelled",
                                                       )
-                                                    : !(combinedDoc[index]
-                                                                ["accepted"] ??
-                                                            true)
-                                                        ? RecentData(
-                                                            clr: Colors.blue,
-                                                            request:
-                                                                combinedDoc[
-                                                                    index],
-                                                            text: "cancelled",
-                                                          )
-                                                        : Container();
-                                  }),
-                            )
-                          : Container(),
-                      upcomming
-                          ? Expanded(
-                              child: UpcomingData(
-                                  clr: Colors.green, requests: requestDoc))
-                          : Container(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SafeArea(
-            child: Container(
-              height: 90,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  color: Colors.green,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Activity",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: w * 6.0,
-                        ),
-                      ),
-                    ),
-                  ),
+                                                    : Container();
+                              }),
+                        )
+                      : Container(),
+                  upcomming
+                      ? Expanded(
+                          child: UpcomingData(
+                              clr: Colors.green, requests: requestDoc))
+                      : Container(),
                 ],
               ),
             ),
-          )
+          ),
         ],
       ),
     );
