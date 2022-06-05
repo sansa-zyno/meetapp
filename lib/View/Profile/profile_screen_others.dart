@@ -56,58 +56,67 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: userDoc != null ? 300 : kToolbarHeight,
+        flexibleSpace: SafeArea(
+          child: userDoc != null
+              ? Container(
+                  height: 300,
+                  width: double.infinity,
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 230,
+                        width: double.infinity,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(50),
+                            bottomLeft: Radius.circular(50),
+                          ),
+                          child: Container(
+                              child: Image.network(
+                            userDoc!['bannerImage'],
+                            fit: BoxFit.fitWidth,
+                          )),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 130.0),
+                          child: CircularProfileAvatar(
+                            userDoc!['avatarUrl'] ?? '',
+                            backgroundColor: Colors.black,
+                            initialsText: Text(
+                              "+",
+                              textScaleFactor: 1,
+                              style: TextStyle(
+                                  fontFamily: "Nunito",
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 21,
+                                  color: Colors.white),
+                            ),
+                            cacheImage: true,
+                            borderColor: Colors.black,
+                            borderWidth: 5,
+                            elevation: 10,
+                            radius: 50,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Container(),
+        ),
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
+      ),
       body: userDoc != null
           ? Container(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Container(
-                      height: 300,
-                      width: double.infinity,
-                      child: Stack(
-                        children: [
-                          Container(
-                            height: 230,
-                            width: double.infinity,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(50),
-                                bottomLeft: Radius.circular(50),
-                              ),
-                              child: Container(
-                                  child: Image.network(
-                                userDoc!['bannerImage'],
-                                fit: BoxFit.fitWidth,
-                              )),
-                            ),
-                          ),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: const EdgeInsets.only(top: 130.0),
-                              child: CircularProfileAvatar(
-                                userDoc!['avatarUrl'] ?? '',
-                                backgroundColor: Colors.black,
-                                initialsText: Text(
-                                  "+",
-                                  textScaleFactor: 1,
-                                  style: TextStyle(
-                                      fontFamily: "Nunito",
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 21,
-                                      color: Colors.white),
-                                ),
-                                cacheImage: true,
-                                borderColor: Colors.black,
-                                borderWidth: 5,
-                                elevation: 10,
-                                radius: 50,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     Container(
                       alignment: Alignment.center,
                       child: PoppinsText(
