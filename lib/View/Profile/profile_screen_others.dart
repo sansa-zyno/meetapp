@@ -57,7 +57,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: userDoc != null ? 230 : kToolbarHeight,
+        toolbarHeight: 230,
         flexibleSpace: SafeArea(
           child: userDoc != null
               ? Stack(
@@ -110,184 +110,182 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
         foregroundColor: Colors.transparent,
       ),
       body: userDoc != null
-          ? Container(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      alignment: Alignment.center,
-                      child: PoppinsText(
-                        text: userDoc!['displayName'] ?? '',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 22,
-                      ),
+          ? SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    child: PoppinsText(
+                      text: userDoc!['displayName'] ?? '',
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22,
                     ),
-                    Container(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'Positive',
-                        style: TextStyle(color: Colors.orange),
-                      ),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Positive',
+                      style: TextStyle(color: Colors.orange),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    PoppinsText(
-                      text: userDoc!['country'] ?? '',
-                      fontSize: 12,
-                    ),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    Container(
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Flexible(
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              height: 50,
-                              child: GradientButton(
-                                title: "Connection",
-                                clrs: [Colors.blue, Colors.blue],
-                                fontSize: 12,
-                                letterSpacing: 0,
-                                onpressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (ctx) =>
-                                              Connection(widget.id)));
-                                },
-                              ),
-                            ),
-                          ),
-                          Flexible(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              height: 50,
-                              child: GradientButton(
-                                fontSize: 12,
-                                letterSpacing: 0,
-                                title: "Achievement",
-                                textClr: Color(0xff00AEFF),
-                                clrs: [Colors.white, Colors.white],
-                                border: Border.all(color: Colors.blue),
-                                onpressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (ctx) => Achievement()));
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  PoppinsText(
+                    text: userDoc!['country'] ?? '',
+                    fontSize: 12,
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Flexible(
-                          child: GestureDetector(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: about == true
-                                    ? Border(
-                                        bottom: BorderSide(
-                                          color: Color(0xff00AEFF),
-                                          width: 2,
-                                        ),
-                                      )
-                                    : null,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(3.0),
-                                child: PoppinsText(
-                                  text: "About",
-                                ),
-                              ),
+                          child: Container(
+                            alignment: Alignment.center,
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            height: 50,
+                            child: GradientButton(
+                              title: "Connection",
+                              clrs: [Colors.blue, Colors.blue],
+                              fontSize: 12,
+                              letterSpacing: 0,
+                              onpressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) =>
+                                            Connection(widget.id)));
+                              },
                             ),
-                            onTap: () {
-                              setState(() {
-                                about = true;
-                                service = false;
-                                review = false;
-                              });
-                            },
                           ),
                         ),
                         Flexible(
-                          child: GestureDetector(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: service == true
-                                    ? Border(
-                                        bottom: BorderSide(
-                                          color: Color(0xff00AEFF),
-                                          width: 2,
-                                        ),
-                                      )
-                                    : null,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(3.0),
-                                child: PoppinsText(
-                                  text: "Services ",
-                                ),
-                              ),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            height: 50,
+                            child: GradientButton(
+                              fontSize: 12,
+                              letterSpacing: 0,
+                              title: "Achievement",
+                              textClr: Color(0xff00AEFF),
+                              clrs: [Colors.white, Colors.white],
+                              border: Border.all(color: Colors.blue),
+                              onpressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) => Achievement()));
+                              },
                             ),
-                            onTap: () {
-                              setState(() {
-                                about = false;
-                                service = true;
-                                review = false;
-                              });
-                            },
-                          ),
-                        ),
-                        Flexible(
-                          child: GestureDetector(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: review == true
-                                    ? Border(
-                                        bottom: BorderSide(
-                                          color: Color(0xff00AEFF),
-                                          width: 2,
-                                        ),
-                                      )
-                                    : null,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(3.0),
-                                child: PoppinsText(
-                                  text: "Reviews ",
-                                ),
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                about = false;
-                                service = false;
-                                review = true;
-                              });
-                            },
                           ),
                         ),
                       ],
                     ),
-                    about == true ? About(userDoc!, widget.id) : Container(),
-                    service == true ? Services(widget.id) : Container(),
-                    review == true ? Review() : Container(),
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: about == true
+                                  ? Border(
+                                      bottom: BorderSide(
+                                        color: Color(0xff00AEFF),
+                                        width: 2,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: PoppinsText(
+                                text: "About",
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              about = true;
+                              service = false;
+                              review = false;
+                            });
+                          },
+                        ),
+                      ),
+                      Flexible(
+                        child: GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: service == true
+                                  ? Border(
+                                      bottom: BorderSide(
+                                        color: Color(0xff00AEFF),
+                                        width: 2,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: PoppinsText(
+                                text: "Services ",
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              about = false;
+                              service = true;
+                              review = false;
+                            });
+                          },
+                        ),
+                      ),
+                      Flexible(
+                        child: GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: review == true
+                                  ? Border(
+                                      bottom: BorderSide(
+                                        color: Color(0xff00AEFF),
+                                        width: 2,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(3.0),
+                              child: PoppinsText(
+                                text: "Reviews ",
+                              ),
+                            ),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              about = false;
+                              service = false;
+                              review = true;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  about == true ? About(userDoc!, widget.id) : Container(),
+                  service == true ? Services(widget.id) : Container(),
+                  review == true ? Review() : Container(),
+                ],
               ),
             )
           : Container(
