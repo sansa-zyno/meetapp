@@ -295,6 +295,8 @@ class TimerController extends GetxController {
                   });
                   isDialogShown = true;
                   Get.back();
+                  Get.back();
+                  Get.back();
                   ref2.update({
                     // "startAt": FieldValue.serverTimestamp(),
                     "seconds": 0,
