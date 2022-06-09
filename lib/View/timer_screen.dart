@@ -109,9 +109,9 @@ class _TimerState extends State<Timer> {
                                   child: Text(
                                     timerController.isMeetingRunning.value
                                         ? '${timerController.minutes}:${timerController.seconds}'
-                                            '\n Long press\nto pause or\nresume &'
-                                            '\n Touch to end.'
-                                        : 'Touch to\nbegin/end your\nmeeting',
+                                            '\n Touch to\npause or\nresume &'
+                                            '\n Long Press to end.'
+                                        : 'Long Press to\nbegin/end your\nmeeting',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: w * 4.8,
@@ -130,13 +130,39 @@ class _TimerState extends State<Timer> {
                               ),
                             ),
                             onTap: () async {
+                              if (timerController.isMeetingRunning.value) {
+                                ref2.set({
+                                  // "startAt": FieldValue.serverTimestamp(),
+                                  "meetId": directory,
+                                  "seconds": 2,
+                                  "start_requester_id": "",
+                                  "pause_requester_id": UserController().auth.currentUser?.uid,
+                                  "finished_at_minutes": "",
+                                  "finished_at_seconds": "",
+                                }).then((value) {
+                                  ref.set({
+                                    "meetId": directory,
+                                    "startAt": ServerValue.timestamp,
+                                    "seconds": 2,
+                                    "start_requester_id": "",
+                                    "pause_requester_id": UserController().auth.currentUser?.uid,
+                                    "finished_at_minutes": "",
+                                    "finished_at_seconds": "",
+                                  });
+                                  log("in on long press passing a pause request");
+                                });
+                              } else {
+                                log("onLongPress meeting not running and not not paused ");
+                              }
+                            },
+                            onLongPress: () {
+                              //+------------------------------------------------
                               //+start the timer here.
                               log("current user id is: ${UserController().auth.currentUser}");
                               log("current user id is: ${UserController().auth.currentUser?.uid}");
                               timerController.isStartAnswered.value = false;
                               timerController.isPauseAnswered.value = false;
                               //+ the above line is working and fetching the user alright
-
                               try {
                                 // if (!timerController.isMeetingRunning.value
                                 // && UserController().auth.currentUser?.uid == widget.request["seller_id"]
@@ -149,75 +175,29 @@ class _TimerState extends State<Timer> {
                                   "meetId": directory,
                                   "seconds": -2,
                                   "start_requester_id": UserController().auth.currentUser?.uid,
-                                  "pause_requester_id": ""
+                                  "pause_requester_id": "",
+                                  "finished_at_minutes": timerController.minutes.value,
+                                  "finished_at_seconds": timerController.seconds.value,
                                 }).then((value) {
                                   ref.set({
                                     "meetId": directory,
                                     "startAt": ServerValue.timestamp,
                                     "seconds": -2,
                                     "start_requester_id": UserController().auth.currentUser?.uid,
-                                    "pause_requester_id": ""
+                                    "pause_requester_id": "",
+                                    "finished_at_minutes": timerController.minutes.value,
+                                    "finished_at_seconds": timerController.seconds.value,
                                   });
                                   log("in on Tap passed a start/stop request");
                                   // timerController.meetingMode();
                                 });
-
-                                // }
                               } catch (e) {
-                                // showDialog(
-                                //     context: context,
-                                //     builder: (BuildContext context) =>
-                                //         AlertDialog(
-                                //           title: Text(
-                                //               "Following error was thrown while "
-                                //                   "starting the meeting timer: ${e.toString()}"),
-                                //           actions: [
-                                //             TextButton(
-                                //               child: const Text("Ok"),
-                                //               onPressed: () async {
-                                //                 Navigator.pop(context);
-                                //               },
-                                //             ),
-                                //             // FlatButton(
-                                //             //   child:
-                                //             //   const Text("No"),
-                                //             //   onPressed: () {
-                                //             //     Navigator.pop(
-                                //             //         context);
-                                //             //   },
-                                //             // )
-                                //           ],
-                                //         ));
                                 Get.defaultDialog(
                                     title: "Error!",
                                     middleText: "Following error was thrown while "
                                         "starting the meeting timerController.timer: ${e.toString()}");
                               }
-                              // } else {
-                              //   log("token is null.");
-                              // }
-                            },
-                            onLongPress: () {
-                              if (timerController.isMeetingRunning.value) {
-                                ref2.set({
-                                  // "startAt": FieldValue.serverTimestamp(),
-                                  "meetId": directory,
-                                  "seconds": 2,
-                                  "start_requester_id": "",
-                                  "pause_requester_id": UserController().auth.currentUser?.uid
-                                }).then((value) {
-                                  ref.set({
-                                    "meetId": directory,
-                                    "startAt": ServerValue.timestamp,
-                                    "seconds": 2,
-                                    "start_requester_id": "",
-                                    "pause_requester_id": UserController().auth.currentUser?.uid
-                                  });
-                                  log("in on long press passing a pause request");
-                                });
-                              } else {
-                                log("onLongPress meeting not running and not not paused ");
-                              }
+                              //+------------------------------------------------
                             },
                           );
                         }),
@@ -332,8 +312,8 @@ class _TimerState extends State<Timer> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                              Expanded(
-                              child: Text("Touch to Start or End the meeting & "
-                                  "Long-Press to Pause or Resume the meeting.",
+                              child: Text("Long-Press to Start or End the meeting & "
+                                  "Touch to Pause or Resume the meeting.",
                                 style: TextStyle(
                                   fontSize: w * 3.8,
                                   fontWeight: FontWeight.w400,

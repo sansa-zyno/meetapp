@@ -213,38 +213,41 @@ class TimerController extends GetxController {
           log("cancel timer called.");
           // meetingMode(); //+ I added this 23-4
           log("local values are: lMinutes: $lMinutes and "
-              "lSeconds: $lSeconds");
+              "dataMap['finished_at_minutes'] is: ${dataMap['finished_at_minutes']}"
+              "lSeconds: $lSeconds and dataMap['finished_at_seconds'] is: ${dataMap['finished_at_seconds']}");
           totalCharge = 0;
           extraMinutes = 0;
           extraSeconds = 0;
           extraTimeCharge = 0;
           currentCharge = request["price"] / request["duration"];
 
-          if (int.parse(lMinutes) > request["duration"] ||
-              (int.parse(lMinutes) == request["duration"])) {
-            log("inside lMinutes less if request['duration']: ${request["duration"]} \n\n "
-                " int.parse(lMinutes): ${int.parse(lMinutes)}");
+          if (int.parse(dataMap['finished_at_minutes']) > request["duration"] ||
+              (int.parse(dataMap['finished_at_minutes']) == request["duration"])) {
+            log("inside dataMap['finished_at_minutes'] less if request['duration']: ${request["duration"]} \n\n "
+                " int.parse(dataMap['finished_at_minutes']): ${int.parse(dataMap['finished_at_minutes'])}");
             totalCharge = request["duration"] * currentCharge;
-            extraMinutes = (int.parse(lMinutes) - request["duration"]).toInt();
-            extraSeconds = int.parse(lSeconds);
+            extraMinutes = (int.parse(dataMap['finished_at_minutes']) - request["duration"]).toInt();
+            extraSeconds = int.parse(dataMap['finished_at_seconds']);
             log("total charge is: $totalCharge");
             extraTimeCharge = extraMinutes * extraCharge;
             extraTimeCharge += extraSeconds * (extraCharge / 60);
             totalCharge += extraTimeCharge;
           } else {
             log("inside else less if");
-            totalCharge = int.parse(lMinutes) * currentCharge;
+            totalCharge = int.parse(dataMap['finished_at_minutes']) * currentCharge;
             totalCharge +=
-                ((int.parse(lSeconds) * (currentCharge / 60)).toPrecision(3))
+                ((int.parse(dataMap['finished_at_seconds']) * (currentCharge / 60)).toPrecision(3))
                     .toPrecision(2);
           }
           // resetTimer();
-          log("after refreshing minutes: $minutes"
-              " Seconds: $seconds");
+          log("after refreshing minutes: $minutes and "
+              "dataMap['finished_at_minutes'] is: ${dataMap['finished_at_minutes']}"
+              " Seconds: $seconds dataMap['finished_at_seconds'] is: ${dataMap['finished_at_seconds']}");
           log("returnVValue of leaveChannel is:");
           log("\n\n\n"
               "You were in the meeting for "
-              "$lMinutes minutes and $seconds lSeconds. "
+              "$lMinutes minutes and dataMap['finished_at_minutes']: ${dataMap['finished_at_minutes']} "
+              "and $seconds lSeconds. and dataMap['finished_at_seconds'] is: ${dataMap['finished_at_seconds']}"
               "You are being charged \$$totalCharge for "
               "this meeting."
               "\n\n\n");
@@ -265,7 +268,7 @@ class TimerController extends GetxController {
                 title: "Attention!",
                 middleText: "$name "
                     "${name == "You" ? "were" : "was"} in the meeting for "
-                    "$lMinutes minutes and $lSeconds seconds. "
+                    "${dataMap['finished_at_minutes']} minutes and ${dataMap['finished_at_seconds']} seconds. "
                     "$pronoun ${pronoun == "You" ? "are" : "is"} being charged "
                     "\$${totalCharge.toPrecision(2)} for "
                     "this meeting.",
