@@ -130,21 +130,20 @@ class _TimerState extends State<Timer> {
                               ),
                             ),
                             onTap: () async {
+                              //+ onTap is for Pause and Resume
                               if (timerController.isMeetingRunning.value) {
-                                ref2.set({
+                                ref2.update({
                                   // "startAt": FieldValue.serverTimestamp(),
                                   "meetId": directory,
                                   "seconds": 2,
-                                  "start_requester_id": "",
                                   "pause_requester_id": UserController().auth.currentUser?.uid,
                                   "finished_at_minutes": "",
                                   "finished_at_seconds": "",
                                 }).then((value) {
-                                  ref.set({
+                                  ref.update({
                                     "meetId": directory,
                                     "startAt": ServerValue.timestamp,
                                     "seconds": 2,
-                                    "start_requester_id": "",
                                     "pause_requester_id": UserController().auth.currentUser?.uid,
                                     "finished_at_minutes": "",
                                     "finished_at_seconds": "",
@@ -156,6 +155,8 @@ class _TimerState extends State<Timer> {
                               }
                             },
                             onLongPress: () {
+                              //+onLongPress is for meeting Start or Stop.
+
                               //+------------------------------------------------
                               //+start the timer here.
                               log("current user id is: ${UserController().auth.currentUser}");
@@ -169,7 +170,7 @@ class _TimerState extends State<Timer> {
                                 // ) {
                                 log("\n\n started the timerController.timer in then after "
                                     "joining the channel.\n\n");
-                                //+ requesting meeting start or stop.
+                                //+onLongPress requesting meeting start or stop.
                                 ref2.set({
                                   // "startAt": FieldValue.serverTimestamp(),
                                   "meetId": directory,
