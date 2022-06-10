@@ -132,7 +132,7 @@ class _TimerState extends State<Timer> {
                             onTap: () async {
                               //+ onTap is for Pause and Resume
                               if (timerController.isMeetingRunning.value) {
-                                ref2.update({
+                                ref2.set({
                                   // "startAt": FieldValue.serverTimestamp(),
                                   "meetId": directory,
                                   "seconds": 2,
@@ -140,7 +140,7 @@ class _TimerState extends State<Timer> {
                                   "finished_at_minutes": "",
                                   "finished_at_seconds": "",
                                 }).then((value) {
-                                  ref.update({
+                                  ref.set({
                                     "meetId": directory,
                                     "startAt": ServerValue.timestamp,
                                     "seconds": 2,
