@@ -312,9 +312,9 @@ class TimerController extends GetxController {
                   });
                   isDialogShown = true;
                   Get.back();
-                  Get.back();
-                  Get.back();
-                  // Get.offAll(() => BottomNavBar(),transition: Transition.rightToLeft,);
+                  // Get.back();
+                  // Get.back();
+                  Get.offAll(() => BottomNavBar(),transition: Transition.rightToLeft,);
                   // Navigator.pushAndRemoveUntil(
                   //     context,
                   //     PageTransition(
