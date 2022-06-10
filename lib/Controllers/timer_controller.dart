@@ -178,6 +178,7 @@ class TimerController extends GetxController {
     log("startStream called ....................");
     isStreamCalled = true;
     requestData = request.data() as Map<String, dynamic>;
+    log("requestData after setting is: ${requestData}");
     var directory = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
     log("request: ${request.data()}");
 
