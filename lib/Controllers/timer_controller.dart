@@ -71,6 +71,7 @@ class TimerController extends GetxController {
     log('time is: ${minutes.value}:${seconds.value}');
     log("before request data empty if  requestData:");
     if (requestData != {}) {
+      log("inside request data if: ");
       if (int.parse(minutes.value) == int.parse(requestData['duration'])) {
         var directory = getChatRoomIdByUsernames(requestData['seller_id'], requestData['buyer_id']);
         log("request: ${requestData}");
