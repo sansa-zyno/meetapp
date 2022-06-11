@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:image_picker/image_picker.dart';
@@ -14,9 +13,8 @@ class UserController with ChangeNotifier {
   OurUser get getCurrentUser => _currentUser;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-
-  bool isUploading = false;
+  bool isAvatarUploading = false;
+  bool isBannerUploading = false;
   late File file;
   ImagePicker img = ImagePicker();
   String postId = Uuid().v4();
@@ -40,6 +38,8 @@ class UserController with ChangeNotifier {
         "avatarUrl": mediaUrl,
       });
       await getCurrentUserInfo();
+      isAvatarUploading = false;
+      notifyListeners();
     }
 
     uploadToStorage(String uid) async {
@@ -54,6 +54,8 @@ class UserController with ChangeNotifier {
           await img.getImage(source: ImageSource.gallery, imageQuality: 25);
       File file = File(getImage!.path);
       this.file = file;
+      isAvatarUploading = true;
+      notifyListeners();
       await uploadToStorage(uid);
     }
 
@@ -79,6 +81,8 @@ class UserController with ChangeNotifier {
         "bannerImage": mediaUrl,
       });
       await getCurrentUserInfo();
+      isBannerUploading = false;
+      notifyListeners();
     }
 
     uploadToStorage(String uid) async {
@@ -96,6 +100,8 @@ class UserController with ChangeNotifier {
           imageQuality: 25);
       File file = File(getImage!.path);
       this.file = file;
+      isBannerUploading = true;
+      notifyListeners();
       await uploadToStorage(uid);
     }
 

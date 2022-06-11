@@ -131,10 +131,12 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             .collection('users')
             .where('uid', isEqualTo: widget.users[i])
             .get();
-        user = OurUser.fromFireStore(_doc.docs[0]);
-        profilePicUrl = user!.avatarUrl!;
-        //name = username;
-        setState(() {});
+        if (_doc.docs.isNotEmpty) {
+          user = OurUser.fromFireStore(_doc.docs[0]);
+          profilePicUrl = user!.avatarUrl!;
+          //name = username;
+          setState(() {});
+        }
       }
     }
 
@@ -161,14 +163,17 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     }
   }
 
-  @override
+  /* @override
   void initState() {
-    getOtherPersonInfoAndProductName();
     super.initState();
-  }
+    getOtherPersonInfoAndProductName();
+  }*/
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      getOtherPersonInfoAndProductName();
+    });
     return user != null
         ? GestureDetector(
             onTap: () async {

@@ -45,7 +45,7 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
   late UserController _currentUser;
 
   bool value = false;
-
+  bool isUploading = false;
   File? _image;
   String _bannerImage = '';
 
@@ -56,6 +56,9 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
     String fileName = '${DateTime.now().toString()}.png';
 
     if (image != null) {
+      isUploading = true;
+      setState(() {});
+
       ///Saving Pdf to firebase
       Reference reference = FirebaseStorage.instance.ref().child(fileName);
       UploadTask uploadTask =
@@ -65,6 +68,7 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
       setState(() {
         _image = File(image.path);
         _bannerImage = urlImage;
+        isUploading = false;
       });
     }
   }
@@ -168,10 +172,16 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                               border: Border.all(
                                   color: Color(0xff00AEFF), width: 1),
                               borderRadius: BorderRadius.circular(20)),
-                          child: Image.network(
-                            _bannerImage,
-                            fit: BoxFit.fill,
-                          ))
+                          child: isUploading
+                              ? Center(
+                                  child: Container(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : Image.network(
+                                  _bannerImage,
+                                  fit: BoxFit.fill,
+                                ))
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: Container(
@@ -182,10 +192,16 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                                 border: Border.all(
                                     color: Color(0xff00AEFF), width: 1),
                                 borderRadius: BorderRadius.circular(20)),
-                            child: Image.file(
-                              _image!,
-                              fit: BoxFit.cover,
-                            ),
+                            child: isUploading
+                                ? Center(
+                                    child: Container(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  )
+                                : Image.file(
+                                    _image!,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                   onTap: () {

@@ -42,7 +42,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
   List<String> tagssss = [];
 
   bool value = false;
-
+  bool isUploading = false;
   File? _image;
   String _bannerImage = '';
 
@@ -53,6 +53,9 @@ class _DemandSetupSetupState extends State<DemandSetup> {
     String fileName = '${DateTime.now().toString()}.png';
 
     if (image != null) {
+      isUploading = true;
+      setState(() {});
+
       ///Saving Pdf to firebase
       Reference reference = FirebaseStorage.instance.ref().child(fileName);
       UploadTask uploadTask =
@@ -62,6 +65,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
       setState(() {
         _image = File(image.path);
         _bannerImage = urlImage;
+        isUploading = false;
       });
     }
   }
@@ -149,7 +153,11 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                               border: Border.all(
                                   color: Color(0xff00AEFF), width: 1),
                               borderRadius: BorderRadius.circular(20)),
-                          child: Image.asset("assets/images/image.png"),
+                          child: isUploading
+                              ? Center(
+                                  child: Container(
+                                      child: CircularProgressIndicator()))
+                              : Image.asset("assets/images/image.png"),
                         )
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(20),
@@ -161,10 +169,14 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                                 border: Border.all(
                                     color: Color(0xff00AEFF), width: 1),
                                 borderRadius: BorderRadius.circular(20)),
-                            child: Image.file(
-                              _image!,
-                              fit: BoxFit.cover,
-                            ),
+                            child: isUploading
+                                ? Center(
+                                    child: Container(
+                                        child: CircularProgressIndicator()))
+                                : Image.file(
+                                    _image!,
+                                    fit: BoxFit.cover,
+                                  ),
                           ),
                         ),
                   onTap: () {

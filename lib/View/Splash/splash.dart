@@ -1,68 +1,76 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flare_splash_screen/flare_splash_screen.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:meeter/Providers/user_controller.dart';
 import 'package:meeter/View/Profile/profile_setup.dart';
-import 'package:move_to_background/move_to_background.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Splash extends StatefulWidget {
   @override
-  _SplashState createState() => _SplashState();
+  SplashState createState() => new SplashState();
 }
 
-class _SplashState extends State<Splash> {
-  late String wid;
-  FirebaseAuth auth = FirebaseAuth.instance;
+class SplashState extends State<Splash> with SingleTickerProviderStateMixin {
+  var _visible = true;
 
-  Future<String> checkFirstSeen() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool _seen = (prefs.getBool('seen') ?? false);
-    if (_seen) {
-      return "Seen";
-    } else {
-      await prefs.setBool('seen', true);
-      return "Not Seen";
-    }
+  late AnimationController animationController;
+  late Animation<double> animation;
+
+  startTime() async {
+    var _duration = new Duration(seconds: 5);
+    return new Timer(_duration, navigationPage);
+  }
+
+  Future<void> navigationPage() async {
+    Navigator.of(context)
+        .pushReplacement(MaterialPageRoute(builder: (ctx) => ProfileSetup()));
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
+  initState() {
     super.initState();
-    checkFirstSeen().then((value) => wid = value);
+
+    animationController = new AnimationController(
+        vsync: this, duration: new Duration(seconds: 3));
+    animation =
+        new CurvedAnimation(parent: animationController, curve: Curves.easeOut);
+
+    animation.addListener(() => this.setState(() {}));
+
+    animationController.forward();
+
+    setState(() {
+      _visible = !_visible;
+    });
+    startTime();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    animation.removeListener(() {});
+    animationController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    UserController _currentUser =
-        Provider.of<UserController>(context, listen: false);
-
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SplashScreen.navigate(
-        name: 'assets/flare/meeter.flr',
-        startAnimation: "splash",
-        next: (context) {
-          if (wid == "Seen") {
-            return WillPopScope(
-              onWillPop: () async {
-                MoveToBackground.moveTaskToBack();
-                return false;
-              },
-              child: ProfileSetup(),
-            );
-          } else if (wid == "Not Seen") {
-            return ProfileSetup();
-          } else {
-            return ProfileSetup();
-          }
-        },
-        until: () async {
-          await _currentUser.getCurrentUserInfo();
-          return;
-        },
+      body: Container(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        color: Colors.white,
+        child: new Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                new Image.asset(
+                  'assets/meeterLogo.png',
+                  width: animation.value * 100,
+                  height: animation.value * 100,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

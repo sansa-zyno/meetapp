@@ -53,6 +53,9 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
     }
   }
 
+  double placeLat = 0.0;
+  double placeLng = 0.0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -288,7 +291,9 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                               controller: _locationController,
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
-                                hintText: 'Search and pin a Location',
+                                hintText:
+                                    'Search a place. Pin location by long-pressing on the map',
+                                hintMaxLines: 2,
                                 prefixIcon: Icon(
                                   Icons.location_on,
                                   color: Colors.green,
@@ -326,6 +331,8 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                                       _mapController.complete(controller);
                                     },
                                     onLongPress: (LatLng position) async {
+                                      placeLat = position.latitude;
+                                      placeLng = position.longitude;
                                       List<Placemark> placemarks =
                                           await placemarkFromCoordinates(
                                               position.latitude,
@@ -448,7 +455,9 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                             "meeters": [
                               widget.doc.demand_person_uid,
                               _currentUser.getCurrentUser.uid
-                            ]
+                            ],
+                            "placeLat": placeLat,
+                            "placeLng": placeLng
                           };
                           if (_value == 1) {
                             if (_locationController.text != "") {
@@ -461,15 +470,6 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                                   .doc(widget.personDetails.uid)
                                   .collection('request')
                                   .add(map);
-                              /* await FirebaseFirestore.instance
-                                    .collection('notifications')
-                                    .doc(widget.personDetails.uid)
-                                    .set({"n": "n"});
-                                await FirebaseFirestore.instance
-                                    .collection('notifications')
-                                    .doc(widget.personDetails.uid)
-                                    .collection('notification')
-                                    .add(map);*/
 
                               AchievementView(
                                 context,
@@ -503,15 +503,6 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                                 .doc(widget.personDetails.uid)
                                 .collection('request')
                                 .add(map);
-                            /* await FirebaseFirestore.instance
-                                    .collection('notifications')
-                                    .doc(widget.personDetails.uid)
-                                    .set({"n": "n"});
-                                await FirebaseFirestore.instance
-                                    .collection('notifications')
-                                    .doc(widget.personDetails.uid)
-                                    .collection('notification')
-                                    .add(map);*/
 
                             AchievementView(
                               context,

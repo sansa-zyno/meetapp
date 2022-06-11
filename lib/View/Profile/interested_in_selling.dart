@@ -20,7 +20,7 @@ class _InterestedSellingState extends State<InterestedSelling> {
   bool yes = false;
   bool no = false;
 
-  getCurrentUser() async {
+  getCurrentUserInfo() async {
     await _currentUser.getCurrentUserInfo();
   }
 
@@ -30,7 +30,7 @@ class _InterestedSellingState extends State<InterestedSelling> {
     super.initState();
     SchedulerBinding.instance!.addPostFrameCallback((_) {
       _currentUser = Provider.of<UserController>(context, listen: false);
-      getCurrentUser();
+      getCurrentUserInfo();
     });
   }
 

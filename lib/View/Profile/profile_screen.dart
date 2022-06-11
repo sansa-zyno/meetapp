@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
 import 'package:meeter/Providers/user_controller.dart';
@@ -27,6 +29,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool demand = false;
   bool review = false;
   late UserController _currentUser;
+  String? recentMeetingDate;
+
+  getRecentMeeting() async {
+    QuerySnapshot q = await FirebaseFirestore.instance
+        .collection("connections")
+        .where("meeters", arrayContains: FirebaseAuth.instance.currentUser!.uid)
+        .orderBy("ts", descending: true)
+        .get();
+    recentMeetingDate = q.docs.isNotEmpty ? q.docs[0]["date"] : null;
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getRecentMeeting();
+    //To update last active when app is already signed in
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _currentUser = Provider.of<UserController>(context, listen: false);
+      _currentUser.getCurrentUserInfo();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +72,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: GestureDetector(
                     child: Container(
-                      child: _currentUser.getCurrentUser.bannerImage != null
-                          ? Image.network(
-                              _currentUser.getCurrentUser.bannerImage!,
-                              fit: BoxFit.fitWidth,
-                            )
-                          : Container(),
-                    ),
+                        child: _currentUser.isBannerUploading
+                            ? Center(
+                                child:
+                                    Container(child: LinearProgressIndicator()))
+                            : Image.network(
+                                _currentUser.getCurrentUser.bannerImage!,
+                                fit: BoxFit.fitWidth,
+                              )),
                     onTap: () async {
                       _currentUser =
                           Provider.of<UserController>(context, listen: false);
@@ -68,8 +94,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 130.0),
                   child: CircularProfileAvatar(
-                    _currentUser.getCurrentUser.avatarUrl ?? '',
-                    backgroundColor: Colors.black,
+                    '',
+                    backgroundColor: Color(0xffDCf0EF),
+                    child: _currentUser.getCurrentUser.avatarUrl != null
+                        ? _currentUser.isAvatarUploading
+                            ? Center(child: CircularProgressIndicator())
+                            : Image.network(
+                                _currentUser.getCurrentUser.avatarUrl!)
+                        : Container(),
                     initialsText: Text(
                       "+",
                       textScaleFactor: 1,
@@ -79,9 +111,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           fontSize: 21,
                           color: Colors.white),
                     ),
-                    cacheImage: true,
-                    borderColor: Colors.black,
-                    borderWidth: 5,
+                    //cacheImage: true,
+                    borderWidth: 2,
                     elevation: 10,
                     radius: 50,
                     onTap: () async {
@@ -97,8 +128,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        elevation: 0.0,
         foregroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
@@ -141,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 5),
                       height: 50,
                       child: GradientButton(
-                        title: "Connection",
+                        title: "Connections",
                         clrs: [widget.clr, widget.clr],
                         fontSize: 12,
                         letterSpacing: 0,
@@ -161,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: GradientButton(
                         fontSize: 12,
                         letterSpacing: 0,
-                        title: "Achievement",
+                        title: "Achievements",
                         textClr: Color(0xff00AEFF),
                         clrs: [Colors.white, Colors.white],
                         border: Border.all(color: widget.clr),
@@ -306,9 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
             about == true
-                ? About(
-                    clr: widget.clr,
-                  )
+                ? About(clr: widget.clr, recentMeetingDate: recentMeetingDate)
                 : Container(),
             service == true ? Services() : Container(),
             demand == true ? Demands() : Container(),

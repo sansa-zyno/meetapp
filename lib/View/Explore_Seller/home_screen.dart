@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:meeter/Services/database.dart';
 import 'package:meeter/Services/nearest_service.dart';
 import 'package:meeter/Widgets/HWidgets/nav_main_buyer.dart';
 import 'package:meeter/Widgets/HWidgets/upcomingMeetings.dart';
@@ -25,6 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   List<MeetupData>? nearest;
   List<QueryDocumentSnapshot>? requests;
   List<MeetupData>? listMeetupData;
+  List<QueryDocumentSnapshot>? messageDoc;
+  List<QueryDocumentSnapshot>? recentActivities;
 
   getNearestMeetups(List<MeetupData> list) async {
     applicationBloc = Provider.of<ApplicationBloc>(context, listen: false);
@@ -59,6 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
       requests = event.docs;
       setState(() {});
     });
+    Database().getChatRooms().listen((event) {
+      messageDoc = event.docs;
+      setState(() {});
+    });
   }
 
   @override
@@ -73,6 +80,24 @@ class _HomeScreenState extends State<HomeScreen> {
     var h = MediaQuery.of(context).size.height / 100;
     UserController _currentUser = Provider.of<UserController>(context);
     OurUser currentUser = _currentUser.getCurrentUser;
+    List<QueryDocumentSnapshot>? latestRequests = requests!
+        .where((element) {
+          DateTime dt = element["ts"].toDate();
+          return "${dt.day} ${dt.month} ${dt.year}" ==
+              "${DateTime.now().day} ${DateTime.now().month} ${DateTime.now().year}";
+        })
+        .where((element) => element["read"] == false)
+        .toList();
+    List<QueryDocumentSnapshot>? latestMsgs = messageDoc!
+        .where((element) {
+          DateTime dt = element["ts"].toDate();
+          return "${dt.day} ${dt.month} ${dt.year}" ==
+              "${DateTime.now().day} ${DateTime.now().month} ${DateTime.now().year}";
+        })
+        .where((element) => element["read"] == false)
+        .toList();
+
+    recentActivities = [...latestRequests, ...latestMsgs];
     return Scaffold(
       key: _scaffoldKey,
       drawer: Menu(
@@ -167,6 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
                               padding: EdgeInsets.symmetric(
@@ -182,6 +208,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     )
                                   : Container(),
                             ),
+                            Stack(children: [
+                              Icon(Icons.notifications),
+                              Positioned(
+                                  top: 0,
+                                  right: 2,
+                                  child: Text("${recentActivities!.length}"))
+                            ])
                           ],
                         ),
                         Row(

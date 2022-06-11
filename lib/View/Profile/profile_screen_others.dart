@@ -37,6 +37,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
   bool about = true;
   bool service = false;
   bool review = false;
+  String? recentMeetingDate;
 
   getUserDetails() async {
     userDoc = await FirebaseFirestore.instance
@@ -46,11 +47,22 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
     setState(() {});
   }
 
+  getRecentMeeting() async {
+    QuerySnapshot q = await FirebaseFirestore.instance
+        .collection("connections")
+        .where("meeters", arrayContains: widget.id)
+        .orderBy("ts", descending: true)
+        .get();
+    recentMeetingDate = q.docs.isNotEmpty ? q.docs[0]["date"] : null;
+    setState(() {});
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getUserDetails();
+    getRecentMeeting();
   }
 
   @override
@@ -83,7 +95,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                         padding: const EdgeInsets.only(top: 130.0),
                         child: CircularProfileAvatar(
                           userDoc!['avatarUrl'] ?? '',
-                          backgroundColor: Colors.black,
+                          backgroundColor: Color(0xffDCf0EF),
                           initialsText: Text(
                             "+",
                             textScaleFactor: 1,
@@ -94,8 +106,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                                 color: Colors.white),
                           ),
                           cacheImage: true,
-                          borderColor: Colors.black,
-                          borderWidth: 5,
+                          borderWidth: 2,
                           elevation: 10,
                           radius: 50,
                         ),
@@ -105,8 +116,9 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                 )
               : Container(),
         ),
-        iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        elevation: 0.0,
         foregroundColor: Colors.transparent,
       ),
       body: userDoc != null
@@ -150,7 +162,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                             padding: EdgeInsets.symmetric(horizontal: 5),
                             height: 50,
                             child: GradientButton(
-                              title: "Connection",
+                              title: "Connections",
                               clrs: [Colors.blue, Colors.blue],
                               fontSize: 12,
                               letterSpacing: 0,
@@ -171,7 +183,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                             child: GradientButton(
                               fontSize: 12,
                               letterSpacing: 0,
-                              title: "Achievement",
+                              title: "Achievements",
                               textClr: Color(0xff00AEFF),
                               clrs: [Colors.white, Colors.white],
                               border: Border.all(color: Colors.blue),
@@ -282,7 +294,9 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                       ),
                     ],
                   ),
-                  about == true ? About(userDoc!, widget.id) : Container(),
+                  about == true
+                      ? About(userDoc!, widget.id, recentMeetingDate)
+                      : Container(),
                   service == true ? Services(widget.id) : Container(),
                   review == true ? Review() : Container(),
                 ],

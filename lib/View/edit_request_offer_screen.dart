@@ -52,6 +52,8 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
   }
 
   final _scacffoldKey = GlobalKey<ScaffoldState>();
+  double placeLat = 0.0;
+  double placeLng = 0.0;
 
   @override
   void initState() {
@@ -301,7 +303,9 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                               controller: _locationController,
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
-                                hintText: 'Search and pin a Location',
+                                hintText:
+                                    "Search a place. Pin location by long-pressing on the map",
+                                hintMaxLines: 2,
                                 prefixIcon: Icon(
                                   Icons.location_on,
                                   color: widget.clr,
@@ -339,6 +343,8 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                       _mapController.complete(controller);
                                     },
                                     onLongPress: (LatLng position) async {
+                                      placeLat = position.latitude;
+                                      placeLng = position.longitude;
                                       List<Placemark> placemarks =
                                           await placemarkFromCoordinates(
                                               position.latitude,
@@ -440,6 +446,8 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                               "hour": _startTime.hour,
                               "min": _startTime.minute
                             },
+                            "placeLat": placeLat,
+                            "placeLng": placeLng
                           };
                           if (_value == 1) {
                             if (_locationController.text != "") {

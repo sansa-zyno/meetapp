@@ -6,7 +6,8 @@ import 'package:readmore/readmore.dart';
 class About extends StatelessWidget {
   DocumentSnapshot userDoc;
   String id;
-  About(this.userDoc, this.id);
+  String? recentMeetingDate;
+  About(this.userDoc, this.id, this.recentMeetingDate);
 
   List<String> count = [
     "First",
@@ -119,7 +120,7 @@ class About extends StatelessWidget {
               ),
             ),
           ),
-          /*SizedBox(
+          SizedBox(
             height: 20,
           ),
           Align(
@@ -139,13 +140,13 @@ class About extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: PoppinsText(
-                text: "N/A",
+                text: recentMeetingDate != null ? recentMeetingDate : "N/A",
                 clr: Colors.black,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),
-          ),*/
+          ),
           SizedBox(
             height: 20,
           ),
@@ -202,6 +203,7 @@ class About extends StatelessWidget {
                     width: MediaQuery.of(context).size.width,
                     child: ListView.builder(
                       shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
                       padding: EdgeInsets.all(5),
                       itemCount: (data.length / 2).ceil(),
                       itemBuilder: (context, index) {

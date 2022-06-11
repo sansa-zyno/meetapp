@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:meeter/Widgets/HWidgets/nav_main_buyer.dart';
 import 'package:meeter/Widgets/HWidgets/search_filter.dart';
 import 'package:meeter/Widgets/HWidgets/menu.dart';
 import 'package:meeter/Providers/application_bloc.dart';
@@ -85,7 +86,8 @@ class _SearchBuyerScreenState extends State<SearchBuyerScreen> {
                               controller: _appBloc.searchController2,
                               decoration: InputDecoration(
                                 prefixIcon: GestureDetector(
-                                  onTap: () => Get.offAll(() => HomeBuyerScreen()),
+                                  onTap: () =>
+                                      Get.offAll(() => BuyerBottomNavBar()),
                                   child: const Icon(
                                     Icons.arrow_back,
                                     color: Colors.black,

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:meeter/Services/database.dart';
 import 'package:meeter/View/Explore_Buyer/search_buyer_screen.dart';
 import 'package:meeter/Widgets/HWidgets/menu.dart';
 import 'package:meeter/Widgets/HWidgets/upcomingMeetings.dart';
@@ -22,6 +23,8 @@ class _HomeBuyerScreenState extends State<HomeBuyerScreen> {
   List<DemandData>? nearest;
   List<QueryDocumentSnapshot>? requests;
   List<DemandData>? listDemandData;
+  List<QueryDocumentSnapshot>? messageDoc;
+  List<QueryDocumentSnapshot>? recentActivities;
 
   getNearestDemands(List<DemandData> list) async {
     applicationBloc = Provider.of<ApplicationBloc>(context, listen: false);
@@ -56,12 +59,37 @@ class _HomeBuyerScreenState extends State<HomeBuyerScreen> {
       requests = event.docs;
       setState(() {});
     });
+    Database().getChatRooms().listen((event) {
+      messageDoc = event.docs;
+      setState(() {});
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width / 100;
     var h = MediaQuery.of(context).size.height / 100;
+    List<QueryDocumentSnapshot> latestRequests = requests != null
+        ? requests!
+            .where((element) {
+              DateTime dt = element["ts"].toDate();
+              return "${dt.day} ${dt.month} ${dt.year}" ==
+                  "${DateTime.now().day} ${DateTime.now().month} ${DateTime.now().year}";
+            })
+            .where((element) => element["read"] == false)
+            .toList()
+        : [];
+    List<QueryDocumentSnapshot> latestMsgs = messageDoc != null
+        ? messageDoc!
+            .where((element) {
+              DateTime dt = element["ts"].toDate();
+              return "${dt.day} ${dt.month} ${dt.year}" ==
+                  "${DateTime.now().day} ${DateTime.now().month} ${DateTime.now().year}";
+            })
+            .where((element) => element["read"] == false)
+            .toList()
+        : [];
+    recentActivities = [...latestRequests, ...latestMsgs];
     return Scaffold(
         key: _scaffoldKey,
         drawer: Menu(
@@ -157,6 +185,7 @@ class _HomeBuyerScreenState extends State<HomeBuyerScreen> {
                             ],
                           ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
                                 child: Padding(
@@ -172,6 +201,13 @@ class _HomeBuyerScreenState extends State<HomeBuyerScreen> {
                                   ),
                                 ),
                               ),
+                              Stack(children: [
+                                Icon(Icons.notifications),
+                                Positioned(
+                                    top: 0,
+                                    right: 2,
+                                    child: Text("${recentActivities!.length}"))
+                              ])
                             ],
                           ),
                           Row(

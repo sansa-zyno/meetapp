@@ -103,163 +103,177 @@ class _InterestedSellersState extends State<InterestedSellers> {
                   ),
                 ),
               ),
-              qdocs != null && qdocs!.docs.take(i).toList().isNotEmpty
-                  ? ListView.builder(
-                      itemCount: qdocs!.docs.take(i).toList().length,
-                      padding: const EdgeInsets.all(0),
-                      physics: ClampingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Color(0xff00AEFF),
-                                border: Border.all(
-                                  color: Colors.grey,
-                                ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Container(
-                                      padding: EdgeInsets.all(8),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Image.network(
-                                              qdocs!.docs[index]
-                                                  ["meetup_seller_image"],
-                                              width: 80,
-                                              height: 70,
-                                              fit: BoxFit.cover),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          PoppinsText(
-                                            text: qdocs!.docs[index]
-                                                ["meetup_seller_name"],
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 12,
-                                            clr: Colors.white,
-                                          ),
-                                        ],
-                                      ),
+              qdocs != null
+                  ? qdocs!.docs.take(i).toList().isNotEmpty
+                      ? ListView.builder(
+                          itemCount: qdocs!.docs.take(i).toList().length,
+                          padding: const EdgeInsets.all(0),
+                          physics: ClampingScrollPhysics(),
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: GestureDetector(
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xff00AEFF),
+                                    border: Border.all(
+                                      color: Colors.grey,
                                     ),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  Expanded(
-                                    flex: 2,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 15, right: 5.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          PoppinsText(
-                                            text: qdocs!.docs[index]
-                                                ["meetup_title"],
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 11,
-                                            align: TextAlign.start,
-                                            clr: Colors.white,
-                                          ),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 1,
+                                        child: Container(
+                                          padding: EdgeInsets.all(8),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
-                                              Expanded(
-                                                child: Text(
-                                                  "Rating:",
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
-                                                    color: Colors.white,
-                                                  ),
-                                                  textAlign: TextAlign.start,
-                                                ),
+                                              Image.network(
+                                                  qdocs!.docs[index]
+                                                      ["meetup_seller_image"],
+                                                  width: 80,
+                                                  height: 70,
+                                                  fit: BoxFit.cover),
+                                              SizedBox(
+                                                height: 10,
                                               ),
-                                              qdocs!.docs[index]
-                                                          ["meetup_likes"] <=
-                                                      10
-                                                  ? Expanded(
-                                                      child: Text(
-                                                        'Positive',
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 14,
-                                                          color: Colors.yellow,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.start,
-                                                      ),
-                                                    )
-                                                  : qdocs!.docs[index][
-                                                                  "meetup_likes"] >
-                                                              10 &&
-                                                          qdocs!.docs[index][
-                                                                  "meetup_likes"] <=
-                                                              100
-                                                      ? Expanded(
-                                                          child: Text(
-                                                            'Very Positive',
-                                                            style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.yellow,
-                                                            ),
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                          ),
-                                                        )
-                                                      : Expanded(
-                                                          child: Text(
-                                                            'Overwhelmingly Positive',
-                                                            style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.yellow,
-                                                            ),
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                          ),
-                                                        )
+                                              PoppinsText(
+                                                text: qdocs!.docs[index]
+                                                    ["meetup_seller_name"],
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 16,
+                                                clr: Colors.white,
+                                              ),
                                             ],
                                           ),
-                                        ],
+                                        ),
                                       ),
-                                    ),
+                                      Expanded(
+                                        flex: 2,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 15, right: 5.0),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              PoppinsText(
+                                                text: qdocs!.docs[index]
+                                                    ["meetup_title"],
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                                align: TextAlign.start,
+                                                clr: Colors.white,
+                                              ),
+                                              SizedBox(
+                                                height: 20,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      "Rating:",
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Colors.white,
+                                                      ),
+                                                      textAlign:
+                                                          TextAlign.start,
+                                                    ),
+                                                  ),
+                                                  qdocs!.docs[index][
+                                                              "meetup_likes"] <=
+                                                          10
+                                                      ? Expanded(
+                                                          child: Text(
+                                                            'Positive',
+                                                            style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 12,
+                                                              color:
+                                                                  Colors.yellow,
+                                                            ),
+                                                            textAlign:
+                                                                TextAlign.start,
+                                                          ),
+                                                        )
+                                                      : qdocs!.docs[index][
+                                                                      "meetup_likes"] >
+                                                                  10 &&
+                                                              qdocs!.docs[index]
+                                                                      [
+                                                                      "meetup_likes"] <=
+                                                                  100
+                                                          ? Expanded(
+                                                              child: Text(
+                                                                'Very Positive',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontSize: 12,
+                                                                  color: Colors
+                                                                      .yellow,
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                              ),
+                                                            )
+                                                          : Expanded(
+                                                              child: Text(
+                                                                'Overwhelmingly Positive',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  fontSize: 12,
+                                                                  color: Colors
+                                                                      .yellow,
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .start,
+                                                              ),
+                                                            )
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
+                                onTap: () {
+                                  MeetupData data =
+                                      MeetupData.fromSnap(qdocs!.docs[index]);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (ctx) =>
+                                              DetailsScreen(data)));
+                                },
                               ),
-                            ),
-                            onTap: () {
-                              MeetupData data =
-                                  MeetupData.fromSnap(qdocs!.docs[index]);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (ctx) => DetailsScreen(data)));
-                            },
-                          ),
-                        );
-                      })
-                  : Container(),
+                            );
+                          })
+                      : Container()
+                  : Center(
+                      child: Container(child: CircularProgressIndicator())),
               SizedBox(height: 10),
               qdocs != null && qdocs!.docs.take(i).toList().isNotEmpty
                   ? Container(

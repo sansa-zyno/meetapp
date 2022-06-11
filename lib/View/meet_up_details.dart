@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:achievement_view/achievement_view.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meeter/Services/database.dart';
 import 'package:meeter/View/Profile/profile_screen_others.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,6 +33,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
   String deleter = "";
   UserController userController = UserController();
   final _scacffoldKey = GlobalKey<ScaffoldState>();
+  final Completer<GoogleMapController> _mapController = Completer();
 
   getChatRoomIdByUsernames(String a, String b) {
     if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
@@ -70,25 +74,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
         .doc(widget.request.id)
         .snapshots()
         .listen((event) {
-      event.data() != null
-          ? {}
-          : AchievementView(
-              context,
-              color: Colors.green,
-              icon: Icon(
-                FontAwesomeIcons.check,
-                color: Colors.white,
-              ),
-              title: deleter == FirebaseAuth.instance.currentUser!.uid
-                  ? "Success!"
-                  : "Alert!",
-              elevation: 20,
-              subTitle: deleter == FirebaseAuth.instance.currentUser!.uid
-                  ? "This request was deleted successfully"
-                  : "This request was deleted by the other party",
-              isCircle: true,
-            ).show();
-      event.data() != null ? {} : Navigator.pop(context);
+      event["accepted"] == false ? Navigator.pop(context) : {};
     });
   }
 
@@ -255,356 +241,202 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                         ),
                       ],
                     ),
+              SizedBox(height: 5),
+              widget.request['location'] == "Physical"
+                  ? Container(
+                      height: 300.0,
+                      child: GoogleMap(
+                        mapType: MapType.normal,
+                        myLocationEnabled: false,
+                        myLocationButtonEnabled: false,
+                        markers: Set<Marker>.of([
+                          Marker(
+                              markerId:
+                                  MarkerId(widget.request['location_address']),
+                              draggable: false,
+                              visible: true,
+                              position: LatLng(
+                                  widget.request['placeLat'].toDouble(),
+                                  widget.request['placeLng'].toDouble()))
+                        ]),
+                        initialCameraPosition: CameraPosition(
+                          target: LatLng(widget.request['placeLat'].toDouble(),
+                              widget.request['placeLng'].toDouble()),
+                          zoom: 14,
+                        ),
+                        onMapCreated: (GoogleMapController controller) {
+                          _mapController.complete(controller);
+                        },
+                      ))
+                  : Container(),
               SizedBox(height: 50),
-              widget.request.exists
-                  ? Center(
-                      child: Column(
-                        children: [
-                          widget.request['declinedBy'] == "" ||
-                                  widget.request['declinedBy'] ==
-                                      FirebaseAuth.instance.currentUser!.uid
-                              ? StreamBuilder(
-                                  stream: FirebaseFirestore.instance
-                                      .collection("requests")
-                                      .doc(widget.request['seller_id'])
-                                      .collection('request')
-                                      .doc(widget.request.id)
-                                      .snapshots(),
-                                  builder: (context, snapshot) {
-                                    DocumentSnapshot? doc =
-                                        snapshot.data as DocumentSnapshot?;
-                                    return snapshot.hasData &&
-                                            doc!.data() != null
-                                        ? !(doc['accepted'] ?? false)
-                                            ? GestureDetector(
-                                                onTap: () async {
-                                                  await Database()
-                                                      .acceptRequest(
+              Center(
+                child: Column(
+                  children: [
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection("requests")
+                            .doc(widget.request['seller_id'])
+                            .collection('request')
+                            .doc(widget.request.id)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          DocumentSnapshot? doc =
+                              snapshot.data as DocumentSnapshot?;
+                          return snapshot.hasData && doc!.data() != null
+                              ? !(doc['accepted'] ?? false)
+                                  ? GestureDetector(
+                                      onTap: () async {
+                                        await Database().acceptRequest(
+                                            widget.request['seller_id'],
+                                            widget.request.id,
+                                            widget.request['buyer_id']);
+                                        AchievementView(
+                                          context,
+                                          color: Colors.green,
+                                          icon: Icon(
+                                            FontAwesomeIcons.check,
+                                            color: Colors.white,
+                                          ),
+                                          title: "Succesfull !",
+                                          elevation: 20,
+                                          subTitle:
+                                              "Request accepted succesfully",
+                                          isCircle: true,
+                                        ).show();
+                                      },
+                                      child: Container(
+                                        width: 120,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: widget.clr),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          color: widget.clr,
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text('Accept',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                        ),
+                                      ),
+                                    )
+                                  : Container()
+                              : Container();
+                        }),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection("requests")
+                            .doc(widget.request['seller_id'])
+                            .collection('request')
+                            .doc(widget.request.id)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          DocumentSnapshot? doc =
+                              snapshot.data as DocumentSnapshot?;
+                          return snapshot.hasData && doc!.data() != null
+                              ? (doc['accepted'] ?? true)
+                                  ? GestureDetector(
+                                      onTap: () async {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                AlertDialog(
+                                                  title: const Text(
+                                                      'Are you sure to decline meeting ?'),
+                                                  actions: [
+                                                    FlatButton(
+                                                      child: Text("Yes"),
+                                                      onPressed: () async {
+                                                        await Database()
+                                                            .cancelRequest(
                                                           widget.request[
                                                               'seller_id'],
                                                           widget.request.id,
-                                                          widget.request[
-                                                              'buyer_id']);
-                                                  AchievementView(
-                                                    context,
-                                                    color: Colors.green,
-                                                    icon: Icon(
-                                                      FontAwesomeIcons.check,
-                                                      color: Colors.white,
-                                                    ),
-                                                    title: "Succesfull !",
-                                                    elevation: 20,
-                                                    subTitle:
-                                                        "Request accepted succesfully",
-                                                    isCircle: true,
-                                                  ).show();
-                                                },
-                                                child: Container(
-                                                  width: 120,
-                                                  decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        color: widget.clr),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                    color: widget.clr,
-                                                  ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Text('Accept',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white)),
-                                                  ),
-                                                ),
-                                              )
-                                            : Container()
-                                        : Container();
-                                  })
-                              : Container(),
-                          StreamBuilder(
-                              stream: FirebaseFirestore.instance
-                                  .collection("requests")
-                                  .doc(widget.request['seller_id'])
-                                  .collection('request')
-                                  .doc(widget.request.id)
-                                  .snapshots(),
-                              builder: (context, snapshot) {
-                                DocumentSnapshot? doc =
-                                    snapshot.data as DocumentSnapshot?;
-                                return snapshot.hasData && doc!.data() != null
-                                    ? (doc['accepted'] ?? false)
-                                        ? GestureDetector(
-                                            onTap: () async {
-                                              showDialog(
-                                                  context: context,
-                                                  builder: (BuildContext
-                                                          context) =>
-                                                      AlertDialog(
-                                                        title: const Text(
-                                                            'Are you sure to cancel meeting ?'),
-                                                        actions: [
-                                                          FlatButton(
-                                                            child: Text("Yes"),
-                                                            onPressed:
-                                                                () async {
-                                                              await Database()
-                                                                  .cancelRequest(
-                                                                widget.request[
-                                                                    'seller_id'],
-                                                                widget
-                                                                    .request.id,
-                                                              );
-                                                              AchievementView(
-                                                                context,
-                                                                color: Colors
-                                                                    .green,
-                                                                icon: Icon(
-                                                                  FontAwesomeIcons
-                                                                      .check,
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
-                                                                title:
-                                                                    "Succesfull!",
-                                                                elevation: 20,
-                                                                subTitle:
-                                                                    "Request Cancelled succesfully",
-                                                                isCircle: true,
-                                                              )..show();
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
+                                                        );
+                                                        AchievementView(
+                                                          context,
+                                                          color: Colors.green,
+                                                          icon: Icon(
+                                                            FontAwesomeIcons
+                                                                .check,
+                                                            color: Colors.white,
                                                           ),
-                                                          FlatButton(
-                                                            child: Text("No"),
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                          )
-                                                        ],
-                                                      ));
-                                            },
-                                            child: Container(
-                                              width: 120,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: widget.clr),
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                                color: widget.clr,
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text('Cancel',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        color: Colors.white)),
-                                              ),
-                                            ),
-                                          )
-                                        : Container()
-                                    : Container();
-                              }),
-                          SizedBox(height: 15),
-                          widget.request["accepted"] == null ||
-                                  widget.request["accepted"] == true
-                              ? GestureDetector(
-                                  onTap: () {
-                                    String date = widget.request['date'];
-                                    int duration = widget.request['duration'];
-                                    int startHour =
-                                        widget.request['startTime']['hour'];
-                                    int startMin =
-                                        widget.request['startTime']['min'];
-                                    int timeInMin =
-                                        (startHour * 60) + startMin + duration;
-                                    String endTime =
-                                        "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
-                                    String formattedString = "$date $endTime";
-                                    DateTime dateTime =
-                                        DateTime.parse(formattedString);
-                                    if (dateTime.difference(DateTime.now()) >
-                                        Duration(hours: 24)) {
-                                      Navigator.of(context).pushReplacement(
-                                          MaterialPageRoute(
-                                              builder: (ctx) =>
-                                                  EditRequestOffer(
-                                                      doc: widget.request,
-                                                      clr: widget.clr)));
-                                    } else {
-                                      _scacffoldKey.currentState!
-                                          .showSnackBar(SnackBar(
-                                        backgroundColor: Colors.red,
-                                        content: Text(
-                                          'Not available from 24 hours before the meeting',
-                                          textAlign: TextAlign.center,
+                                                          title: "Succesfull!",
+                                                          elevation: 20,
+                                                          subTitle:
+                                                              "Request declined succesfully",
+                                                          isCircle: true,
+                                                        )..show();
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                    FlatButton(
+                                                      child: Text("No"),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                    )
+                                                  ],
+                                                ));
+                                      },
+                                      child: Container(
+                                        width: 120,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: widget.clr),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          color: widget.clr,
                                         ),
-                                      ));
-                                    }
-                                  },
-                                  child: Container(
-                                    width: 120,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: widget.clr),
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: widget.clr,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Modify',
-                                          textAlign: TextAlign.center,
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                          SizedBox(height: 15),
-                          GestureDetector(
-                            onTap: () async {
-                              if (_currentUser.getCurrentUser.uid ==
-                                  widget.request['seller_id']) {
-                                SharedPreferences preferences =
-                                    await SharedPreferences.getInstance();
-                                String userName =
-                                    preferences.getString('userName')!;
-                                if (buyerDetails != null) {
-                                  var chatroomId = getChatRoomIdByUsernames(
-                                      userName, buyerDetails.displayName!);
-                                  Map<String, dynamic> chatroomInfo = {
-                                    "users": [
-                                      FirebaseAuth.instance.currentUser!.uid,
-                                      buyerDetails.uid
-                                    ]
-                                  };
-                                  Database()
-                                      .createChatRoom(chatroomId, chatroomInfo);
-
-                                  DocumentSnapshot doc = await FirebaseFirestore
-                                      .instance
-                                      .collection("chatrooms")
-                                      .doc(chatroomId)
-                                      .get();
-                                  Map<String, dynamic>? map =
-                                      doc.data() as Map<String, dynamic>?;
-                                  if (map != null) {
-                                    if (map
-                                        .containsKey("lastMessageSendByUid")) {
-                                      if (doc['lastMessageSendByUid'] !=
-                                          FirebaseAuth
-                                              .instance.currentUser!.uid) {
-                                        //get all messages that havent been read
-                                        QuerySnapshot q =
-                                            await FirebaseFirestore.instance
-                                                .collection("chatrooms")
-                                                .doc(chatroomId)
-                                                .collection('chats')
-                                                .where("read", isEqualTo: false)
-                                                .get();
-                                        //turn to read to pevent showing as unread in chat history
-                                        for (int i = 0;
-                                            i < q.docs.length;
-                                            i++) {
-                                          await FirebaseFirestore.instance
-                                              .collection("chatrooms")
-                                              .doc(chatroomId)
-                                              .collection('chats')
-                                              .doc(q.docs[i].id)
-                                              .update({"read": true});
-                                        }
-
-                                        //turn to read to prevent showing here again
-                                        await FirebaseFirestore.instance
-                                            .collection("chatrooms")
-                                            .doc(chatroomId)
-                                            .update({"read": true});
-                                      }
-                                    }
-                                  }
-
-                                  Navigator.push(
-                                    context,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text('Decline',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                        ),
+                                      ),
+                                    )
+                                  : Container()
+                              : Container();
+                        }),
+                    SizedBox(height: 15),
+                    widget.request["accepted"] == null ||
+                            widget.request["accepted"] == true
+                        ? GestureDetector(
+                            onTap: () {
+                              String date = widget.request['date'];
+                              int duration = widget.request['duration'];
+                              int startHour =
+                                  widget.request['startTime']['hour'];
+                              int startMin = widget.request['startTime']['min'];
+                              int timeInMin =
+                                  (startHour * 60) + startMin + duration;
+                              String endTime =
+                                  "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
+                              String formattedString = "$date $endTime";
+                              DateTime dateTime =
+                                  DateTime.parse(formattedString);
+                              if (dateTime.difference(DateTime.now()) >
+                                  Duration(hours: 24)) {
+                                Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          ChatScreen(buyerDetails, chatroomId),
-                                    ),
-                                  );
-                                } else {}
-                                ;
+                                        builder: (ctx) => EditRequestOffer(
+                                            doc: widget.request,
+                                            clr: widget.clr)));
                               } else {
-                                SharedPreferences preferences =
-                                    await SharedPreferences.getInstance();
-                                String userName =
-                                    preferences.getString('userName')!;
-                                if (sellerDetails != null) {
-                                  var chatroomId = getChatRoomIdByUsernames(
-                                      userName, sellerDetails.displayName!);
-                                  Map<String, dynamic> chatroomInfo = {
-                                    "users": [
-                                      FirebaseAuth.instance.currentUser!.uid,
-                                      sellerDetails.uid
-                                    ]
-                                  };
-                                  Database()
-                                      .createChatRoom(chatroomId, chatroomInfo);
-
-                                  DocumentSnapshot doc = await FirebaseFirestore
-                                      .instance
-                                      .collection("chatrooms")
-                                      .doc(chatroomId)
-                                      .get();
-                                  Map<String, dynamic>? map =
-                                      doc.data() as Map<String, dynamic>?;
-                                  if (map != null) {
-                                    if (map
-                                        .containsKey("lastMessageSendByUid")) {
-                                      if (doc['lastMessageSendByUid'] !=
-                                          FirebaseAuth
-                                              .instance.currentUser!.uid) {
-                                        //get all messages that havent been read
-                                        QuerySnapshot q =
-                                            await FirebaseFirestore.instance
-                                                .collection("chatrooms")
-                                                .doc(chatroomId)
-                                                .collection('chats')
-                                                .where("read", isEqualTo: false)
-                                                .get();
-                                        //turn to read to pevent showing as unread in chat history
-                                        for (int i = 0;
-                                            i < q.docs.length;
-                                            i++) {
-                                          await FirebaseFirestore.instance
-                                              .collection("chatrooms")
-                                              .doc(chatroomId)
-                                              .collection('chats')
-                                              .doc(q.docs[i].id)
-                                              .update({"read": true});
-                                        }
-
-                                        //turn to read to prevent showing here again
-                                        await FirebaseFirestore.instance
-                                            .collection("chatrooms")
-                                            .doc(chatroomId)
-                                            .update({"read": true});
-                                      }
-                                    }
-                                  }
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ChatScreen(sellerDetails, chatroomId),
-                                    ),
-                                  );
-                                } else {}
-                                ;
+                                _scacffoldKey.currentState!
+                                    .showSnackBar(SnackBar(
+                                  backgroundColor: Colors.red,
+                                  content: Text(
+                                    'Not available from 24 hours before the meeting',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ));
                               }
                             },
                             child: Container(
@@ -616,98 +448,190 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                               ),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Text('Chat',
+                                child: Text('Modify',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(color: Colors.white)),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 15),
-                          widget.request["accepted"] == null ||
-                                  widget.request["accepted"] == true
-                              ? GestureDetector(
-                                  onTap: () async {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (ctx) => Timer(widget.request),
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    width: 120,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: widget.clr),
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: widget.clr,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Start Meeting',
-                                          textAlign: TextAlign.center,
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                          SizedBox(height: 15),
-                          widget.request["accepted"] != null &&
-                                  widget.request["accepted"] == false
-                              ? GestureDetector(
-                                  onTap: () async {
-                                    deleter =
-                                        FirebaseAuth.instance.currentUser!.uid;
-                                    setState(() {});
+                          )
+                        : Container(),
+                    SizedBox(height: 15),
+                    GestureDetector(
+                      onTap: () async {
+                        if (_currentUser.getCurrentUser.uid ==
+                            widget.request['seller_id']) {
+                          SharedPreferences preferences =
+                              await SharedPreferences.getInstance();
+                          String userName = preferences.getString('userName')!;
+                          if (buyerDetails != null) {
+                            var chatroomId = getChatRoomIdByUsernames(
+                                userName, buyerDetails.displayName!);
+                            Map<String, dynamic> chatroomInfo = {
+                              "users": [
+                                FirebaseAuth.instance.currentUser!.uid,
+                                buyerDetails.uid
+                              ]
+                            };
+                            Database().createChatRoom(chatroomId, chatroomInfo);
+
+                            DocumentSnapshot doc = await FirebaseFirestore
+                                .instance
+                                .collection("chatrooms")
+                                .doc(chatroomId)
+                                .get();
+                            Map<String, dynamic>? map =
+                                doc.data() as Map<String, dynamic>?;
+                            if (map != null) {
+                              if (map.containsKey("lastMessageSendByUid")) {
+                                if (doc['lastMessageSendByUid'] !=
+                                    FirebaseAuth.instance.currentUser!.uid) {
+                                  //get all messages that havent been read
+                                  QuerySnapshot q = await FirebaseFirestore
+                                      .instance
+                                      .collection("chatrooms")
+                                      .doc(chatroomId)
+                                      .collection('chats')
+                                      .where("read", isEqualTo: false)
+                                      .get();
+                                  //turn to read to pevent showing as unread in chat history
+                                  for (int i = 0; i < q.docs.length; i++) {
                                     await FirebaseFirestore.instance
-                                        .collection('requests')
-                                        .doc(widget.request['seller_id'])
-                                        .collection('request')
-                                        .doc(widget.request.id)
-                                        .delete();
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                    width: 120,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: widget.clr),
-                                      borderRadius: BorderRadius.circular(15),
-                                      color: widget.clr,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text('Delete',
-                                          textAlign: TextAlign.center,
-                                          style:
-                                              TextStyle(color: Colors.white)),
-                                    ),
-                                  ),
-                                )
-                              : Container(),
-                        ],
-                      ),
-                    )
-                  : Container(),
-              SizedBox(height: 30),
-              widget.request["accepted"] == null ||
-                      widget.request["accepted"] == true
-                  ? Text(
-                      "Warning: Modification will not be available from 24 hours before the meeting")
-                  : Padding(
-                      padding: EdgeInsets.only(
-                          top: MediaQuery.of(context).size.height / 7,
-                          left: MediaQuery.of(context).size.width / 17),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                              child: Text(
-                            "This meet up request has been cancelled",
-                            style: TextStyle(
-                                fontStyle: FontStyle.italic, fontSize: 16),
-                          ))
-                        ],
+                                        .collection("chatrooms")
+                                        .doc(chatroomId)
+                                        .collection('chats')
+                                        .doc(q.docs[i].id)
+                                        .update({"read": true});
+                                  }
+
+                                  //turn to read to prevent showing here again
+                                  await FirebaseFirestore.instance
+                                      .collection("chatrooms")
+                                      .doc(chatroomId)
+                                      .update({"read": true});
+                                }
+                              }
+                            }
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ChatScreen(buyerDetails, chatroomId),
+                              ),
+                            );
+                          } else {}
+                          ;
+                        } else {
+                          SharedPreferences preferences =
+                              await SharedPreferences.getInstance();
+                          String userName = preferences.getString('userName')!;
+                          if (sellerDetails != null) {
+                            var chatroomId = getChatRoomIdByUsernames(
+                                userName, sellerDetails.displayName!);
+                            Map<String, dynamic> chatroomInfo = {
+                              "users": [
+                                FirebaseAuth.instance.currentUser!.uid,
+                                sellerDetails.uid
+                              ]
+                            };
+                            Database().createChatRoom(chatroomId, chatroomInfo);
+
+                            DocumentSnapshot doc = await FirebaseFirestore
+                                .instance
+                                .collection("chatrooms")
+                                .doc(chatroomId)
+                                .get();
+                            Map<String, dynamic>? map =
+                                doc.data() as Map<String, dynamic>?;
+                            if (map != null) {
+                              if (map.containsKey("lastMessageSendByUid")) {
+                                if (doc['lastMessageSendByUid'] !=
+                                    FirebaseAuth.instance.currentUser!.uid) {
+                                  //get all messages that havent been read
+                                  QuerySnapshot q = await FirebaseFirestore
+                                      .instance
+                                      .collection("chatrooms")
+                                      .doc(chatroomId)
+                                      .collection('chats')
+                                      .where("read", isEqualTo: false)
+                                      .get();
+                                  //turn to read to pevent showing as unread in chat history
+                                  for (int i = 0; i < q.docs.length; i++) {
+                                    await FirebaseFirestore.instance
+                                        .collection("chatrooms")
+                                        .doc(chatroomId)
+                                        .collection('chats')
+                                        .doc(q.docs[i].id)
+                                        .update({"read": true});
+                                  }
+
+                                  //turn to read to prevent showing here again
+                                  await FirebaseFirestore.instance
+                                      .collection("chatrooms")
+                                      .doc(chatroomId)
+                                      .update({"read": true});
+                                }
+                              }
+                            }
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ChatScreen(sellerDetails, chatroomId),
+                              ),
+                            );
+                          } else {}
+                          ;
+                        }
+                      },
+                      child: Container(
+                        width: 120,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: widget.clr),
+                          borderRadius: BorderRadius.circular(15),
+                          color: widget.clr,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text('Chat',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white)),
+                        ),
                       ),
                     ),
+                    SizedBox(height: 15),
+                    widget.request["accepted"] != null &&
+                            widget.request["accepted"] == true
+                        ? GestureDetector(
+                            onTap: () async {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (ctx) => Timer(widget.request),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 120,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: widget.clr),
+                                borderRadius: BorderRadius.circular(15),
+                                color: widget.clr,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('Start Meeting',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: Colors.white)),
+                              ),
+                            ),
+                          )
+                        : Container(),
+                  ],
+                ),
+              ),
+              SizedBox(height: 30),
+              Text(
+                  "Warning: Modification will not be available from 24 hours before the meeting"),
               SizedBox(height: 50),
             ],
           ),

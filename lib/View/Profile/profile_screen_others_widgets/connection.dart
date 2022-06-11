@@ -66,100 +66,106 @@ class _ConnectionState extends State<Connection> {
           stream: FirebaseFirestore.instance
               .collection("connections")
               .where("meeters", arrayContains: widget.id)
+              .orderBy("ts", descending: true)
               .snapshots(),
           builder: (ctx, snapshot) {
             QuerySnapshot? qdocs = snapshot.data as QuerySnapshot?;
-            return snapshot.hasData && qdocs!.docs.isNotEmpty
-                ? ListView.builder(
-                    itemCount: qdocs.docs.length,
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    shrinkWrap: true,
-                    physics: ClampingScrollPhysics(),
-                    itemBuilder: (ctx, index) => qdocs.docs[index]
-                                ['seller_id'] ==
-                            widget.id
-                        ? ListTile(
-                            leading: CircleAvatar(
-                              radius: 30,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: Image.network(
-                                  qdocs.docs[index]['buyer_image'],
-                                  fit: BoxFit.fill,
-                                  height: 60,
-                                  width: 60,
+            return snapshot.hasData
+                ? qdocs!.docs.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: qdocs.docs.length,
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        shrinkWrap: true,
+                        physics: ClampingScrollPhysics(),
+                        itemBuilder: (ctx, index) => qdocs.docs[index]
+                                    ['seller_id'] ==
+                                widget.id
+                            ? ListTile(
+                                leading: CircleAvatar(
+                                  radius: 30,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Image.network(
+                                      qdocs.docs[index]['buyer_image'],
+                                      fit: BoxFit.fill,
+                                      height: 60,
+                                      width: 60,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            title: ShaderMask(
-                                blendMode: BlendMode.srcIn,
-                                shaderCallback: (rect) => LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [Colors.indigoAccent, Colors.blue, Colors.green])
-                                    .createShader(rect),
-                                child: Text(qdocs.docs[index]['title'],
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold))),
-                            subtitle: ShaderMask(
-                                blendMode: BlendMode.srcIn,
-                                shaderCallback: (rect) => LinearGradient(
-                                        begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
-                                        colors: [Colors.indigoAccent, Colors.blue, Colors.green])
-                                    .createShader(rect),
-                                child: Text(
-                                  qdocs.docs[index]['buyer_name'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )),
-                            trailing: ShaderMask(
-                                blendMode: BlendMode.srcIn,
-                                shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
-                                child: Text(
-                                  qdocs.docs[index]['date'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )))
-                        : ListTile(
-                            leading: CircleAvatar(
-                              radius: 30,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(50),
-                                child: Image.network(
-                                  qdocs.docs[index]['seller_image'],
-                                  fit: BoxFit.fill,
-                                  height: 60,
-                                  width: 60,
+                                title: ShaderMask(
+                                    blendMode: BlendMode.srcIn,
+                                    shaderCallback: (rect) => LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Colors.indigoAccent,
+                                              Colors.blue,
+                                              Colors.green
+                                            ]).createShader(rect),
+                                    child: Text(qdocs.docs[index]['title'],
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold))),
+                                subtitle: ShaderMask(
+                                    blendMode: BlendMode.srcIn,
+                                    shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
+                                    child: Text(
+                                      qdocs.docs[index]['buyer_name'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    )),
+                                trailing: ShaderMask(
+                                    blendMode: BlendMode.srcIn,
+                                    shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
+                                    child: Text(
+                                      qdocs.docs[index]['date'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    )))
+                            : ListTile(
+                                leading: CircleAvatar(
+                                  radius: 30,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(50),
+                                    child: Image.network(
+                                      qdocs.docs[index]['seller_image'],
+                                      fit: BoxFit.fill,
+                                      height: 60,
+                                      width: 60,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            title: ShaderMask(
-                                blendMode: BlendMode.srcIn,
-                                shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
-                                child: Text(
-                                  qdocs.docs[index]['title'],
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                )),
-                            subtitle: ShaderMask(
-                                blendMode: BlendMode.srcIn,
-                                shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
-                                child: Text(
-                                  qdocs.docs[index]['seller_name'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                )),
-                            trailing: ShaderMask(
-                                blendMode: BlendMode.srcIn,
-                                shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
-                                child: Text(
-                                  qdocs.docs[index]['date'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ))))
-                : Center(
-                    child: Container(
-                    child: Text("No connections to show"),
-                  ));
+                                title: ShaderMask(
+                                    blendMode: BlendMode.srcIn,
+                                    shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
+                                    child: Text(
+                                      qdocs.docs[index]['title'],
+                                      style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold),
+                                    )),
+                                subtitle: ShaderMask(
+                                    blendMode: BlendMode.srcIn,
+                                    shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
+                                    child: Text(
+                                      qdocs.docs[index]['seller_name'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    )),
+                                trailing: ShaderMask(
+                                    blendMode: BlendMode.srcIn,
+                                    shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
+                                    child: Text(
+                                      qdocs.docs[index]['date'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ))))
+                    : Center(
+                        child: Container(
+                        child: Text("No connections to show"),
+                      ))
+                : Center(child: Container(child: CircularProgressIndicator()));
           }),
     );
   }

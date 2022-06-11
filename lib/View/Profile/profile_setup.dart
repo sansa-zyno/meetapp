@@ -46,7 +46,6 @@ class _ProfileSetupState extends State<ProfileSetup> {
   ];
 
   late UserController _currentUser;
-
   List<Widget> langSelector = [
     LangSelector(
       ith: "First",
@@ -57,7 +56,6 @@ class _ProfileSetupState extends State<ProfileSetup> {
     langDynamicSelector = langSelector;
     final w = MediaQuery.of(context).size.width / 100;
     final h = MediaQuery.of(context).size.height / 100;
-
     _currentUser = Provider.of<UserController>(context);
 
     return Scaffold(
@@ -74,57 +72,44 @@ class _ProfileSetupState extends State<ProfileSetup> {
                   SizedBox(
                     height: 180,
                   ),
-
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("users")
-                          .doc(_currentUser.getCurrentUser.uid ??
-                              FirebaseAuth.instance.currentUser!.uid)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        DocumentSnapshot? doc =
-                            snapshot.data as DocumentSnapshot?;
-                        if (snapshot.hasData) {
-                          if (doc != null) {
-                            Map<String, dynamic>? data =
-                                doc.data() as Map<String, dynamic>?;
-                            if (data != null) {
-                              if (data.containsKey("avatarUrl")) {
-                                _currentUser.getCurrentUser.avatarUrl =
-                                    data["avatarUrl"];
-                              }
-                            }
-                          }
-                        }
-                        return CircularProfileAvatar(
-                          _currentUser.getCurrentUser.avatarUrl ?? "",
-                          backgroundColor: Color(0xffDCf0EF),
-                          initialsText: Text(
-                            "+",
-                            textScaleFactor: 1,
-                            style: TextStyle(
-                                fontFamily: "Nunito",
-                                fontWeight: FontWeight.w900,
-                                fontSize: w * 7.6388,
-                                color: Color(0xff00AEFF)),
-                          ),
-                          cacheImage: true,
-                          borderWidth: 2,
-                          elevation: 10,
-                          radius: w * 12.7314,
-                          onTap: () async {
-                            await UserController().updateAvatar(
-                                _currentUser.getCurrentUser.uid ??
-                                    FirebaseAuth.instance.currentUser!.uid);
-                          },
-                        );
-                      }),
-
-                  // }),
+                  CircularProfileAvatar(
+                    "",
+                    /*placeHolder: (context, url) =>
+                        Center(child: CircularProgressIndicator()),
+                    /* progressIndicatorBuilder: (ctx, url, dp) =>*/
+                        Center(child: CircularProgressIndicator()),*/
+                    backgroundColor: Color(0xffDCf0EF),
+                    child: _currentUser.getCurrentUser.avatarUrl != null
+                        ? _currentUser.isAvatarUploading
+                            ? Center(child: CircularProgressIndicator())
+                            : Image.network(
+                                _currentUser.getCurrentUser.avatarUrl!)
+                        : Container(),
+                    initialsText: Text(
+                      "+",
+                      textScaleFactor: 1,
+                      style: TextStyle(
+                          fontFamily: "Nunito",
+                          fontWeight: FontWeight.w900,
+                          fontSize: w * 7.6388,
+                          color: Color(0xff00AEFF)),
+                    ),
+                    //cacheImage: true,
+                    borderWidth: 2,
+                    elevation: 10,
+                    radius: w * 12.7314,
+                    onTap: () async {
+                      //UserController()
+                      await _currentUser.updateAvatar(
+                          _currentUser.getCurrentUser.uid ??
+                              FirebaseAuth.instance.currentUser!.uid);
+                      print("aaaaaa");
+                      print(_currentUser.getCurrentUser.uid);
+                    },
+                  ),
                   SizedBox(
                     height: h * 4.2217,
                   ),
-
                   Container(
                     padding: EdgeInsets.symmetric(horizontal: 20),
                     child: Row(
@@ -295,7 +280,6 @@ class _ProfileSetupState extends State<ProfileSetup> {
                       ],
                     ),
                   ),
-
                   ListView(
                     shrinkWrap: true,
                     children: langSelector,
@@ -333,73 +317,39 @@ class _ProfileSetupState extends State<ProfileSetup> {
                   SizedBox(
                     height: h * 4.2217,
                   ),
-                  StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(_currentUser.getCurrentUser.uid ??
-                              FirebaseAuth.instance.currentUser!.uid)
-                          .snapshots(),
-                      builder: (context, snapshot) {
-                        DocumentSnapshot? doc =
-                            snapshot.data as DocumentSnapshot?;
-                        if (snapshot.hasData) {
-                          if (doc != null) {
-                            Map<String, dynamic>? data =
-                                doc.data() as Map<String, dynamic>?;
-                            if (data != null) {
-                              if (data.containsKey("bannerImage")) {
-                                _currentUser.getCurrentUser.bannerImage =
-                                    data["bannerImage"];
-                              }
-                            }
-                          }
-                        }
-                        return _currentUser.getCurrentUser.bannerImage == null
-                            ? GestureDetector(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  height: 150,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.80,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color(0xff00AEFF), width: 1),
-                                      borderRadius: BorderRadius.circular(20)),
-                                  child: Image.asset("assets/images/image.png"),
-                                ),
-                                onTap: () {
-                                  _currentUser.updateBanner(
-                                      _currentUser.getCurrentUser.uid ??
-                                          FirebaseAuth
-                                              .instance.currentUser!.uid,
-                                      "users");
-                                },
-                              )
-                            : GestureDetector(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 20),
-                                  height: 150,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.80,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Color(0xff00AEFF), width: 1),
-                                      borderRadius: BorderRadius.circular(20)),
+                  GestureDetector(
+                    child: Container(
+                      //padding: EdgeInsets.symmetric(horizontal: 20),
+                      height: 150,
+                      width: MediaQuery.of(context).size.width * 0.80,
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Color(0xff00AEFF), width: 1),
+                          borderRadius: BorderRadius.circular(20)),
+                      child: _currentUser.isBannerUploading
+                          ? Center(child: CircularProgressIndicator())
+                          : _currentUser.getCurrentUser.bannerImage == null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.asset(
+                                    "assets/images/image.png",
+                                  ),
+                                )
+                              : ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
                                   child: Image.network(
                                     _currentUser.getCurrentUser.bannerImage!,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
-                                onTap: () {
-                                  _currentUser.updateBanner(
-                                      _currentUser.getCurrentUser.uid ??
-                                          FirebaseAuth
-                                              .instance.currentUser!.uid,
-                                      "users");
-                                },
-                              );
-                      }),
-
+                    ),
+                    onTap: () {
+                      _currentUser.updateBanner(
+                          _currentUser.getCurrentUser.uid ??
+                              FirebaseAuth.instance.currentUser!.uid,
+                          "users");
+                    },
+                  ),
                   SizedBox(
                     height: h * 4.2217,
                   ),

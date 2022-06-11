@@ -108,7 +108,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                 children: [
                   // Icon(Icons.phone,color: const Color(0xff7672c9),),
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.3,
+                    height: MediaQuery.of(context).size.height * 0.25,
                     width: MediaQuery.of(context).size.width * 0.5,
                     margin: EdgeInsets.only(
                       right: 15,
@@ -127,7 +127,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                 children: [
                   // Icon(Icons.phone,color: const Color(0xff7672c9),),
                   Container(
-                    height: MediaQuery.of(context).size.height * 0.3,
+                    height: MediaQuery.of(context).size.height * 0.25,
                     width: MediaQuery.of(context).size.width * 0.5,
                     margin: EdgeInsets.only(
                       left: 15,
@@ -171,7 +171,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                     itemBuilder: (context, index) {
                       if (index == q.docs.length) {
                         return Container(
-                          height: 50,
+                          height: 100,
                         );
                       }
                       bool isSameDate = true;
@@ -207,6 +207,7 @@ class _ChatMessagesState extends State<ChatMessages> {
                                 ? "Yesterday"
                                 : formatDate(dt, [M, ' ', dd, ', ', yyyy]);
                         return Column(children: [
+                          SizedBox(height: 8),
                           Text(
                             date,
                             style: TextStyle(fontSize: 16),

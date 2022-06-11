@@ -52,6 +52,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width / 100;
     var h = MediaQuery.of(context).size.height / 100;
+    requests.sort((a, b) {
+      DateTime adate = a['ts'].toDate();
+      DateTime bdate = b['ts'].toDate();
+      return adate.compareTo(bdate);
+    });
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 90,
@@ -94,15 +99,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
         iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.transparent,
       ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            SizedBox(
-              height: h * 3.8,
-            ),
-            Container(
-              height: h * 56.1,
+      body: Column(
+        children: [
+          SizedBox(
+            height: h * 3.8,
+          ),
+          Expanded(
+            child: Container(
+              //height: h * 56.1,
               child: SfCalendar(
                 view: CalendarView.month,
                 dataSource: MeetingDataSource(_getDataSource(requests)),
@@ -113,15 +117,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 monthViewSettings: MonthViewSettings(
                   showAgenda: true,
                   agendaItemHeight: 70,
-                  appointmentDisplayCount: 2,
+                  appointmentDisplayCount: requests.length,
                   showTrailingAndLeadingDates: false,
                   numberOfWeeksInView: 4,
                   appointmentDisplayMode: MonthAppointmentDisplayMode.indicator,
                 ),
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
