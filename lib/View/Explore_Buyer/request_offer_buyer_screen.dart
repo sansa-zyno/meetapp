@@ -53,8 +53,8 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
     }
   }
 
-  double placeLat = 0.0;
-  double placeLng = 0.0;
+  double? placeLat;
+  double? placeLng;
 
   @override
   void initState() {
@@ -292,7 +292,7 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
                                 hintText:
-                                    'Search a place. Pin location by long-pressing on the map',
+                                    'Search a place. Tap a place on map to pin location',
                                 hintMaxLines: 2,
                                 prefixIcon: Icon(
                                   Icons.location_on,
@@ -330,7 +330,7 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                                         (GoogleMapController controller) {
                                       _mapController.complete(controller);
                                     },
-                                    onLongPress: (LatLng position) async {
+                                    onTap: (LatLng position) async {
                                       placeLat = position.latitude;
                                       placeLng = position.longitude;
                                       List<Placemark> placemarks =
@@ -460,7 +460,9 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                             "placeLng": placeLng
                           };
                           if (_value == 1) {
-                            if (_locationController.text != "") {
+                            if (_locationController.text != "" &&
+                                placeLat != null &&
+                                placeLng != null) {
                               await FirebaseFirestore.instance
                                   .collection('requests')
                                   .doc(widget.personDetails.uid)
@@ -488,7 +490,7 @@ class _RequestOfferBuyerState extends State<RequestOfferBuyer> {
                               _scacffoldKey.currentState!.showSnackBar(SnackBar(
                                 backgroundColor: Colors.red,
                                 content: Text(
-                                  'Please pin a location ',
+                                  'Please pin a location from map',
                                   textAlign: TextAlign.center,
                                 ),
                               ));

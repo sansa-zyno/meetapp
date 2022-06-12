@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/Services/database.dart';
+import 'package:meeter/View/Dashboard/activity_buyer.dart';
 import 'package:meeter/View/Explore_Buyer/search_buyer_screen.dart';
 import 'package:meeter/Widgets/HWidgets/menu.dart';
 import 'package:meeter/Widgets/HWidgets/upcomingMeetings.dart';
@@ -72,22 +74,14 @@ class _HomeBuyerScreenState extends State<HomeBuyerScreen> {
     List<QueryDocumentSnapshot> latestRequests = requests != null
         ? requests!
             .where((element) {
-              DateTime dt = element["ts"].toDate();
-              return "${dt.day} ${dt.month} ${dt.year}" ==
-                  "${DateTime.now().day} ${DateTime.now().month} ${DateTime.now().year}";
+              List meeters = element["meeters"];
+              return meeters.contains(FirebaseAuth.instance.currentUser!.uid);
             })
             .where((element) => element["read"] == false)
             .toList()
         : [];
     List<QueryDocumentSnapshot> latestMsgs = messageDoc != null
-        ? messageDoc!
-            .where((element) {
-              DateTime dt = element["ts"].toDate();
-              return "${dt.day} ${dt.month} ${dt.year}" ==
-                  "${DateTime.now().day} ${DateTime.now().month} ${DateTime.now().year}";
-            })
-            .where((element) => element["read"] == false)
-            .toList()
+        ? messageDoc!.where((element) => element["read"] == false).toList()
         : [];
     recentActivities = [...latestRequests, ...latestMsgs];
     return Scaffold(
@@ -202,11 +196,32 @@ class _HomeBuyerScreenState extends State<HomeBuyerScreen> {
                                 ),
                               ),
                               Stack(children: [
-                                Icon(Icons.notifications),
+                                Column(
+                                  children: [
+                                    SizedBox(height: 5),
+                                    IconButton(
+                                      icon: Icon(Icons.notifications,
+                                          color: Colors.white),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                BuyerActivityScreen(),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                                 Positioned(
-                                    top: 0,
-                                    right: 2,
-                                    child: Text("${recentActivities!.length}"))
+                                    top: 3,
+                                    right: 12,
+                                    child: recentActivities!.length == 0
+                                        ? Container()
+                                        : Text("${recentActivities!.length}",
+                                            style:
+                                                TextStyle(color: Colors.red)))
                               ])
                             ],
                           ),

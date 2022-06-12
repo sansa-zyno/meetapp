@@ -729,7 +729,7 @@ class RecentData extends StatelessWidget {
                                                 Expanded(
                                                   child: Container(
                                                     child: Text(
-                                                      'Meet up request was re-accepted by ${request!["buyer_name"]}',
+                                                      'Modified meet up request was accepted by ${request!["buyer_name"]}',
                                                       //overflow: TextOverflow.ellipsis,
                                                       style: TextStyle(
                                                         color: request!["read"]
@@ -752,7 +752,7 @@ class RecentData extends StatelessWidget {
                                 ),
                               )
                             : Container()
-                    : text == "cancelled"
+                    : text == "declined"
                         ? request!['declinedBy'] !=
                                     FirebaseAuth.instance.currentUser!.uid &&
                                 request!['buyer_id'] ==
@@ -768,16 +768,11 @@ class RecentData extends StatelessWidget {
                                         .collection("request")
                                         .doc(request!.id)
                                         .update({"read": true});
-
-                                    Future.delayed(
-                                        Duration(minutes: 5),
-                                        () async => await FirebaseFirestore
-                                            .instance
-                                            .collection("requests")
-                                            .doc(request!['seller_id'])
-                                            .collection("request")
-                                            .doc(request!.id)
-                                            .delete());
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (ctx) =>
+                                                MeetUpDetails(request!, clr)));
                                   },
                                   child: Container(
                                     alignment: Alignment.centerLeft,
@@ -905,15 +900,11 @@ class RecentData extends StatelessWidget {
                                             .doc(request!.id)
                                             .update({"read": true});
 
-                                        Future.delayed(
-                                            Duration(minutes: 5),
-                                            () async => await FirebaseFirestore
-                                                .instance
-                                                .collection("requests")
-                                                .doc(request!['seller_id'])
-                                                .collection("request")
-                                                .doc(request!.id)
-                                                .delete());
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (ctx) => MeetUpDetails(
+                                                    request!, clr)));
                                       },
                                       child: Container(
                                         alignment: Alignment.centerLeft,

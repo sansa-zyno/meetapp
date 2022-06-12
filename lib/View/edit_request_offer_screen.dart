@@ -52,8 +52,8 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
   }
 
   final _scacffoldKey = GlobalKey<ScaffoldState>();
-  double placeLat = 0.0;
-  double placeLng = 0.0;
+  double? placeLat;
+  double? placeLng;
 
   @override
   void initState() {
@@ -73,6 +73,8 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
     }
     widget.doc['location'] == "Physical" ? _value = 1 : _value = 2;
     date = DateTime.parse(widget.doc['date']);
+    placeLat = widget.doc['placeLat'];
+    placeLng = widget.doc['placeLng'];
     setState(() {});
     final applicationBloc =
         Provider.of<ApplicationBloc>(context, listen: false);
@@ -304,7 +306,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
                                 hintText:
-                                    "Search a place. Pin location by long-pressing on the map",
+                                    "Search a place. Tap a place on map to pin location",
                                 hintMaxLines: 2,
                                 prefixIcon: Icon(
                                   Icons.location_on,
@@ -342,7 +344,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                         (GoogleMapController controller) {
                                       _mapController.complete(controller);
                                     },
-                                    onLongPress: (LatLng position) async {
+                                    onTap: (LatLng position) async {
                                       placeLat = position.latitude;
                                       placeLng = position.longitude;
                                       List<Placemark> placemarks =
@@ -450,7 +452,9 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                             "placeLng": placeLng
                           };
                           if (_value == 1) {
-                            if (_locationController.text != "") {
+                            if (_locationController.text != "" &&
+                                placeLat != null &&
+                                placeLng != null) {
                               await FirebaseFirestore.instance
                                   .collection('requests')
                                   .doc(widget.doc['seller_id'])
@@ -485,7 +489,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                               _scacffoldKey.currentState!.showSnackBar(SnackBar(
                                 backgroundColor: Colors.red,
                                 content: Text(
-                                  'Please pin a location',
+                                  'Please pin a location from map',
                                   textAlign: TextAlign.center,
                                 ),
                               ));

@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/Services/database.dart';
 import 'package:meeter/Services/nearest_service.dart';
+import 'package:meeter/View/Dashboard/activity.dart';
 import 'package:meeter/Widgets/HWidgets/nav_main_buyer.dart';
 import 'package:meeter/Widgets/HWidgets/upcomingMeetings.dart';
 import 'package:meeter/Providers/user_controller.dart';
@@ -80,23 +82,18 @@ class _HomeScreenState extends State<HomeScreen> {
     var h = MediaQuery.of(context).size.height / 100;
     UserController _currentUser = Provider.of<UserController>(context);
     OurUser currentUser = _currentUser.getCurrentUser;
-    List<QueryDocumentSnapshot>? latestRequests = requests!
-        .where((element) {
-          DateTime dt = element["ts"].toDate();
-          return "${dt.day} ${dt.month} ${dt.year}" ==
-              "${DateTime.now().day} ${DateTime.now().month} ${DateTime.now().year}";
-        })
-        .where((element) => element["read"] == false)
-        .toList();
-    List<QueryDocumentSnapshot>? latestMsgs = messageDoc!
-        .where((element) {
-          DateTime dt = element["ts"].toDate();
-          return "${dt.day} ${dt.month} ${dt.year}" ==
-              "${DateTime.now().day} ${DateTime.now().month} ${DateTime.now().year}";
-        })
-        .where((element) => element["read"] == false)
-        .toList();
-
+    List<QueryDocumentSnapshot> latestRequests = requests != null
+        ? requests!
+            .where((element) {
+              List meeters = element["meeters"];
+              return meeters.contains(FirebaseAuth.instance.currentUser!.uid);
+            })
+            .where((element) => element["read"] == false)
+            .toList()
+        : [];
+    List<QueryDocumentSnapshot> latestMsgs = messageDoc != null
+        ? messageDoc!.where((element) => element["read"] == false).toList()
+        : [];
     recentActivities = [...latestRequests, ...latestMsgs];
     return Scaffold(
       key: _scaffoldKey,
@@ -209,11 +206,33 @@ class _HomeScreenState extends State<HomeScreen> {
                                   : Container(),
                             ),
                             Stack(children: [
-                              Icon(Icons.notifications),
+                              Column(
+                                children: [
+                                  //SizedBox(height: 3),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.notifications,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              ActivityScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
                               Positioned(
-                                  top: 0,
-                                  right: 2,
-                                  child: Text("${recentActivities!.length}"))
+                                  top: 3,
+                                  right: 12,
+                                  child: recentActivities!.length == 0
+                                      ? Container()
+                                      : Text("${recentActivities!.length}",
+                                          style: TextStyle(color: Colors.red)))
                             ])
                           ],
                         ),

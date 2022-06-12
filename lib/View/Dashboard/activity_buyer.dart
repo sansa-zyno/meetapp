@@ -208,7 +208,7 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
                                                             request:
                                                                 combinedDoc[
                                                                     index],
-                                                            text: "cancelled",
+                                                            text: "declined",
                                                           )
                                                         : Container();
                                   }),

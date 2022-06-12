@@ -96,12 +96,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: CircularProfileAvatar(
                     '',
                     backgroundColor: Color(0xffDCf0EF),
-                    child: _currentUser.getCurrentUser.avatarUrl != null
-                        ? _currentUser.isAvatarUploading
-                            ? Center(child: CircularProgressIndicator())
+                    child: _currentUser.isAvatarUploading
+                        ? Center(child: CircularProgressIndicator())
+                        : _currentUser.getCurrentUser.avatarUrl == null
+                            ? Container()
                             : Image.network(
-                                _currentUser.getCurrentUser.avatarUrl!)
-                        : Container(),
+                                _currentUser.getCurrentUser.avatarUrl!),
                     initialsText: Text(
                       "+",
                       textScaleFactor: 1,

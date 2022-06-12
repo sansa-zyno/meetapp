@@ -75,7 +75,10 @@ class Database {
     });
   }
 
-  Future cancelRequest(String sellerId, String docId) async {
+  Future cancelRequest(
+    String sellerId,
+    String docId,
+  ) async {
     List<String> meeters = [];
     await FirebaseFirestore.instance
         .collection("requests")

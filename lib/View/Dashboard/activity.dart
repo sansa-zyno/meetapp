@@ -206,7 +206,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                                                             request:
                                                                 combinedDoc[
                                                                     index],
-                                                            text: "cancelled",
+                                                            text: "declined",
                                                           )
                                                         : Container();
                                   }),

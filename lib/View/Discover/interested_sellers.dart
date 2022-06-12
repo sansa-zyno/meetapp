@@ -85,7 +85,6 @@ class _InterestedSellersState extends State<InterestedSellers> {
         child: Container(
           color: Colors.white,
           child: Column(
-            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               SizedBox(
                 height: 15,
@@ -271,9 +270,13 @@ class _InterestedSellersState extends State<InterestedSellers> {
                               ),
                             );
                           })
-                      : Container()
-                  : Center(
-                      child: Container(child: CircularProgressIndicator())),
+                      : Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                            child: Text("No sellers match"),
+                          ),
+                        )
+                  : Center(child: Container(child: LinearProgressIndicator())),
               SizedBox(height: 10),
               qdocs != null && qdocs!.docs.take(i).toList().isNotEmpty
                   ? Container(

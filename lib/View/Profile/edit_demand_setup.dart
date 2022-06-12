@@ -165,7 +165,7 @@ class _EditDemandSetupState extends State<EditDemandSetup> {
                 GestureDetector(
                   child: _image == null
                       ? Container(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          padding: EdgeInsets.symmetric(horizontal: 0),
                           height: 150,
                           width: MediaQuery.of(context).size.width * 0.80,
                           decoration: BoxDecoration(

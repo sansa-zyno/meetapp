@@ -54,8 +54,8 @@ class _RequestOfferState extends State<RequestOffer> {
     }
   }
 
-  double placeLat = 0.0;
-  double placeLng = 0.0;
+  double? placeLat;
+  double? placeLng;
 
   @override
   void initState() {
@@ -304,7 +304,7 @@ class _RequestOfferState extends State<RequestOffer> {
                               textCapitalization: TextCapitalization.words,
                               decoration: InputDecoration(
                                 hintText:
-                                    'Search a place. Pin location by long-pressing on the map',
+                                    'Search a place. Tap a place on map to pin location',
                                 hintMaxLines: 2,
                                 prefixIcon: Icon(
                                   Icons.location_on,
@@ -342,7 +342,7 @@ class _RequestOfferState extends State<RequestOffer> {
                                         (GoogleMapController controller) {
                                       _mapController.complete(controller);
                                     },
-                                    onLongPress: (LatLng position) async {
+                                    onTap: (LatLng position) async {
                                       placeLat = position.latitude;
                                       placeLng = position.longitude;
                                       List<Placemark> placemarks =
@@ -474,7 +474,9 @@ class _RequestOfferState extends State<RequestOffer> {
                               "placeLng": placeLng
                             };
                             if (_value == 1) {
-                              if (_locationController.text != "") {
+                              if (_locationController.text != "" &&
+                                  placeLat != null &&
+                                  placeLng != null) {
                                 await FirebaseFirestore.instance
                                     .collection('requests')
                                     .doc(widget.sellerDetails.uid)
@@ -503,7 +505,7 @@ class _RequestOfferState extends State<RequestOffer> {
                                     .showSnackBar(SnackBar(
                                   backgroundColor: Colors.red,
                                   content: Text(
-                                    'Please pin a location',
+                                    'Please pin a location from map',
                                     textAlign: TextAlign.center,
                                   ),
                                 ));
