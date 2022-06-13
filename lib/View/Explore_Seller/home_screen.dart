@@ -232,7 +232,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: recentActivities!.length == 0
                                       ? Container()
                                       : Text("${recentActivities!.length}",
-                                          style: TextStyle(color: Colors.red)))
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold)))
                             ])
                           ],
                         ),
