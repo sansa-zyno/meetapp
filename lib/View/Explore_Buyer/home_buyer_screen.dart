@@ -75,13 +75,39 @@ class _HomeBuyerScreenState extends State<HomeBuyerScreen> {
         ? requests!
             .where((element) {
               List meeters = element["meeters"];
-              return meeters.contains(FirebaseAuth.instance.currentUser!.uid);
+              if (element["accepted"] == false) {
+                return meeters.isEmpty;
+              } else {
+                return meeters.contains(FirebaseAuth.instance.currentUser!.uid);
+              }
+            })
+            .where((element) {
+              if (FirebaseAuth.instance.currentUser!.uid ==
+                  element["buyer_id"]) {
+                return element["accepted"] != null ||
+                    element["modified"] != null;
+              } else {
+                return true;
+              }
+            })
+            .where((element) {
+              return element["acceptedBy"] !=
+                      FirebaseAuth.instance.currentUser!.uid &&
+                  element["declinedBy"] !=
+                      FirebaseAuth.instance.currentUser!.uid &&
+                  element["modifiedBy"] !=
+                      FirebaseAuth.instance.currentUser!.uid;
             })
             .where((element) => element["read"] == false)
             .toList()
         : [];
     List<QueryDocumentSnapshot> latestMsgs = messageDoc != null
-        ? messageDoc!.where((element) => element["read"] == false).toList()
+        ? messageDoc!
+            .where((element) => element["read"] == false)
+            .where((element) =>
+                element["lastMessageSendByUid"] !=
+                FirebaseAuth.instance.currentUser!.uid)
+            .toList()
         : [];
     recentActivities = [...latestRequests, ...latestMsgs];
     return Scaffold(

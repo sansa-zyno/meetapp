@@ -349,7 +349,9 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                           DocumentSnapshot? doc =
                               snapshot.data as DocumentSnapshot?;
                           return snapshot.hasData && doc!.data() != null
-                              ? doc['accepted'] == null
+                              ? doc['accepted'] == null &&
+                                      doc['modifiedBy'] !=
+                                          FirebaseAuth.instance.currentUser!.uid
                                   ? GestureDetector(
                                       onTap: () async {
                                         await Database().acceptRequest(

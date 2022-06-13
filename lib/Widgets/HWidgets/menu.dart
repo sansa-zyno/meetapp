@@ -201,11 +201,12 @@ class _MenuState extends State<Menu> {
                         .doc(user.uid)
                         .update({"lastActive": "Offline"});
                     await FirebaseAuth.instance.signOut();
-                    _currentUser.removeCurrentUser();
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => AuthMain()),
                         (route) => false);
+                    await Future.delayed(
+                        Duration(seconds: 1), _currentUser.removeCurrentUser);
                   },
                 ),
               ],

@@ -433,6 +433,8 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                             "read": false,
                             "modified": true,
                             "accepted": null,
+                            "acceptedBy": "",
+                            "declinedBy": "",
                             "modifiedBy":
                                 FirebaseAuth.instance.currentUser!.uid,
                             "question": questionController.text,

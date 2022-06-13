@@ -70,6 +70,8 @@ class Database {
       'meeters': meeters,
       "accepted": true,
       "acceptedBy": FirebaseAuth.instance.currentUser!.uid,
+      "declinedBy": "",
+      "modifiedBy": "",
       "modified": false,
       "ts": DateTime.now()
     });
@@ -90,6 +92,8 @@ class Database {
       'meeters': meeters,
       "accepted": false,
       "declinedBy": FirebaseAuth.instance.currentUser!.uid,
+      "acceptedBy": "",
+      "modifiedBy": "",
       "modified": false,
       "ts": DateTime.now()
     });
