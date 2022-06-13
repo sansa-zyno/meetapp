@@ -471,13 +471,13 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                               ? snapshot.data!["accepted"] != false
                                   ? GestureDetector(
                                       onTap: () {
-                                        String date = widget.request['date'];
+                                        String date = snapshot.data!['date'];
                                         int duration =
-                                            widget.request['duration'];
+                                            snapshot.data!['duration'];
                                         int startHour =
-                                            widget.request['startTime']['hour'];
+                                            snapshot.data!['startTime']['hour'];
                                         int startMin =
-                                            widget.request['startTime']['min'];
+                                            snapshot.data!['startTime']['min'];
                                         int timeInMin = (startHour * 60) +
                                             startMin +
                                             duration;
@@ -494,7 +494,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                               MaterialPageRoute(
                                                   builder: (ctx) =>
                                                       EditRequestOffer(
-                                                          doc: widget.request,
+                                                          doc: snapshot.data!,
                                                           clr: widget.clr)));
                                         } else {
                                           _scacffoldKey.currentState!
@@ -736,12 +736,41 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       snapshot.data!["accepted"] != false
                                   ? GestureDetector(
                                       onTap: () async {
-                                        Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                            builder: (ctx) =>
-                                                Timer(widget.request),
-                                          ),
-                                        );
+                                        String date = snapshot.data!['date'];
+                                        int duration =
+                                            snapshot.data!['duration'];
+                                        int startHour =
+                                            snapshot.data!['startTime']['hour'];
+                                        int startMin =
+                                            snapshot.data!['startTime']['min'];
+                                        int timeInMin = (startHour * 60) +
+                                            startMin +
+                                            duration;
+                                        String endTime =
+                                            "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
+                                        String formattedString =
+                                            "$date $endTime";
+                                        DateTime dateTime =
+                                            DateTime.parse(formattedString);
+                                        if (dateTime
+                                                .difference(DateTime.now()) <
+                                            Duration(hours: 1)) {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (ctx) =>
+                                                  Timer(snapshot.data!),
+                                            ),
+                                          );
+                                        } else {
+                                          _scacffoldKey.currentState!
+                                              .showSnackBar(SnackBar(
+                                            backgroundColor: Colors.red,
+                                            content: Text(
+                                              'Available 1 hour to the schedulled meeting time',
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ));
+                                        }
                                       },
                                       child: Container(
                                         width: 120,
