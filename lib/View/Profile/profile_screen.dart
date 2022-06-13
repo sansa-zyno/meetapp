@@ -111,7 +111,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           fontSize: 21,
                           color: Colors.white),
                     ),
-                    //cacheImage: true,
                     borderWidth: 2,
                     elevation: 10,
                     radius: 50,

@@ -9,9 +9,9 @@ import 'package:meeter/Model/user.dart';
 import 'package:uuid/uuid.dart';
 
 class UserController with ChangeNotifier {
-  final OurUser _currentUser = OurUser();
+  OurUser _currentUser = OurUser();
   OurUser get getCurrentUser => _currentUser;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseAuth auth = FirebaseAuth.instance;
   bool isAvatarUploading = false;
   bool isBannerUploading = false;
@@ -223,5 +223,10 @@ class UserController with ChangeNotifier {
     } catch (e) {
       return usr;
     }
+  }
+
+  removeCurrentUser() {
+    _currentUser = OurUser();
+    notifyListeners();
   }
 }
