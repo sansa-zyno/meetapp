@@ -47,6 +47,7 @@ class TimerController extends GetxController {
   RxBool isExtraChargeAnswered = false.obs;
 
   Map<String, dynamic> requestData = {};
+  late DocumentSnapshot request;
 
   void addTime() {
     final addSeconds = 1;
@@ -176,7 +177,7 @@ class TimerController extends GetxController {
   //     return "$a\_$b";
   //   }
   // }
-  startStream(DocumentSnapshot request) {
+  startStream() {
     log("startStream called ....................");
     isStreamCalled = true;
     requestData = request.data() as Map<String, dynamic>;

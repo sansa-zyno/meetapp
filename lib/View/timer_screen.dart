@@ -51,8 +51,9 @@ class _TimerState extends State<Timer> {
     currentCharge = widget.request["price"] / widget.request["duration"];
     extraCharge = currentCharge + (currentCharge * 0.3);
     log("currentCharge is: $currentCharge and extraCharge is: $extraCharge");
+    timerController.request = widget.request;
     if(!timerController.isStreamCalled){
-      timerController.startStream(widget.request);
+      timerController.startStream();
     }else{
       log("\n\n\n\n\n\n\n\n\n\n\nseems like stream called again\n\n\n\n\n\n\n\n");
     }
