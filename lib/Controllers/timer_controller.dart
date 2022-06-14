@@ -70,20 +70,20 @@ class TimerController extends GetxController {
     seconds.value = twoDigits(duration.inSeconds.remainder(60));
     log('time is: ${minutes.value}:${seconds.value}');
     log("before request data empty if  requestData:");
-    // if (requestData != {}) {
-    //   log("inside request data if: ");
-    //   if (int.parse(minutes.value) == int.parse(requestData['duration'])) {
-    //     var directory = getChatRoomIdByUsernames(requestData['seller_id'], requestData['buyer_id']);
-    //     log("request: ${requestData}");
-    //
-    //     // final ref2 = FirebaseDatabase.instance.ref().child('$directory/');
-    //     final ref2 = FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
-    //     ref2.update({
-    //       // "startAt": FieldValue.serverTimestamp(),
-    //       "seconds": -3,
-    //     });
-    //   }
-    // }
+    if (requestData != {}) {
+      log("inside request data if: ");
+      if (int.parse(minutes.value) == int.parse(requestData['duration'])) {
+        var directory = getChatRoomIdByUsernames(requestData['seller_id'], requestData['buyer_id']);
+        log("request: ${requestData}");
+
+        // final ref2 = FirebaseDatabase.instance.ref().child('$directory/');
+        final ref2 = FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
+        ref2.update({
+          // "startAt": FieldValue.serverTimestamp(),
+          "seconds": -3,
+        });
+      }
+    }
   }
 
   void pauseMode() {
