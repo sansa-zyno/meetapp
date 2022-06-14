@@ -323,6 +323,7 @@ class TimerController extends GetxController {
                         "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
                     "meeters": ["${request["seller_id"]}", "${request["buyer_id"]}"]
                   });
+                  log("deleting the item with ${request["seller_id"]} and request.id: ${request.id}");
                   await FirebaseFirestore.instance
                       .collection("requests")
                       .doc(request["seller_id"])
