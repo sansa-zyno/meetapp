@@ -109,8 +109,8 @@ class _TimerState extends State<Timer> {
                                   child: Text(
                                     timerController.isMeetingRunning.value
                                         ? '${timerController.minutes}:${timerController.seconds}'
-                                            '\n Touch to\npause or\nresume &'
-                                            '\n Long Press to end.'
+                                            '\n Touch to pause/resume \n&'
+                                            ' Long Press to end.'
                                         : 'Long Press to\nbegin/end your\nmeeting',
                                     style: TextStyle(
                                       color: Colors.white,

@@ -30,6 +30,7 @@ class TimerController extends GetxController {
   RxBool isMeetingPaused = false.obs;
   RxBool isMeetingStarted = false.obs;
   bool isDialogShown = false;
+  bool isExtraChargeTimeDialogShown = false;
 
   RxString minutes = '00'.obs;
   RxString seconds = '00'.obs;
@@ -460,6 +461,7 @@ class TimerController extends GetxController {
         var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
         if (id == dataMap['meetId']) {
           isDialogShown = false;
+          isExtraChargeTimeDialogShown = false;
           lMinutes = minutes.value;
           lSeconds = seconds.value;
           log("current user id in -2 is: ${UserController().auth.currentUser?.uid} "
@@ -651,59 +653,64 @@ class TimerController extends GetxController {
       } else if (timerSeconds.value == -3) {
         // timer.cancel();
         if (UserController().auth.currentUser?.uid != dataMap["start_requester_id"]) {
-          Get.defaultDialog(
-            barrierDismissible: false,
-            title: "Attention!",
-            middleText:
-                "The meeting time has reached the requested time limit. If you continue, you would be charged based on "
-                "the extra charge rate for this extra time. Do you wish to continue?",
-            confirmTextColor: Colors.white,
-            textConfirm: "Yes",
-            onConfirm: () {
-              isExtraChargeAnswered.value = true;
-              // if (!isMeetingPaused.value) {
-              ref2.update({
-                // "startAt": FieldValue.serverTimestamp(),
-                "seconds": 40,
-              });
-              Get.back();
-              // } else {
-              //   ref2.update({
-              //     // "startAt": FieldValue.serverTimestamp(),
-              //     "seconds": request["duration"],
-              //     "start_requester_id": dataMap["start_requester_id"],
-              //     "pause_requester_id": dataMap["pause_requester_id"]
-              //   });
+          if(!isExtraChargeTimeDialogShown){
+            Get.defaultDialog(
+              barrierDismissible: false,
+              title: "Attention!",
+              middleText:
+              "The meeting time has reached the requested time limit. If you continue, you would be charged based on "
+                  "the extra charge rate for this extra time. Do you wish to continue?",
+              confirmTextColor: Colors.white,
+              textConfirm: "Yes",
+              onConfirm: () {
+                isExtraChargeAnswered.value = true;
+                // isExtraChargeTimeDialogShown = false;
+                // if (!isMeetingPaused.value) {
+                ref2.update({
+                  // "startAt": FieldValue.serverTimestamp(),
+                  "seconds": 40,
+                });
+                Get.back();
+                // } else {
+                //   ref2.update({
+                //     // "startAt": FieldValue.serverTimestamp(),
+                //     "seconds": request["duration"],
+                //     "start_requester_id": dataMap["start_requester_id"],
+                //     "pause_requester_id": dataMap["pause_requester_id"]
+                //   });
+                // Get.back();
+                // }
+              },
+              cancelTextColor: Colors.red,
+              textCancel: "No",
+              onCancel: () {
+                isExtraChargeAnswered.value = true;
+                ref2.update({
+                  // "startAt": FieldValue.serverTimestamp(),
+                  "seconds": -1,
+                  "finished_at_minutes": minutes.value,
+                  "finished_at_seconds": seconds.value,
+                  "start_requester_id": dataMap["start_requester_id"],
+                  "pause_requester_id": dataMap["pause_requester_id"]
+                });
+              },
+            );
+            Future.delayed(Duration(minutes: 1), () {
+              log("is pause answered delayed checking");
               // Get.back();
-              // }
-            },
-            cancelTextColor: Colors.red,
-            textCancel: "No",
-            onCancel: () {
-              isExtraChargeAnswered.value = true;
-              ref2.update({
-                // "startAt": FieldValue.serverTimestamp(),
-                "seconds": -1,
-                "finished_at_minutes": minutes.value,
-                "finished_at_seconds": seconds.value,
-                "start_requester_id": dataMap["start_requester_id"],
-                "pause_requester_id": dataMap["pause_requester_id"]
-              });
-            },
-          );
+              if (!isExtraChargeAnswered.value) {
+                ref2.update({
+                  // "startAt": FieldValue.serverTimestamp(),
+                  "seconds": -1,
+                  "finished_at_minutes": minutes.value,
+                  "finished_at_seconds": seconds.value,
+                }).then((value) => log("from !isPauseAnswered.value"));
+              }
+            });
+            isExtraChargeTimeDialogShown = true;
+          }
 
-          Future.delayed(Duration(minutes: 1), () {
-            log("is pause answered delayed checking");
-            // Get.back();
-            if (!isExtraChargeAnswered.value) {
-              ref2.update({
-                // "startAt": FieldValue.serverTimestamp(),
-                "seconds": -1,
-                "finished_at_minutes": minutes.value,
-                "finished_at_seconds": seconds.value,
-              }).then((value) => log("from !isPauseAnswered.value"));
-            }
-          });
+
         }
       } else {
         //+ if the number is none of the code related things
