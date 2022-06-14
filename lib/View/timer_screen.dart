@@ -109,8 +109,8 @@ class _TimerState extends State<Timer> {
                                   child: Text(
                                     timerController.isMeetingRunning.value
                                         ? '${timerController.minutes}:${timerController.seconds}'
-                                            '\n Touch to\npause or\nresume &'
-                                            '\n Long Press to end.'
+                                            '\n Touch to pause/resume \n&'
+                                            ' Long Press to end.'
                                         : 'Long Press to\nbegin/end your\nmeeting',
                                     style: TextStyle(
                                       color: Colors.white,
@@ -140,7 +140,7 @@ class _TimerState extends State<Timer> {
                                   "pause_requester_id": UserController().auth.currentUser?.uid,
                                   "finished_at_minutes": "",
                                   "finished_at_seconds": "",
-                                }).then((value) {
+                                }, SetOptions(merge: true)).then((value) {
                                   ref.set({
                                     "meetId": directory,
                                     "startAt": ServerValue.timestamp,
@@ -181,7 +181,7 @@ class _TimerState extends State<Timer> {
                                   "pause_requester_id": "",
                                   "finished_at_minutes": timerController.minutes.value,
                                   "finished_at_seconds": timerController.seconds.value,
-                                }).then((value) {
+                                }, SetOptions(merge: true)).then((value) {
                                   ref.set({
                                     "meetId": directory,
                                     "startAt": ServerValue.timestamp,
