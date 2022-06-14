@@ -653,7 +653,7 @@ class TimerController extends GetxController {
         // ref2.set({"startAt": FieldValue.serverTimestamp(), "seconds": 0});
       } else if (timerSeconds.value == -3) {
         // timer.cancel();
-        if (UserController().auth.currentUser?.uid != dataMap["start_requester_id"]) {
+        if (UserController().auth.currentUser?.uid != request["buyer_id"]) {
           if(!isExtraChargeTimeDialogShown){
             Get.defaultDialog(
               barrierDismissible: false,
