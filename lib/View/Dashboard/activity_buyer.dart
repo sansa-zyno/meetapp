@@ -49,11 +49,11 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          SizedBox(
-            height: h * 16.8,
-          ),
           Column(
             children: [
+              SizedBox(
+                height: h * 16.8,
+              ),
               Expanded(
                 child: Container(
                   height: h * 72.5,
@@ -153,9 +153,6 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
                           thickness: 1,
                           color: Colors.grey[300],
                         ),
-                      ),
-                      SizedBox(
-                        height: h * 0.5,
                       ),
                       recent
                           ? Expanded(
