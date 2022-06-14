@@ -253,8 +253,18 @@ class TimerController extends GetxController {
             extraSeconds = int.parse(dataMap['finished_at_seconds']);
             log("total charge is: $totalCharge");
             extraTimeCharge = extraMinutes * extraCharge;
+            log("extraTimeCharge charge is: $extraTimeCharge");
+            log("extraMinutes is: $extraMinutes");
+            log("extraCharge is: $extraCharge");
+
             extraTimeCharge += extraSeconds * (extraCharge / 60);
+            log("extraTimeCharge charge after seconds is is: $extraTimeCharge");
+            log("extraMinutes is: $extraMinutes");
+            log("extraCharge is: $extraCharge");
+            log("totalCharge is: $totalCharge");
             totalCharge += extraTimeCharge;
+            log("totalCharge after adding all charges is: $totalCharge");
+
           } else {
             log("inside else less if");
             totalCharge = int.parse(dataMap['finished_at_minutes']) * currentCharge;
