@@ -142,15 +142,15 @@ class _TimerState extends State<Timer> {
                                   "finished_at_minutes": "",
                                   "finished_at_seconds": "",
                                 }, SetOptions(merge: true)).then((value) {
-                                  ref.set({
-                                    "meetId": directory,
-                                    "startAt": ServerValue.timestamp,
-                                    "seconds": 2,
-                                    "start_requester_id": "",
-                                    "pause_requester_id": UserController().auth.currentUser?.uid,
-                                    "finished_at_minutes": "",
-                                    "finished_at_seconds": "",
-                                  });
+                                  // ref.set({
+                                  //   "meetId": directory,
+                                  //   "startAt": ServerValue.timestamp,
+                                  //   "seconds": 2,
+                                  //   "start_requester_id": "",
+                                  //   "pause_requester_id": UserController().auth.currentUser?.uid,
+                                  //   "finished_at_minutes": "",
+                                  //   "finished_at_seconds": "",
+                                  // });
                                   log("in on long press passing a pause request");
                                 });
                               } else {
@@ -183,15 +183,15 @@ class _TimerState extends State<Timer> {
                                   "finished_at_minutes": timerController.minutes.value,
                                   "finished_at_seconds": timerController.seconds.value,
                                 }, SetOptions(merge: true)).then((value) {
-                                  ref.set({
-                                    "meetId": directory,
-                                    "startAt": ServerValue.timestamp,
-                                    "seconds": -2,
-                                    "start_requester_id": UserController().auth.currentUser?.uid,
-                                    "pause_requester_id": "",
-                                    "finished_at_minutes": timerController.minutes.value,
-                                    "finished_at_seconds": timerController.seconds.value,
-                                  });
+                                  // ref.set({
+                                  //   "meetId": directory,
+                                  //   "startAt": ServerValue.timestamp,
+                                  //   "seconds": -2,
+                                  //   "start_requester_id": UserController().auth.currentUser?.uid,
+                                  //   "pause_requester_id": "",
+                                  //   "finished_at_minutes": timerController.minutes.value,
+                                  //   "finished_at_seconds": timerController.seconds.value,
+                                  // });
                                   log("in on Tap passed a start/stop request");
                                   // timerController.meetingMode();
                                 });
