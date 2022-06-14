@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meeter/Widgets/HWidgets/nav_main_seller.dart';
+import 'package:page_transition/page_transition.dart';
+import 'package:wakelock/wakelock.dart';
 
 import '../Providers/user_controller.dart';
 
@@ -41,6 +43,9 @@ class TimerController extends GetxController {
   RxBool isStartAnswered = false.obs;
   RxBool isEndAnswered = false.obs;
   RxBool isPauseAnswered = false.obs;
+  RxBool isExtraChargeAnswered = false.obs;
+
+  Map<String, dynamic> requestData = {};
 
   void addTime() {
     final addSeconds = 1;
@@ -64,6 +69,21 @@ class TimerController extends GetxController {
     minutes.value = twoDigits(duration.inMinutes);
     seconds.value = twoDigits(duration.inSeconds.remainder(60));
     log('time is: ${minutes.value}:${seconds.value}');
+    log("before request data empty if  requestData:");
+    // if (requestData != {}) {
+    //   log("inside request data if: ");
+    //   if (int.parse(minutes.value) == int.parse(requestData['duration'])) {
+    //     var directory = getChatRoomIdByUsernames(requestData['seller_id'], requestData['buyer_id']);
+    //     log("request: ${requestData}");
+    //
+    //     // final ref2 = FirebaseDatabase.instance.ref().child('$directory/');
+    //     final ref2 = FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
+    //     ref2.update({
+    //       // "startAt": FieldValue.serverTimestamp(),
+    //       "seconds": -3,
+    //     });
+    //   }
+    // }
   }
 
   void pauseMode() {
@@ -82,6 +102,7 @@ class TimerController extends GetxController {
     if (isMeetingRunning.value) {
       log("inside if(isMeetingRunning.value)");
       startTimer();
+      Wakelock.enable();
       /**/
       // buildTime();
     } else {
@@ -89,6 +110,7 @@ class TimerController extends GetxController {
       log("in meeting mode else resetting time is::");
       timer.cancel();
       resetTimer();
+      Wakelock.disable();
     }
     // update();
   }
@@ -156,19 +178,16 @@ class TimerController extends GetxController {
   startStream(DocumentSnapshot request) {
     log("startStream called ....................");
     isStreamCalled = true;
-    var directory =
-        getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
+    requestData = request.data() as Map<String, dynamic>;
+    log("requestData after setting is: ${requestData}");
+    var directory = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
     log("request: ${request.data()}");
 
     // final ref2 = FirebaseDatabase.instance.ref().child('$directory/');
-    final ref2DocSnap = FirebaseFirestore.instance
-        .collection("InMeetingRecord")
-        .doc(directory)
-        .snapshots();
-    final ref2 =
-        FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
+    final ref2DocSnap = FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory).snapshots();
+    final ref2 = FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
 
-    ref2DocSnap.listen((event) {
+    ref2DocSnap.listen((event) async {
       var data = event.data();
       log("data is: $data");
       // var jsonString = json.encode(event.snapshot.value);
@@ -196,14 +215,18 @@ class TimerController extends GetxController {
         //   timer.cancel();
         //   resetTimer();
         // }
+        // if(isMeetingRunning.value){
+        //   if(dataMap['pause_requester_id'] == UserController().auth.currentUser?.uid){
+        //     startTimer();
+        //   }
+        // }
       } else if (timerSeconds.value == -1) {
         //+ -1 means the meeting is ended and  timer is reset and the value
         //+ in RTDB is changed to 0.
         log("is meeting end called ");
         log("request: ${request.data()}");
 
-        var id =
-            getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
+        var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
         log("in -1 before if id == request['meetId'] and id: $id and and request['meetId']: ${dataMap['meetId']}");
 
         if (id == dataMap['meetId']) {
@@ -213,7 +236,8 @@ class TimerController extends GetxController {
           log("cancel timer called.");
           // meetingMode(); //+ I added this 23-4
           log("local values are: lMinutes: $lMinutes and "
-              "lSeconds: $lSeconds");
+              "dataMap['finished_at_minutes'] is: ${dataMap['finished_at_minutes']}"
+              "lSeconds: $lSeconds and dataMap['finished_at_seconds'] is: ${dataMap['finished_at_seconds']}");
           totalCharge = 0;
           extraMinutes = 0;
           extraSeconds = 0;
@@ -237,25 +261,6 @@ class TimerController extends GetxController {
             totalCharge +=
                 ((int.parse(dataMap['finished_at_seconds']) * (currentCharge / 60)).toPrecision(3)).toPrecision(2);
           }
-          // if (int.parse(lMinutes) > request["duration"] ||
-          //     (int.parse(lMinutes) == request["duration"])) {
-          //   log("inside lMinutes less if request['duration']: ${request["duration"]} \n\n "
-          //       " int.parse(lMinutes): ${int.parse(lMinutes)}");
-          //   totalCharge = request["duration"] * currentCharge;
-          //   extraMinutes = (int.parse(lMinutes) - request["duration"]).toInt();
-          //   extraSeconds = int.parse(lSeconds);
-          //   log("total charge is: $totalCharge");
-          //   extraTimeCharge = extraMinutes * extraCharge;
-          //   extraTimeCharge += extraSeconds * (extraCharge / 60);
-          //   totalCharge += extraTimeCharge;
-          // }
-          // else {
-          //   log("inside else less if");
-          //   totalCharge = int.parse(lMinutes) * currentCharge;
-          //   totalCharge +=
-          //       ((int.parse(lSeconds) * (currentCharge / 60)).toPrecision(3))
-          //           .toPrecision(2);
-          // }
           // resetTimer();
           log("after refreshing minutes: $minutes and "
               "dataMap['finished_at_minutes'] is: ${dataMap['finished_at_minutes']}"
@@ -296,10 +301,7 @@ class TimerController extends GetxController {
                   //+DELETE THIS MEETING FRoM THE RECENT ONES OR THE REQUESTS AFTER THIS MEETING
                   //+ IS ENDED hERE
                   DateTime date = DateTime.now();
-                  await FirebaseFirestore.instance
-                      .collection("connections")
-                      .add({
-                    "ts": date,
+                  await FirebaseFirestore.instance.collection("connections").add({
                     "title": request["title"],
                     "seller_id": request["seller_id"],
                     "seller_name": request["seller_name"],
@@ -308,11 +310,8 @@ class TimerController extends GetxController {
                     "buyer_name": request["buyer_name"],
                     "buyer_image": request["buyer_image"],
                     "date":
-                        "${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.year}",
-                    "meeters": [
-                      "${request["seller_id"]}",
-                      "${request["buyer_id"]}"
-                    ]
+                        "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
+                    "meeters": ["${request["seller_id"]}", "${request["buyer_id"]}"]
                   });
                   await FirebaseFirestore.instance
                       .collection("requests")
@@ -322,7 +321,18 @@ class TimerController extends GetxController {
                       .delete();
                   isDialogShown = true;
                   Get.back();
+                  // Get.back();
+                  // Get.back();
                   Get.offAll(() => BottomNavBar(),transition: Transition.rightToLeft,);
+                  // Navigator.pushAndRemoveUntil(
+                  //     context,
+                  //     PageTransition(
+                  //       type: PageTransitionType.rightToLeft,
+                  //       duration: Duration(milliseconds: 200),
+                  //       curve: Curves.easeIn,
+                  //       child: BottomNavBar(),
+                  //     ),
+                  //         (route) => false);
                   ref2.update({
                     // "startAt": FieldValue.serverTimestamp(),
                     "seconds": 0,
@@ -335,6 +345,10 @@ class TimerController extends GetxController {
             timer.cancel();
           }
           resetTimer();
+          bool isWakelock = await Wakelock.enabled;
+          if (isWakelock) {
+            Wakelock.disable();
+          }
         } else {
           log("in stop else meaning this is some other meeting page and the stop was called for some other one");
         }
@@ -405,8 +419,7 @@ class TimerController extends GetxController {
         // if (!isMeetingPaused.value) {
         // isMeetingPaused.value = true;
 
-        var id =
-            getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
+        var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
         log("in 1 before if id == request['meetId'] and id: $id and and request['meetId']: ${dataMap['meetId']}");
 
         if (id == dataMap['meetId']) {
@@ -430,17 +443,17 @@ class TimerController extends GetxController {
         //+ setting or putting '0' in RTDB
 
         //+ let's also add a requested by ID in the data in RTDB
-
-        var id =
-            getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
+        // if(timer.isActive){
+        //   timer.cancel();
+        // }
+        var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
         if (id == dataMap['meetId']) {
           isDialogShown = false;
           lMinutes = minutes.value;
           lSeconds = seconds.value;
           log("current user id in -2 is: ${UserController().auth.currentUser?.uid} "
               "and other id is: ");
-          if (UserController().auth.currentUser?.uid !=
-              dataMap["start_requester_id"]) {
+          if (UserController().auth.currentUser?.uid != dataMap["start_requester_id"]) {
             //+ this means I am the buyer and I should see the dialog regarding start of meeting
             var name = "";
             if (dataMap["start_requester_id"] == request["seller_id"]) {
@@ -484,6 +497,7 @@ class TimerController extends GetxController {
                   });
                   Get.back();
                 }
+                // startTimer();
               },
               cancelTextColor: Colors.red,
               textCancel: "No",
@@ -495,6 +509,9 @@ class TimerController extends GetxController {
                   "start_requester_id": dataMap["start_requester_id"],
                   "pause_requester_id": dataMap["pause_requester_id"]
                 });
+                // if(isMeetingRunning.value){
+                //   startTimer();
+                // }
               },
             );
 
@@ -516,8 +533,7 @@ class TimerController extends GetxController {
                     "start_requester_id": dataMap["start_requester_id"],
                     "pause_requester_id": dataMap["pause_requester_id"]
                   });
-                  if (dataMap["start_requester_id"] !=
-                      UserController().auth.currentUser?.uid) {
+                  if (dataMap["start_requester_id"] != UserController().auth.currentUser?.uid) {
                     log("inside the start requester id check if");
                     Get.back();
                   }
@@ -549,14 +565,12 @@ class TimerController extends GetxController {
         //+ but if not answered in a minute, as reflected from the RxBool isPauseAnswered then set 1 in the RTDB
         //+ which means that the meeting is paused.
 
-        var id =
-            getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
+        var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
         log("in 2 before if id == request['meetId'] and id: $id and and request['meetId']: ${dataMap['meetId']}");
         if (id == dataMap['meetId']) {
           log("current user in 2 id is: ${UserController().auth.currentUser?.uid}");
           var name = "";
-          if (UserController().auth.currentUser?.uid !=
-              dataMap["pause_requester_id"]) {
+          if (UserController().auth.currentUser?.uid != dataMap["pause_requester_id"]) {
             //+ this means I am the buyer and I should see the dialog regarding start of meeting
             if (dataMap["pause_requester_id"] == request["seller_id"]) {
               name = request["seller_name"];
@@ -618,13 +632,68 @@ class TimerController extends GetxController {
         } else {
           log("in 2 not the meeting the request was made for.");
         }
-
         //!! haven't taken care of the timed thingy yet
-
         // timer2.cancel();
         // resetTimer2();
         // isMeetingRunning2.value = false;
         // ref2.set({"startAt": FieldValue.serverTimestamp(), "seconds": 0});
+      } else if (timerSeconds.value == -3) {
+        // timer.cancel();
+        if (UserController().auth.currentUser?.uid != dataMap["start_requester_id"]) {
+          Get.defaultDialog(
+            barrierDismissible: false,
+            title: "Attention!",
+            middleText:
+                "The meeting time has reached the requested time limit. If you continue, you would be charged based on "
+                "the extra charge rate for this extra time. Do you wish to continue?",
+            confirmTextColor: Colors.white,
+            textConfirm: "Yes",
+            onConfirm: () {
+              isExtraChargeAnswered.value = true;
+              // if (!isMeetingPaused.value) {
+              ref2.update({
+                // "startAt": FieldValue.serverTimestamp(),
+                "seconds": 40,
+              });
+              Get.back();
+              // } else {
+              //   ref2.update({
+              //     // "startAt": FieldValue.serverTimestamp(),
+              //     "seconds": request["duration"],
+              //     "start_requester_id": dataMap["start_requester_id"],
+              //     "pause_requester_id": dataMap["pause_requester_id"]
+              //   });
+              // Get.back();
+              // }
+            },
+            cancelTextColor: Colors.red,
+            textCancel: "No",
+            onCancel: () {
+              isExtraChargeAnswered.value = true;
+              ref2.update({
+                // "startAt": FieldValue.serverTimestamp(),
+                "seconds": -1,
+                "finished_at_minutes": minutes.value,
+                "finished_at_seconds": seconds.value,
+                "start_requester_id": dataMap["start_requester_id"],
+                "pause_requester_id": dataMap["pause_requester_id"]
+              });
+            },
+          );
+
+          Future.delayed(Duration(minutes: 1), () {
+            log("is pause answered delayed checking");
+            // Get.back();
+            if (!isExtraChargeAnswered.value) {
+              ref2.update({
+                // "startAt": FieldValue.serverTimestamp(),
+                "seconds": -1,
+                "finished_at_minutes": minutes.value,
+                "finished_at_seconds": seconds.value,
+              }).then((value) => log("from !isPauseAnswered.value"));
+            }
+          });
+        }
       } else {
         //+ if the number is none of the code related things
         log("inside callback else");
@@ -659,8 +728,7 @@ class TimerController extends GetxController {
         // });
         log("inside if calling the wnd meeting mode");
 
-        var id =
-            getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
+        var id = getChatRoomIdByUsernames(request['seller_id'], request['buyer_id']);
         log("in last else before if id == request['meetId'] and id: $id and and request['meetId']: ${dataMap['meetId']}");
         if (id == dataMap['meetId']) {
           if (!isMeetingRunning.value) {
