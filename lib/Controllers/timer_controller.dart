@@ -73,7 +73,7 @@ class TimerController extends GetxController {
     log("before request data empty if  requestData:");
     if (requestData != {}) {
       log("inside request data if: ");
-      if (int.parse(minutes.value) == requestData['duration']) {
+      if (int.parse(minutes.value) == requestData['duration'] && int.parse(seconds.value) == 0) {
         var directory = getChatRoomIdByUsernames(requestData['seller_id'], requestData['buyer_id']);
         log("request: ${requestData}");
 
@@ -244,6 +244,7 @@ class TimerController extends GetxController {
           extraSeconds = 0;
           extraTimeCharge = 0;
           currentCharge = request["price"] / request["duration"];
+          extraCharge = extraCharge = currentCharge + (currentCharge * 0.3);;
 
           if (int.parse(dataMap['finished_at_minutes']) > request["duration"] ||
               (int.parse(dataMap['finished_at_minutes']) == request["duration"])) {
