@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:meeter/Widgets/HWidgets/nav_main_seller.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:wakelock/wakelock.dart';
 
 import '../Providers/user_controller.dart';
@@ -311,6 +310,7 @@ class TimerController extends GetxController {
                   //+HANDLE THIS HERE PLEASE IN WHATEVER WAY YOU WANT. yOU MIGHT ALSO WANT tO
                   //+DELETE THIS MEETING FRoM THE RECENT ONES OR THE REQUESTS AFTER THIS MEETING
                   //+ IS ENDED hERE
+                  Get.defaultDialog(content: CircularProgressIndicator());
                   DateTime date = DateTime.now();
                   await FirebaseFirestore.instance.collection("connections").add({
                     "title": request["title"],
@@ -332,6 +332,7 @@ class TimerController extends GetxController {
                       .doc(request.id)
                       .delete();
                   isDialogShown = true;
+                  Get.back();
                   Get.back();
                   // Get.back();
                   // Get.back();
