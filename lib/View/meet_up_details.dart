@@ -472,19 +472,16 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                   ? GestureDetector(
                                       onTap: () {
                                         String date = snapshot.data!['date'];
-                                        int duration =
-                                            snapshot.data!['duration'];
                                         int startHour =
                                             snapshot.data!['startTime']['hour'];
                                         int startMin =
                                             snapshot.data!['startTime']['min'];
-                                        int timeInMin = (startHour * 60) +
-                                            startMin +
-                                            duration;
-                                        String endTime =
+                                        int timeInMin =
+                                            (startHour * 60) + startMin;
+                                        String startTime =
                                             "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
                                         String formattedString =
-                                            "$date $endTime";
+                                            "$date $startTime";
                                         DateTime dateTime =
                                             DateTime.parse(formattedString);
                                         if (dateTime
@@ -737,19 +734,16 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                   ? GestureDetector(
                                       onTap: () async {
                                         String date = snapshot.data!['date'];
-                                        int duration =
-                                            snapshot.data!['duration'];
                                         int startHour =
                                             snapshot.data!['startTime']['hour'];
                                         int startMin =
                                             snapshot.data!['startTime']['min'];
-                                        int timeInMin = (startHour * 60) +
-                                            startMin +
-                                            duration;
-                                        String endTime =
+                                        int timeInMin =
+                                            (startHour * 60) + startMin;
+                                        String startTime =
                                             "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
                                         String formattedString =
-                                            "$date $endTime";
+                                            "$date $startTime";
                                         DateTime dateTime =
                                             DateTime.parse(formattedString);
                                         if (dateTime

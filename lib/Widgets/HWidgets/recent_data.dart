@@ -23,7 +23,8 @@ class RecentData extends StatelessWidget {
     return text == "new"
         ? request!['seller_id'] == FirebaseAuth.instance.currentUser!.uid
             ? Padding(
-                padding: EdgeInsets.all(MediaQuery.of(context).size.width / 60),
+                padding: EdgeInsets.symmetric(
+                    horizontal: MediaQuery.of(context).size.width / 60),
                 child: GestureDetector(
                   onTap: () async {
                     await FirebaseFirestore.instance
@@ -44,7 +45,7 @@ class RecentData extends StatelessWidget {
                       children: [
                         Padding(
                           padding: EdgeInsets.symmetric(
-                              horizontal: width / 40, vertical: height / 100),
+                              horizontal: width / 40, vertical: height / 10),
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.vertical(
@@ -91,15 +92,12 @@ class RecentData extends StatelessWidget {
                                           child: Padding(
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: width / 60),
-                                            child: Container(
-                                              width: 500,
-                                              child: Text(
-                                                '🕒${request!['time']}',
-                                                style: TextStyle(
-                                                  color: request!["read"]
-                                                      ? Colors.grey
-                                                      : Colors.black,
-                                                ),
+                                            child: Text(
+                                              '🕒${request!['time']}',
+                                              style: TextStyle(
+                                                color: request!["read"]
+                                                    ? Colors.grey
+                                                    : Colors.black,
                                               ),
                                             ),
                                           ),
@@ -137,8 +135,8 @@ class RecentData extends StatelessWidget {
             ? msg!["lastMessageSendByUid"] !=
                     FirebaseAuth.instance.currentUser!.uid
                 ? Padding(
-                    padding:
-                        EdgeInsets.all(MediaQuery.of(context).size.width / 60),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width / 60),
                     child: GestureDetector(
                       onTap: () async {
                         QuerySnapshot _doc = await FirebaseFirestore.instance
@@ -259,8 +257,8 @@ class RecentData extends StatelessWidget {
                         request!['buyer_id'] ==
                             FirebaseAuth.instance.currentUser!.uid
                     ? Padding(
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width / 60),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width / 60),
                         child: GestureDetector(
                           onTap: () async {
                             await FirebaseFirestore.instance
@@ -378,8 +376,9 @@ class RecentData extends StatelessWidget {
                             request!['seller_id'] ==
                                 FirebaseAuth.instance.currentUser!.uid
                         ? Padding(
-                            padding: EdgeInsets.all(
-                                MediaQuery.of(context).size.width / 60),
+                            padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width / 60),
                             child: GestureDetector(
                               onTap: () async {
                                 await FirebaseFirestore.instance
@@ -503,8 +502,9 @@ class RecentData extends StatelessWidget {
                             request!['buyer_id'] ==
                                 FirebaseAuth.instance.currentUser!.uid
                         ? Padding(
-                            padding: EdgeInsets.all(
-                                MediaQuery.of(context).size.width / 60),
+                            padding: EdgeInsets.symmetric(
+                                horizontal:
+                                    MediaQuery.of(context).size.width / 60),
                             child: GestureDetector(
                               onTap: () async {
                                 await FirebaseFirestore.instance
@@ -626,8 +626,9 @@ class RecentData extends StatelessWidget {
                                 request!['seller_id'] ==
                                     FirebaseAuth.instance.currentUser!.uid
                             ? Padding(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width / 60),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        MediaQuery.of(context).size.width / 60),
                                 child: GestureDetector(
                                   onTap: () async {
                                     await FirebaseFirestore.instance
@@ -758,8 +759,9 @@ class RecentData extends StatelessWidget {
                                 request!['buyer_id'] ==
                                     FirebaseAuth.instance.currentUser!.uid
                             ? Padding(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width / 60),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        MediaQuery.of(context).size.width / 60),
                                 child: GestureDetector(
                                   onTap: () async {
                                     await FirebaseFirestore.instance
@@ -889,8 +891,10 @@ class RecentData extends StatelessWidget {
                                     request!['seller_id'] ==
                                         FirebaseAuth.instance.currentUser!.uid
                                 ? Padding(
-                                    padding: EdgeInsets.all(
-                                        MediaQuery.of(context).size.width / 60),
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            MediaQuery.of(context).size.width /
+                                                60),
                                     child: GestureDetector(
                                       onTap: () async {
                                         await FirebaseFirestore.instance

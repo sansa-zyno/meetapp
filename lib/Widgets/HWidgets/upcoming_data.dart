@@ -38,7 +38,8 @@ class _UpcomingDataState extends State<UpcomingData> {
         padding: EdgeInsets.all(0),
         itemBuilder: (context, index) {
           return Padding(
-            padding: EdgeInsets.all(MediaQuery.of(context).size.width / 80),
+            padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width / 60),
             child: GestureDetector(
               onTap: () {
                 Navigator.push(
