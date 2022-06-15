@@ -134,16 +134,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
 List<Meeting> _getDataSource(List<QueryDocumentSnapshot> requests) {
   meetings = <Meeting>[];
   for (int i = 0; i < requests.length; i++) {
-    final DateTime startTime = DateTime(
+    /*final DateTime startTime = DateTime(
         DateTime.parse(requests[i]['date']).year,
         DateTime.parse(requests[i]['date']).month,
         DateTime.parse(requests[i]['date']).day,
         requests[i]['startTime']['hour'],
         requests[i]['startTime']['min'],
-        0);
-    final DateTime endTime =
-        startTime.add(Duration(minutes: requests[i]['duration']));
-    meetings.add(Meeting(requests[i]['title'], startTime, endTime,
+        0);*/
+    final DateTime startDateTime = requests[i]['startDateTime'].toDate();
+    final DateTime endDateTime = requests[i]['endDateTime'].toDate();
+
+    /*final DateTime endTime =
+        startTime.add(Duration(minutes: requests[i]['duration']));*/
+    meetings.add(Meeting(requests[i]['title'], startDateTime, endDateTime,
         const Color(0xFF0F8644), false));
   }
   return meetings;

@@ -412,8 +412,6 @@ class _RequestOfferState extends State<RequestOffer> {
                         Colors.blue,
                       ],
                       onpressed: () async {
-                        print(placeLat);
-                        print(placeLng);
                         String dateToString =
                             "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}";
                         int startHour = _startTime.hour;
@@ -425,13 +423,12 @@ class _RequestOfferState extends State<RequestOffer> {
                         DateTime dateTime = DateTime.parse(formattedString);
                         if (dateTime.compareTo(DateTime.now()) >= 0) {
                           if (duration != null) {
-                            int totalMin = _startTime.hour < 12
-                                ? (_startTime.hour * 60 +
-                                    _startTime.minute +
-                                    int.parse(duration!))
-                                : ((_startTime.hour - 12) * 60 +
-                                    _startTime.minute +
-                                    int.parse(duration!));
+                            int totalMin = _startTime.hour * 60 +
+                                _startTime.minute +
+                                int.parse(duration!);
+                            String endTime =
+                                "${(totalMin ~/ 60).floor() < 10 ? "0" : ""}${(totalMin ~/ 60).floor()}:${(totalMin % 60).floor() < 10 ? "0" : ""}${(totalMin % 60).floor()}";
+                            print(endTime);
                             Map<String, dynamic> map = {
                               "read": false,
                               "type": "service",
@@ -450,15 +447,18 @@ class _RequestOfferState extends State<RequestOffer> {
                               "seller_image": widget.doc.meetup_seller_image,
                               "seller_id": widget.doc.meetup_seller_uid,
                               "seller_name": widget.doc.meetup_seller_name,
-                              "date":
-                                  "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
-                              "time":
-                                  "${_startTime.hour == 0 ? 12 : _startTime.hour <= 12 ? _startTime.hour : _startTime.hour - 12}:${_startTime.minute.floor() < 10 ? "0" : ""}${_startTime.minute.floor()}${_startTime.period.index == 0 ? "AM" : "PM"} - ${totalMin ~/ 60 == 0 ? 12 : totalMin ~/ 60 <= 12 ? totalMin ~/ 60 : (totalMin ~/ 60) - 12}:${totalMin % 60}${_startTime.period.index == 0 ? totalMin ~/ 60 >= 12 ? "PM" : "AM" : totalMin ~/ 60 >= 12 ? "AM" : "PM"}",
+                              "date": dateToString,
+                              /*"time":
+                                  "${_startTime.hour == 0 ? 12 : _startTime.hour <= 12 ? _startTime.hour : _startTime.hour - 12}:${_startTime.minute.floor() < 10 ? "0" : ""}${_startTime.minute.floor()}${_startTime.period.index == 0 ? "AM" : "PM"} - ${totalMin ~/ 60 == 0 ? 12 : totalMin ~/ 60 <= 12 ? totalMin ~/ 60 : (totalMin ~/ 60) - 12}:${totalMin % 60}${_startTime.period.index == 0 ? totalMin ~/ 60 >= 12 ? "PM" : "AM" : totalMin ~/ 60 >= 12 ? "AM" : "PM"}",*/
                               "duration": int.parse(duration!),
-                              "startTime": {
+                              /*"startTime": {
                                 "hour": _startTime.hour,
                                 "min": _startTime.minute
-                              },
+                              },*/
+                              "startDateTime":
+                                  DateTime.parse("$dateToString $startTime"),
+                              "endDateTime":
+                                  DateTime.parse("$dateToString $endTime"),
                               "location": _value == 1 ? "Physical" : "Virtual",
                               "location_address": _locationController.text,
                               "buyer_name":

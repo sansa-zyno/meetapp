@@ -31,7 +31,6 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
   DatePickerController datePickerController = DatePickerController();
   late TextEditingController questionController;
   late TextEditingController _locationController;
-  late String time;
   late DateTime date;
   int _value = 1;
   late String duration;
@@ -59,13 +58,10 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _startTime = TimeOfDay(
-        hour: widget.doc['startTime']['hour'],
-        minute: widget.doc['startTime']['min']);
+    _startTime = TimeOfDay.fromDateTime(widget.doc['startDateTime'].toDate());
     questionController = TextEditingController(text: widget.doc['question']);
     _locationController =
         TextEditingController(text: widget.doc['location_address']);
-    time = widget.doc['time'];
     {
       duration = widget.doc['duration'].toString();
       idx = _duration.indexOf(duration);
@@ -422,13 +418,12 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                       DateTime dateTime = DateTime.parse(formattedString);
                       if (dateTime.compareTo(DateTime.now()) >= 0) {
                         if (duration != "") {
-                          int totalMin = _startTime.hour < 12
-                              ? (_startTime.hour * 60 +
-                                  _startTime.minute +
-                                  int.parse(duration))
-                              : ((_startTime.hour - 12) * 60 +
-                                  _startTime.minute +
-                                  int.parse(duration));
+                          int totalMin = _startTime.hour * 60 +
+                              _startTime.minute +
+                              int.parse(duration);
+                          String endTime =
+                              "${(totalMin ~/ 60).floor() < 10 ? "0" : ""}${(totalMin ~/ 60).floor()}:${(totalMin % 60).floor() < 10 ? "0" : ""}${(totalMin % 60).floor()}";
+                          print(endTime);
                           Map<String, dynamic> map = {
                             "read": false,
                             "modified": true,
@@ -439,17 +434,20 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                 FirebaseAuth.instance.currentUser!.uid,
                             "question": questionController.text,
                             "ts": Timestamp.now(),
-                            "date":
-                                "${date.year}-${date.month.floor() < 10 ? "0" : ""}${date.month.floor()}-${date.day.floor() < 10 ? "0" : ""}${date.day.floor()}",
-                            "time":
-                                "${_startTime.hour == 0 ? 12 : _startTime.hour <= 12 ? _startTime.hour : _startTime.hour - 12}:${_startTime.minute.floor() < 10 ? "0" : ""}${_startTime.minute.floor()}${_startTime.period.index == 0 ? "AM" : "PM"} - ${totalMin ~/ 60 == 0 ? 12 : totalMin ~/ 60 <= 12 ? totalMin ~/ 60 : (totalMin ~/ 60) - 12}:${totalMin % 60}${_startTime.period.index == 0 ? totalMin ~/ 60 >= 12 ? "PM" : "AM" : totalMin ~/ 60 >= 12 ? "AM" : "PM"}",
+                            "date": dateToString,
+                            /*"time":
+                                "${_startTime.hour == 0 ? 12 : _startTime.hour <= 12 ? _startTime.hour : _startTime.hour - 12}:${_startTime.minute.floor() < 10 ? "0" : ""}${_startTime.minute.floor()}${_startTime.period.index == 0 ? "AM" : "PM"} - ${totalMin ~/ 60 == 0 ? 12 : totalMin ~/ 60 <= 12 ? totalMin ~/ 60 : (totalMin ~/ 60) - 12}:${totalMin % 60}${_startTime.period.index == 0 ? totalMin ~/ 60 >= 12 ? "PM" : "AM" : totalMin ~/ 60 >= 12 ? "AM" : "PM"}",*/
                             "duration": int.parse(duration),
                             "location": _value == 1 ? "Physical" : "Virtual",
                             "location_address": _locationController.text,
-                            "startTime": {
+                            /* "startTime": {
                               "hour": _startTime.hour,
                               "min": _startTime.minute
-                            },
+                            },*/
+                            "startDateTime":
+                                DateTime.parse("$dateToString $startTime"),
+                            "endDateTime":
+                                DateTime.parse("$dateToString $endTime"),
                             "placeLat": placeLat,
                             "placeLng": placeLng
                           };

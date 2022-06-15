@@ -163,52 +163,59 @@ class _ActivityScreenState extends State<ActivityScreen> {
                                   padding: EdgeInsets.all(0),
                                   physics: ClampingScrollPhysics(),
                                   itemBuilder: (context, index) {
-                                    return combinedDoc[index]["type"] ==
-                                                "text" ||
-                                            combinedDoc[index]["type"] ==
-                                                "image"
-                                        ? RecentData(
-                                            clr: Colors.blue,
-                                            msg: combinedDoc[index],
-                                            text: "msg",
-                                          )
-                                        : combinedDoc[index]["accepted"] ==
-                                                    null &&
-                                                combinedDoc[index]
-                                                        ["modified"] ==
-                                                    null
+                                    return combinedDoc.isNotEmpty
+                                        ? combinedDoc[index]["type"] ==
+                                                    "text" ||
+                                                combinedDoc[index]["type"] ==
+                                                    "image"
                                             ? RecentData(
                                                 clr: Colors.blue,
-                                                request: combinedDoc[index],
-                                                text: "new",
+                                                msg: combinedDoc[index],
+                                                text: "msg",
                                               )
-                                            : combinedDoc[index]["accepted"] ??
-                                                    false
+                                            : combinedDoc[index]["accepted"] ==
+                                                        null &&
+                                                    combinedDoc[index]
+                                                            ["modified"] ==
+                                                        null
                                                 ? RecentData(
                                                     clr: Colors.blue,
                                                     request: combinedDoc[index],
-                                                    text: "accepted",
+                                                    text: "new",
                                                   )
                                                 : combinedDoc[index]
-                                                            ["modified"] ??
+                                                            ["accepted"] ??
                                                         false
                                                     ? RecentData(
                                                         clr: Colors.blue,
                                                         request:
                                                             combinedDoc[index],
-                                                        text: "modified",
+                                                        text: "accepted",
                                                       )
-                                                    : !(combinedDoc[index]
-                                                                ["accepted"] ??
-                                                            true)
+                                                    : combinedDoc[index]
+                                                                ["modified"] ??
+                                                            false
                                                         ? RecentData(
                                                             clr: Colors.blue,
                                                             request:
                                                                 combinedDoc[
                                                                     index],
-                                                            text: "declined",
+                                                            text: "modified",
                                                           )
-                                                        : Container();
+                                                        : !(combinedDoc[index][
+                                                                    "accepted"] ??
+                                                                true)
+                                                            ? RecentData(
+                                                                clr:
+                                                                    Colors.blue,
+                                                                request:
+                                                                    combinedDoc[
+                                                                        index],
+                                                                text:
+                                                                    "declined",
+                                                              )
+                                                            : Container()
+                                        : Container();
                                   }),
                             )
                           : Container(),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:achievement_view/achievement_view.dart';
+import 'package:date_format/date_format.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -201,17 +202,29 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
               widget.request['question'] == ""
                   ? Container()
                   : SizedBox(height: 5),
-              widget.request['question'] == ""
-                  ? Container()
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text("Question: ${widget.request['question']}",
-                              style: TextStyle(fontSize: 14)),
-                        ),
-                      ],
-                    ),
+              StreamBuilder<DocumentSnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection("requests")
+                      .doc(widget.request['seller_id'])
+                      .collection('request')
+                      .doc(widget.request.id)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    return snapshot.hasData
+                        ? snapshot.data!["question"] != ""
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                        "Question: ${snapshot.data!["question"]}",
+                                        style: TextStyle(fontSize: 14)),
+                                  ),
+                                ],
+                              )
+                            : Container()
+                        : Container();
+                  }),
               SizedBox(height: 20),
               Row(children: [
                 Icon(Icons.calendar_view_day),
@@ -227,9 +240,41 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${widget.request['date']}"),
+                    StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("requests")
+                            .doc(widget.request['seller_id'])
+                            .collection('request')
+                            .doc(widget.request.id)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          return snapshot.hasData
+                              ? Text("${snapshot.data!['date']}")
+                              : Container();
+                        }),
                     SizedBox(height: 3),
-                    Text("${widget.request['time']}"),
+                    StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("requests")
+                            .doc(widget.request['seller_id'])
+                            .collection('request')
+                            .doc(widget.request.id)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          String startTime = "";
+                          String endTime = "";
+                          if (snapshot.hasData) {
+                            startTime = formatDate(
+                                snapshot.data!['startDateTime'].toDate(),
+                                [hh, ':', nn, '', am]);
+                            endTime = formatDate(
+                                snapshot.data!['endDateTime'].toDate(),
+                                [hh, ':', nn, '', am]);
+                          }
+                          return snapshot.hasData
+                              ? Text("$startTime - $endTime")
+                              : Container();
+                        }),
                   ],
                 ),
               ]),
@@ -471,7 +516,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                               ? snapshot.data!["accepted"] != false
                                   ? GestureDetector(
                                       onTap: () {
-                                        String date = snapshot.data!['date'];
+                                        /*String date = snapshot.data!['date'];
                                         int startHour =
                                             snapshot.data!['startTime']['hour'];
                                         int startMin =
@@ -481,9 +526,10 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                         String startTime =
                                             "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
                                         String formattedString =
-                                            "$date $startTime";
-                                        DateTime dateTime =
-                                            DateTime.parse(formattedString);
+                                            "$date $startTime";*/
+                                        DateTime dateTime = snapshot
+                                            .data!["startDateTime"]
+                                            .toDate();
                                         if (dateTime
                                                 .difference(DateTime.now()) >
                                             Duration(hours: 24)) {
@@ -733,7 +779,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       snapshot.data!["accepted"] != false
                                   ? GestureDetector(
                                       onTap: () async {
-                                        String date = snapshot.data!['date'];
+                                        /* String date = snapshot.data!['date'];
                                         int startHour =
                                             snapshot.data!['startTime']['hour'];
                                         int startMin =
@@ -743,9 +789,10 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                         String startTime =
                                             "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
                                         String formattedString =
-                                            "$date $startTime";
-                                        DateTime dateTime =
-                                            DateTime.parse(formattedString);
+                                            "$date $startTime";*/
+                                        DateTime dateTime = snapshot
+                                            .data!["startDateTime"]
+                                            .toDate();
                                         if (dateTime
                                                 .difference(DateTime.now()) <
                                             Duration(hours: 1)) {

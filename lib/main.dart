@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         .toList();
     if (requests != null) {
       requests!.forEach((element) {
-        String date = element['date'];
+        /* String date = element['date'];
         int duration = element['duration'];
         int startHour = element['startTime']['hour'];
         int startMin = element['startTime']['min'];
@@ -119,8 +119,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         String endTime =
             "${(timeInMin ~/ 60).floor() < 10 ? "0" : ""}${(timeInMin ~/ 60).floor()}:${(timeInMin % 60).floor() < 10 ? "0" : ""}${(timeInMin % 60).floor()}";
         String formattedString = "$date $endTime";
-        DateTime dateTime = DateTime.parse(formattedString);
-        if (dateTime.compareTo(DateTime.now()) <= 0) {
+        DateTime dateTime = DateTime.parse(formattedString);*/
+        DateTime endDateTime = element['endDateTime'].toDate();
+        if (endDateTime.compareTo(DateTime.now()) <= 0) {
           Future.delayed(const Duration(hours: 1), () async {
             await FirebaseFirestore.instance
                 .collection("requests")

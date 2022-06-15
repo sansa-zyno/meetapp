@@ -1,3 +1,4 @@
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meeter/View/meet_up_details.dart';
@@ -5,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/View/chat_screen.dart';
 
-class RecentData extends StatelessWidget {
+class RecentData extends StatefulWidget {
   final Color clr;
   final DocumentSnapshot? request;
   final DocumentSnapshot? msg;
@@ -16,12 +17,31 @@ class RecentData extends StatelessWidget {
     this.msg,
     required this.text,
   });
+
+  @override
+  State<RecentData> createState() => _RecentDataState();
+}
+
+class _RecentDataState extends State<RecentData> {
+  String startTime = "";
+  String endTime = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    startTime = formatDate(
+        widget.request!['startDateTime'].toDate(), [hh, ':', nn, '', am]);
+    endTime = formatDate(
+        widget.request!['endDateTime'].toDate(), [hh, ':', nn, '', am]);
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    return text == "new"
-        ? request!['seller_id'] == FirebaseAuth.instance.currentUser!.uid
+    return widget.text == "new"
+        ? widget.request!['seller_id'] == FirebaseAuth.instance.currentUser!.uid
             ? Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: MediaQuery.of(context).size.width / 60),
@@ -29,14 +49,15 @@ class RecentData extends StatelessWidget {
                   onTap: () async {
                     await FirebaseFirestore.instance
                         .collection("requests")
-                        .doc(request!['seller_id'])
+                        .doc(widget.request!['seller_id'])
                         .collection("request")
-                        .doc(request!.id)
+                        .doc(widget.request!.id)
                         .update({"read": true});
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (ctx) => MeetUpDetails(request!, clr)));
+                            builder: (ctx) =>
+                                MeetUpDetails(widget.request!, widget.clr)));
                   },
                   child: Container(
                     alignment: Alignment.centerLeft,
@@ -57,7 +78,7 @@ class RecentData extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(50),
                               child: Image.network(
-                                request!['buyer_image'],
+                                widget.request!['buyer_image'],
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -80,7 +101,7 @@ class RecentData extends StatelessWidget {
                                           child: Text(
                                             'Meet up request',
                                             style: TextStyle(
-                                              color: request!["read"]
+                                              color: widget.request!["read"]
                                                   ? Colors.grey
                                                   : Colors.black,
                                               fontWeight: FontWeight.w700,
@@ -93,9 +114,9 @@ class RecentData extends StatelessWidget {
                                             padding: EdgeInsets.symmetric(
                                                 horizontal: width / 60),
                                             child: Text(
-                                              '🕒${request!['time']}',
+                                              '🕒$startTime-$endTime',
                                               style: TextStyle(
-                                                color: request!["read"]
+                                                color: widget.request!["read"]
                                                     ? Colors.grey
                                                     : Colors.black,
                                               ),
@@ -109,10 +130,10 @@ class RecentData extends StatelessWidget {
                                 Expanded(
                                   child: Container(
                                     child: Text(
-                                      'You received a meet up request from ${request!["buyer_name"]}',
+                                      'You received a meet up request from ${widget.request!["buyer_name"]}',
                                       //overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        color: request!["read"]
+                                        color: widget.request!["read"]
                                             ? Colors.grey
                                             : Colors.black,
                                         fontWeight: FontWeight.w300,
@@ -131,8 +152,8 @@ class RecentData extends StatelessWidget {
                 ),
               )
             : Container()
-        : text == "msg"
-            ? msg!["lastMessageSendByUid"] !=
+        : widget.text == "msg"
+            ? widget.msg!["lastMessageSendByUid"] !=
                     FirebaseAuth.instance.currentUser!.uid
                 ? Padding(
                     padding: EdgeInsets.symmetric(
@@ -142,13 +163,13 @@ class RecentData extends StatelessWidget {
                         QuerySnapshot _doc = await FirebaseFirestore.instance
                             .collection('users')
                             .where('uid',
-                                isEqualTo: msg!["lastMessageSendByUid"])
+                                isEqualTo: widget.msg!["lastMessageSendByUid"])
                             .get();
                         OurUser user = OurUser.fromFireStore(_doc.docs[0]);
                         //get all messages that havent been read
                         QuerySnapshot q = await FirebaseFirestore.instance
                             .collection("chatrooms")
-                            .doc(msg!.id)
+                            .doc(widget.msg!.id)
                             .collection('chats')
                             .where("read", isEqualTo: false)
                             .get();
@@ -156,7 +177,7 @@ class RecentData extends StatelessWidget {
                         for (int i = 0; i < q.docs.length; i++) {
                           await FirebaseFirestore.instance
                               .collection("chatrooms")
-                              .doc(msg!.id)
+                              .doc(widget.msg!.id)
                               .collection('chats')
                               .doc(q.docs[i].id)
                               .update({"read": true});
@@ -164,12 +185,13 @@ class RecentData extends StatelessWidget {
                         //turn to read to prevent showing here again
                         await FirebaseFirestore.instance
                             .collection("chatrooms")
-                            .doc(msg!.id)
+                            .doc(widget.msg!.id)
                             .update({"read": true});
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (ctx) => ChatScreen(user, msg!.id)));
+                                builder: (ctx) =>
+                                    ChatScreen(user, widget.msg!.id)));
                       },
                       child: Container(
                         alignment: Alignment.centerLeft,
@@ -191,7 +213,7 @@ class RecentData extends StatelessWidget {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(50),
                                   child: Image.network(
-                                    msg!['lastMessageSendByImgUrl'],
+                                    widget.msg!['lastMessageSendByImgUrl'],
                                     fit: BoxFit.fill,
                                   ),
                                 ),
@@ -214,7 +236,7 @@ class RecentData extends StatelessWidget {
                                               child: Text(
                                                 'New message',
                                                 style: TextStyle(
-                                                  color: msg!["read"]
+                                                  color: widget.msg!["read"]
                                                       ? Colors.grey
                                                       : Colors.black,
                                                   fontWeight: FontWeight.w700,
@@ -229,10 +251,10 @@ class RecentData extends StatelessWidget {
                                     Expanded(
                                       child: Container(
                                         child: Text(
-                                          'You received a new message from ${msg!["lastMessageSendBy"]}',
+                                          'You received a new message from ${widget.msg!["lastMessageSendBy"]}',
                                           //overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            color: msg!["read"]
+                                            color: widget.msg!["read"]
                                                 ? Colors.grey
                                                 : Colors.black,
                                             fontWeight: FontWeight.w300,
@@ -251,10 +273,10 @@ class RecentData extends StatelessWidget {
                     ),
                   )
                 : Container()
-            : text == "modified"
-                ? request!['modifiedBy'] !=
+            : widget.text == "modified"
+                ? widget.request!['modifiedBy'] !=
                             FirebaseAuth.instance.currentUser!.uid &&
-                        request!['buyer_id'] ==
+                        widget.request!['buyer_id'] ==
                             FirebaseAuth.instance.currentUser!.uid
                     ? Padding(
                         padding: EdgeInsets.symmetric(
@@ -263,15 +285,15 @@ class RecentData extends StatelessWidget {
                           onTap: () async {
                             await FirebaseFirestore.instance
                                 .collection("requests")
-                                .doc(request!['seller_id'])
+                                .doc(widget.request!['seller_id'])
                                 .collection("request")
-                                .doc(request!.id)
+                                .doc(widget.request!.id)
                                 .update({"read": true});
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (ctx) =>
-                                        MeetUpDetails(request!, clr)));
+                                    builder: (ctx) => MeetUpDetails(
+                                        widget.request!, widget.clr)));
                           },
                           child: Container(
                             alignment: Alignment.centerLeft,
@@ -293,7 +315,7 @@ class RecentData extends StatelessWidget {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(50),
                                       child: Image.network(
-                                        request!['seller_image'],
+                                        widget.request!['seller_image'],
                                         fit: BoxFit.fill,
                                       ),
                                     ),
@@ -318,7 +340,8 @@ class RecentData extends StatelessWidget {
                                                   child: Text(
                                                     'Meet up request modified',
                                                     style: TextStyle(
-                                                      color: request!["read"]
+                                                      color: widget
+                                                              .request!["read"]
                                                           ? Colors.grey
                                                           : Colors.black,
                                                       fontWeight:
@@ -334,9 +357,10 @@ class RecentData extends StatelessWidget {
                                                             horizontal:
                                                                 width / 60),
                                                     child: Text(
-                                                      '🕒${request!['time']}',
+                                                      '🕒$startTime-$endTime',
                                                       style: TextStyle(
-                                                        color: request!["read"]
+                                                        color: widget.request![
+                                                                "read"]
                                                             ? Colors.grey
                                                             : Colors.black,
                                                       ),
@@ -350,10 +374,10 @@ class RecentData extends StatelessWidget {
                                         Expanded(
                                           child: Container(
                                             child: Text(
-                                              'You received a meet up modification from ${request!["seller_name"]}',
+                                              'You received a meet up modification from ${widget.request!["seller_name"]}',
                                               //overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                color: request!["read"]
+                                                color: widget.request!["read"]
                                                     ? Colors.grey
                                                     : Colors.black,
                                                 fontWeight: FontWeight.w300,
@@ -371,9 +395,9 @@ class RecentData extends StatelessWidget {
                           ),
                         ),
                       )
-                    : request!['modifiedBy'] !=
+                    : widget.request!['modifiedBy'] !=
                                 FirebaseAuth.instance.currentUser!.uid &&
-                            request!['seller_id'] ==
+                            widget.request!['seller_id'] ==
                                 FirebaseAuth.instance.currentUser!.uid
                         ? Padding(
                             padding: EdgeInsets.symmetric(
@@ -383,15 +407,15 @@ class RecentData extends StatelessWidget {
                               onTap: () async {
                                 await FirebaseFirestore.instance
                                     .collection("requests")
-                                    .doc(request!['seller_id'])
+                                    .doc(widget.request!['seller_id'])
                                     .collection("request")
-                                    .doc(request!.id)
+                                    .doc(widget.request!.id)
                                     .update({"read": true});
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            MeetUpDetails(request!, clr)));
+                                        builder: (ctx) => MeetUpDetails(
+                                            widget.request!, widget.clr)));
                               },
                               child: Container(
                                 alignment: Alignment.centerLeft,
@@ -414,7 +438,7 @@ class RecentData extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(50),
                                           child: Image.network(
-                                            request!['buyer_image'],
+                                            widget.request!['buyer_image'],
                                             fit: BoxFit.fill,
                                           ),
                                         ),
@@ -439,11 +463,11 @@ class RecentData extends StatelessWidget {
                                                       child: Text(
                                                         'Meet up request modified',
                                                         style: TextStyle(
-                                                          color:
-                                                              request!["read"]
-                                                                  ? Colors.grey
-                                                                  : Colors
-                                                                      .black,
+                                                          color: widget
+                                                                      .request![
+                                                                  "read"]
+                                                              ? Colors.grey
+                                                              : Colors.black,
                                                           fontWeight:
                                                               FontWeight.w700,
                                                           fontSize: width / 21,
@@ -457,12 +481,15 @@ class RecentData extends StatelessWidget {
                                                                 horizontal:
                                                                     width / 60),
                                                         child: Text(
-                                                          '🕒${request!['time']}',
+                                                          '🕒$startTime-$endTime',
                                                           style: TextStyle(
-                                                            color: request![
-                                                                    "read"]
-                                                                ? Colors.grey
-                                                                : Colors.black,
+                                                            color:
+                                                                widget.request![
+                                                                        "read"]
+                                                                    ? Colors
+                                                                        .grey
+                                                                    : Colors
+                                                                        .black,
                                                           ),
                                                         ),
                                                       ),
@@ -474,12 +501,13 @@ class RecentData extends StatelessWidget {
                                             Expanded(
                                               child: Container(
                                                 child: Text(
-                                                  'You received a meet up modification from ${request!["buyer_name"]}',
+                                                  'You received a meet up modification from ${widget.request!["buyer_name"]}',
                                                   //overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                    color: request!["read"]
-                                                        ? Colors.grey
-                                                        : Colors.black,
+                                                    color:
+                                                        widget.request!["read"]
+                                                            ? Colors.grey
+                                                            : Colors.black,
                                                     fontWeight: FontWeight.w300,
                                                     fontSize: width / 24,
                                                   ),
@@ -496,10 +524,10 @@ class RecentData extends StatelessWidget {
                             ),
                           )
                         : Container()
-                : text == "accepted"
-                    ? request!['acceptedBy'] !=
+                : widget.text == "accepted"
+                    ? widget.request!['acceptedBy'] !=
                                 FirebaseAuth.instance.currentUser!.uid &&
-                            request!['buyer_id'] ==
+                            widget.request!['buyer_id'] ==
                                 FirebaseAuth.instance.currentUser!.uid
                         ? Padding(
                             padding: EdgeInsets.symmetric(
@@ -509,15 +537,15 @@ class RecentData extends StatelessWidget {
                               onTap: () async {
                                 await FirebaseFirestore.instance
                                     .collection("requests")
-                                    .doc(request!['seller_id'])
+                                    .doc(widget.request!['seller_id'])
                                     .collection("request")
-                                    .doc(request!.id)
+                                    .doc(widget.request!.id)
                                     .update({"read": true});
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (ctx) =>
-                                            MeetUpDetails(request!, clr)));
+                                        builder: (ctx) => MeetUpDetails(
+                                            widget.request!, widget.clr)));
                               },
                               child: Container(
                                 alignment: Alignment.centerLeft,
@@ -540,7 +568,7 @@ class RecentData extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(50),
                                           child: Image.network(
-                                            request!['seller_image'],
+                                            widget.request!['seller_image'],
                                             fit: BoxFit.fill,
                                           ),
                                         ),
@@ -565,11 +593,11 @@ class RecentData extends StatelessWidget {
                                                       child: Text(
                                                         'Meet up request accepted',
                                                         style: TextStyle(
-                                                          color:
-                                                              request!["read"]
-                                                                  ? Colors.grey
-                                                                  : Colors
-                                                                      .black,
+                                                          color: widget
+                                                                      .request![
+                                                                  "read"]
+                                                              ? Colors.grey
+                                                              : Colors.black,
                                                           fontWeight:
                                                               FontWeight.w700,
                                                           fontSize: width / 21,
@@ -583,12 +611,15 @@ class RecentData extends StatelessWidget {
                                                                 horizontal:
                                                                     width / 60),
                                                         child: Text(
-                                                          '🕒${request!['time']}',
+                                                          '🕒$startTime-$endTime',
                                                           style: TextStyle(
-                                                            color: request![
-                                                                    "read"]
-                                                                ? Colors.grey
-                                                                : Colors.black,
+                                                            color:
+                                                                widget.request![
+                                                                        "read"]
+                                                                    ? Colors
+                                                                        .grey
+                                                                    : Colors
+                                                                        .black,
                                                           ),
                                                         ),
                                                       ),
@@ -600,12 +631,13 @@ class RecentData extends StatelessWidget {
                                             Expanded(
                                               child: Container(
                                                 child: Text(
-                                                  'Your meet up request was accepted by ${request!["seller_name"]}',
+                                                  'Your meet up request was accepted by ${widget.request!["seller_name"]}',
                                                   //overflow: TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                    color: request!["read"]
-                                                        ? Colors.grey
-                                                        : Colors.black,
+                                                    color:
+                                                        widget.request!["read"]
+                                                            ? Colors.grey
+                                                            : Colors.black,
                                                     fontWeight: FontWeight.w300,
                                                     fontSize: width / 24,
                                                   ),
@@ -621,9 +653,9 @@ class RecentData extends StatelessWidget {
                               ),
                             ),
                           )
-                        : request!['acceptedBy'] !=
+                        : widget.request!['acceptedBy'] !=
                                     FirebaseAuth.instance.currentUser!.uid &&
-                                request!['seller_id'] ==
+                                widget.request!['seller_id'] ==
                                     FirebaseAuth.instance.currentUser!.uid
                             ? Padding(
                                 padding: EdgeInsets.symmetric(
@@ -633,15 +665,15 @@ class RecentData extends StatelessWidget {
                                   onTap: () async {
                                     await FirebaseFirestore.instance
                                         .collection("requests")
-                                        .doc(request!['seller_id'])
+                                        .doc(widget.request!['seller_id'])
                                         .collection("request")
-                                        .doc(request!.id)
+                                        .doc(widget.request!.id)
                                         .update({"read": true});
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (ctx) =>
-                                                MeetUpDetails(request!, clr)));
+                                            builder: (ctx) => MeetUpDetails(
+                                                widget.request!, widget.clr)));
                                   },
                                   child: Container(
                                     alignment: Alignment.centerLeft,
@@ -665,7 +697,7 @@ class RecentData extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(50),
                                               child: Image.network(
-                                                request!['buyer_image'],
+                                                widget.request!['buyer_image'],
                                                 fit: BoxFit.fill,
                                               ),
                                             ),
@@ -690,7 +722,8 @@ class RecentData extends StatelessWidget {
                                                           child: Text(
                                                             'Meet up request accepted',
                                                             style: TextStyle(
-                                                              color: request![
+                                                              color: widget
+                                                                          .request![
                                                                       "read"]
                                                                   ? Colors.grey
                                                                   : Colors
@@ -711,10 +744,11 @@ class RecentData extends StatelessWidget {
                                                                         width /
                                                                             60),
                                                             child: Text(
-                                                                '🕒${request!['time']}',
+                                                                '🕒$startTime-$endTime',
                                                                 style:
                                                                     TextStyle(
-                                                                  color: request![
+                                                                  color: widget
+                                                                              .request![
                                                                           "read"]
                                                                       ? Colors
                                                                           .grey
@@ -730,10 +764,11 @@ class RecentData extends StatelessWidget {
                                                 Expanded(
                                                   child: Container(
                                                     child: Text(
-                                                      'Modified meet up request was accepted by ${request!["buyer_name"]}',
+                                                      'Modified meet up request was accepted by ${widget.request!["buyer_name"]}',
                                                       //overflow: TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                        color: request!["read"]
+                                                        color: widget.request![
+                                                                "read"]
                                                             ? Colors.grey
                                                             : Colors.black,
                                                         fontWeight:
@@ -753,10 +788,10 @@ class RecentData extends StatelessWidget {
                                 ),
                               )
                             : Container()
-                    : text == "declined"
-                        ? request!['declinedBy'] !=
+                    : widget.text == "declined"
+                        ? widget.request!['declinedBy'] !=
                                     FirebaseAuth.instance.currentUser!.uid &&
-                                request!['buyer_id'] ==
+                                widget.request!['buyer_id'] ==
                                     FirebaseAuth.instance.currentUser!.uid
                             ? Padding(
                                 padding: EdgeInsets.symmetric(
@@ -766,15 +801,15 @@ class RecentData extends StatelessWidget {
                                   onTap: () async {
                                     await FirebaseFirestore.instance
                                         .collection("requests")
-                                        .doc(request!['seller_id'])
+                                        .doc(widget.request!['seller_id'])
                                         .collection("request")
-                                        .doc(request!.id)
+                                        .doc(widget.request!.id)
                                         .update({"read": true});
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (ctx) =>
-                                                MeetUpDetails(request!, clr)));
+                                            builder: (ctx) => MeetUpDetails(
+                                                widget.request!, widget.clr)));
                                   },
                                   child: Container(
                                     alignment: Alignment.centerLeft,
@@ -798,7 +833,7 @@ class RecentData extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(50),
                                               child: Image.network(
-                                                request!['seller_image'],
+                                                widget.request!['seller_image'],
                                                 fit: BoxFit.fill,
                                               ),
                                             ),
@@ -823,7 +858,8 @@ class RecentData extends StatelessWidget {
                                                           child: Text(
                                                             'Meet up request declined',
                                                             style: TextStyle(
-                                                              color: request![
+                                                              color: widget
+                                                                          .request![
                                                                       "read"]
                                                                   ? Colors.grey
                                                                   : Colors
@@ -844,9 +880,9 @@ class RecentData extends StatelessWidget {
                                                                         width /
                                                                             60),
                                                             child: Text(
-                                                              '🕒${request!['time']}',
+                                                              '🕒$startTime-$endTime',
                                                               style: TextStyle(
-                                                                color: request![
+                                                                color: widget.request![
                                                                         "read"]
                                                                     ? Colors
                                                                         .grey
@@ -863,10 +899,11 @@ class RecentData extends StatelessWidget {
                                                 Expanded(
                                                   child: Container(
                                                     child: Text(
-                                                      'Your meet up request was declined by ${request!["seller_name"]}',
+                                                      'Your meet up request was declined by ${widget.request!["seller_name"]}',
                                                       //overflow: TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                        color: request!["read"]
+                                                        color: widget.request![
+                                                                "read"]
                                                             ? Colors.grey
                                                             : Colors.black,
                                                         fontWeight:
@@ -885,10 +922,10 @@ class RecentData extends StatelessWidget {
                                   ),
                                 ),
                               )
-                            : request!['declinedBy'] !=
+                            : widget.request!['declinedBy'] !=
                                         FirebaseAuth
                                             .instance.currentUser!.uid &&
-                                    request!['seller_id'] ==
+                                    widget.request!['seller_id'] ==
                                         FirebaseAuth.instance.currentUser!.uid
                                 ? Padding(
                                     padding: EdgeInsets.symmetric(
@@ -899,16 +936,17 @@ class RecentData extends StatelessWidget {
                                       onTap: () async {
                                         await FirebaseFirestore.instance
                                             .collection("requests")
-                                            .doc(request!['seller_id'])
+                                            .doc(widget.request!['seller_id'])
                                             .collection("request")
-                                            .doc(request!.id)
+                                            .doc(widget.request!.id)
                                             .update({"read": true});
 
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                                 builder: (ctx) => MeetUpDetails(
-                                                    request!, clr)));
+                                                    widget.request!,
+                                                    widget.clr)));
                                       },
                                       child: Container(
                                         alignment: Alignment.centerLeft,
@@ -932,7 +970,8 @@ class RecentData extends StatelessWidget {
                                                   borderRadius:
                                                       BorderRadius.circular(50),
                                                   child: Image.network(
-                                                    request!['buyer_image'],
+                                                    widget.request![
+                                                        'buyer_image'],
                                                     fit: BoxFit.fill,
                                                   ),
                                                 ),
@@ -958,7 +997,8 @@ class RecentData extends StatelessWidget {
                                                                 'Meet up request declined',
                                                                 style:
                                                                     TextStyle(
-                                                                  color: request![
+                                                                  color: widget
+                                                                              .request![
                                                                           "read"]
                                                                       ? Colors
                                                                           .grey
@@ -981,10 +1021,10 @@ class RecentData extends StatelessWidget {
                                                                             width /
                                                                                 60),
                                                                 child: Text(
-                                                                  '🕒${request!['time']}',
+                                                                  '🕒$startTime-$endTime',
                                                                   style:
                                                                       TextStyle(
-                                                                    color: request![
+                                                                    color: widget.request![
                                                                             "read"]
                                                                         ? Colors
                                                                             .grey
@@ -1001,13 +1041,16 @@ class RecentData extends StatelessWidget {
                                                     Expanded(
                                                       child: Container(
                                                         child: Text(
-                                                          'Meet up declined by ${request!["buyer_name"]}',
+                                                          'Meet up declined by ${widget.request!["buyer_name"]}',
                                                           //overflow: TextOverflow.ellipsis,
                                                           style: TextStyle(
-                                                            color: request![
-                                                                    "read"]
-                                                                ? Colors.grey
-                                                                : Colors.black,
+                                                            color:
+                                                                widget.request![
+                                                                        "read"]
+                                                                    ? Colors
+                                                                        .grey
+                                                                    : Colors
+                                                                        .black,
                                                             fontWeight:
                                                                 FontWeight.w300,
                                                             fontSize:
