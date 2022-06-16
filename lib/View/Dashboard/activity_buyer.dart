@@ -221,7 +221,7 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
                       upcomming
                           ? Expanded(
                               child: UpcomingData(
-                                  clr: Colors.green, requests: requestDoc))
+                                  clr: Colors.blue, requests: requestDoc))
                           : Container(),
                     ],
                   ),

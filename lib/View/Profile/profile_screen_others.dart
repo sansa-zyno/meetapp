@@ -83,10 +83,12 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                           bottomLeft: Radius.circular(50),
                         ),
                         child: Container(
-                            child: Image.network(
-                          userDoc!['bannerImage'],
-                          fit: BoxFit.fitWidth,
-                        )),
+                            child: userDoc!['bannerImage'] != null
+                                ? Image.network(
+                                    userDoc!['bannerImage'],
+                                    fit: BoxFit.fitWidth,
+                                  )
+                                : Container()),
                       ),
                     ),
                     Align(

@@ -43,9 +43,9 @@ class _UpcomingDataState extends State<UpcomingData> {
         itemBuilder: (context, index) {
           if (requests.isNotEmpty) {
             startTime = formatDate(requests[index]['startDateTime'].toDate(),
-                [hh, ':', nn, ' ', am]);
-            endTime = formatDate(requests[index]['endDateTime'].toDate(),
-                [hh, ':', nn, ' ', am]);
+                [hh, ':', nn, '', am]);
+            endTime = formatDate(
+                requests[index]['endDateTime'].toDate(), [hh, ':', nn, '', am]);
           }
           return requests.isNotEmpty
               ? Padding(

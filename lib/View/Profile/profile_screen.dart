@@ -76,10 +76,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ? Center(
                                 child:
                                     Container(child: LinearProgressIndicator()))
-                            : Image.network(
-                                _currentUser.getCurrentUser.bannerImage!,
-                                fit: BoxFit.fitWidth,
-                              )),
+                            : _currentUser.getCurrentUser.bannerImage != null
+                                ? Image.network(
+                                    _currentUser.getCurrentUser.bannerImage!,
+                                    fit: BoxFit.fitWidth,
+                                  )
+                                : Container()),
                     onTap: () async {
                       _currentUser =
                           Provider.of<UserController>(context, listen: false);

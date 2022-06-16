@@ -30,10 +30,12 @@ class _RecentDataState extends State<RecentData> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    startTime = formatDate(
-        widget.request!['startDateTime'].toDate(), [hh, ':', nn, '', am]);
-    endTime = formatDate(
-        widget.request!['endDateTime'].toDate(), [hh, ':', nn, '', am]);
+    if (widget.request != null) {
+      startTime = formatDate(
+          widget.request!['startDateTime'].toDate(), [hh, ':', nn, '', am]);
+      endTime = formatDate(
+          widget.request!['endDateTime'].toDate(), [hh, ':', nn, '', am]);
+    }
   }
 
   @override
