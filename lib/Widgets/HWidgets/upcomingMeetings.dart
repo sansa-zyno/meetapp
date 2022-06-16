@@ -143,7 +143,7 @@ class _UpcomingMeetingsState extends State<UpcomingMeetings> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => MeetUpDetails(
-                                        requests.first, widget.clr),
+                                        requests.first, Colors.blue),
                                   ),
                                 );
                               },
