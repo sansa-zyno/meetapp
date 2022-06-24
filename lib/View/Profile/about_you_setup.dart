@@ -57,7 +57,7 @@ class _YouSetupState extends State<YouSetup> {
                             children: [
                               StreamBuilder<DocumentSnapshot>(
                                 stream: FirebaseFirestore.instance
-                                    .collection("About Dynamic")
+                                    .collection("AboutDynamic")
                                     .doc("dynamic")
                                     .snapshots(),
                                 builder: (context, snapshot) {
@@ -128,7 +128,7 @@ class _YouSetupState extends State<YouSetup> {
                             children: [
                               StreamBuilder<DocumentSnapshot>(
                                 stream: FirebaseFirestore.instance
-                                    .collection("About Dynamic")
+                                    .collection("AboutDynamic")
                                     .doc("dynamic")
                                     .snapshots(),
                                 builder: (context, snapshot) {
