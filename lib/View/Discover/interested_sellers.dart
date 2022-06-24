@@ -132,12 +132,16 @@ class _InterestedSellersState extends State<InterestedSellers> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.center,
                                             children: [
-                                              Image.network(
-                                                  qdocs!.docs[index]
-                                                      ["meetup_seller_image"],
-                                                  width: 80,
-                                                  height: 70,
-                                                  fit: BoxFit.cover),
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: Image.network(
+                                                    qdocs!.docs[index]
+                                                        ["meetup_seller_image"],
+                                                    width: 80,
+                                                    height: 70,
+                                                    fit: BoxFit.cover),
+                                              ),
                                               SizedBox(
                                                 height: 10,
                                               ),
@@ -190,65 +194,57 @@ class _InterestedSellersState extends State<InterestedSellers> {
                                                           TextAlign.start,
                                                     ),
                                                   ),
-                                                  qdocs!.docs[index][
-                                                              "meetup_likes"] <=
-                                                          10
-                                                      ? Expanded(
-                                                          child: Text(
-                                                            'Positive',
-                                                            style: TextStyle(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              fontSize: 12,
-                                                              color:
-                                                                  Colors.yellow,
-                                                            ),
-                                                            textAlign:
-                                                                TextAlign.start,
-                                                          ),
-                                                        )
-                                                      : qdocs!.docs[index][
-                                                                      "meetup_likes"] >
-                                                                  10 &&
-                                                              qdocs!.docs[index]
-                                                                      [
-                                                                      "meetup_likes"] <=
-                                                                  100
-                                                          ? Expanded(
-                                                              child: Text(
-                                                                'Very Positive',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  fontSize: 12,
-                                                                  color: Colors
-                                                                      .yellow,
+                                                  StreamBuilder<
+                                                          DocumentSnapshot>(
+                                                      stream: FirebaseFirestore
+                                                          .instance
+                                                          .collection("users")
+                                                          .doc(qdocs!
+                                                                  .docs[index][
+                                                              "meetup_seller_uid"])
+                                                          .snapshots(),
+                                                      builder:
+                                                          (context, snapshot) {
+                                                        int avg = 0;
+                                                        if (snapshot.hasData) {
+                                                          List ratings = [];
+                                                          ratings = snapshot
+                                                              .data!["ratings"];
+                                                          if (ratings
+                                                              .isNotEmpty) {
+                                                            int sumOfVal = 0;
+                                                            for (int rating
+                                                                in ratings) {
+                                                              sumOfVal +=
+                                                                  rating;
+                                                            }
+                                                            avg = (sumOfVal /
+                                                                    ratings
+                                                                        .length)
+                                                                .round();
+                                                          }
+                                                        }
+                                                        return snapshot.hasData
+                                                            ? Expanded(
+                                                                child: Text(
+                                                                  "${avg == 0 ? "N/A" : avg == 1 ? "Negative" : avg == 2 ? "Neutral" : "Positive"}",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .start,
                                                                 ),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .start,
-                                                              ),
-                                                            )
-                                                          : Expanded(
-                                                              child: Text(
-                                                                'Overwhelmingly Positive',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  fontSize: 12,
-                                                                  color: Colors
-                                                                      .yellow,
-                                                                ),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .start,
-                                                              ),
-                                                            )
+                                                              )
+                                                            : Container();
+                                                      })
                                                 ],
                                               ),
                                             ],

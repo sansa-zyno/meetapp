@@ -73,94 +73,156 @@ class _ConnectionState extends State<Connection> {
             return snapshot.hasData
                 ? qdocs!.docs.isNotEmpty
                     ? ListView.builder(
-                        itemCount: qdocs.docs.length,
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        shrinkWrap: true,
                         physics: ClampingScrollPhysics(),
-                        itemBuilder: (ctx, index) => qdocs.docs[index]
-                                    ['seller_id'] ==
-                                widget.id
-                            ? ListTile(
-                                leading: CircleAvatar(
-                                  radius: 30,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(50),
-                                    child: Image.network(
-                                      qdocs.docs[index]['buyer_image'],
-                                      fit: BoxFit.fill,
-                                      height: 60,
-                                      width: 60,
-                                    ),
+                        itemCount: qdocs.docs.length,
+                        padding: EdgeInsets.all(0),
+                        shrinkWrap: true,
+                        itemBuilder: (ctx, index) {
+                          return qdocs.docs[index]['seller_id'] == widget.id
+                              ? Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 3),
+                                  child: Card(
+                                    elevation: 3,
+                                    child: ListTile(
+                                        leading: CircleAvatar(
+                                          radius: 30,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            child: Image.network(
+                                              qdocs.docs[index]['buyer_image'],
+                                              fit: BoxFit.fill,
+                                              height: 60,
+                                              width: 60,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                            qdocs.docs[index]['buyer_name'],
+                                            style: TextStyle(
+                                              color: Color(0xff00AEFF),
+                                              fontSize: 18,
+                                            )),
+                                        subtitle: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              ListView.builder(
+                                                  physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount: qdocs
+                                                      .docs[index]["items"]
+                                                      .length,
+                                                  itemBuilder: (context, idx) {
+                                                    return Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Text(
+                                                            qdocs.docs[index]
+                                                                    ['items']
+                                                                [idx]["item"],
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 25,
+                                                        ),
+                                                        Text(
+                                                          qdocs.docs[index]
+                                                                  ['items'][idx]
+                                                              ["date"],
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }),
+                                            ]),
+                                        trailing: Text(
+                                          "${qdocs.docs[index]['meetingCount']}X",
+                                          style: TextStyle(
+                                            color: Color(0xff00AEFF),
+                                          ),
+                                        )),
                                   ),
-                                ),
-                                title: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (rect) => LinearGradient(
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                            colors: [
-                                              Colors.indigoAccent,
-                                              Colors.blue,
-                                              Colors.green
-                                            ]).createShader(rect),
-                                    child: Text(qdocs.docs[index]['title'],
-                                        style: TextStyle(
+                                )
+                              : Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 3),
+                                  child: Card(
+                                    elevation: 3,
+                                    child: ListTile(
+                                        leading: CircleAvatar(
+                                          radius: 30,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(50),
+                                            child: Image.network(
+                                              qdocs.docs[index]['seller_image'],
+                                              fit: BoxFit.fill,
+                                              height: 60,
+                                              width: 60,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          qdocs.docs[index]['seller_name'],
+                                          style: TextStyle(
+                                            color: Color(0xff00AEFF),
                                             fontSize: 18,
-                                            fontWeight: FontWeight.bold))),
-                                subtitle: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
-                                    child: Text(
-                                      qdocs.docs[index]['buyer_name'],
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    )),
-                                trailing: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
-                                    child: Text(
-                                      qdocs.docs[index]['date'],
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    )))
-                            : ListTile(
-                                leading: CircleAvatar(
-                                  radius: 30,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(50),
-                                    child: Image.network(
-                                      qdocs.docs[index]['seller_image'],
-                                      fit: BoxFit.fill,
-                                      height: 60,
-                                      width: 60,
-                                    ),
+                                          ),
+                                        ),
+                                        subtitle: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              SizedBox(
+                                                height: 15,
+                                              ),
+                                              ListView.builder(
+                                                  physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount: qdocs
+                                                      .docs[index]["items"]
+                                                      .length,
+                                                  itemBuilder: (context, idx) {
+                                                    return Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Text(
+                                                            qdocs.docs[index]
+                                                                    ['items']
+                                                                [idx]["item"],
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 25,
+                                                        ),
+                                                        Text(
+                                                          qdocs.docs[index]
+                                                                  ['items'][idx]
+                                                              ["date"],
+                                                        ),
+                                                      ],
+                                                    );
+                                                  }),
+                                            ]),
+                                        trailing: Text(
+                                          "${qdocs.docs[index]['meetingCount']}X",
+                                          style: TextStyle(
+                                            color: Color(0xff00AEFF),
+                                          ),
+                                        )),
                                   ),
-                                ),
-                                title: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
-                                    child: Text(
-                                      qdocs.docs[index]['title'],
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold),
-                                    )),
-                                subtitle: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
-                                    child: Text(
-                                      qdocs.docs[index]['seller_name'],
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    )),
-                                trailing: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (rect) => LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [Colors.indigoAccent, Colors.blue, Colors.green]).createShader(rect),
-                                    child: Text(
-                                      qdocs.docs[index]['date'],
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ))))
+                                );
+                        })
                     : Center(
                         child: Container(
                         child: Text("No connections to show"),

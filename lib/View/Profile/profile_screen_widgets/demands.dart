@@ -28,85 +28,96 @@ class _DemandsState extends State<Demands> {
       builder: (ctx, snapshot) {
         QuerySnapshot? query = snapshot.data as QuerySnapshot?;
         return snapshot.hasData
-            ? ListView.builder(
-                itemCount: query!.docs.length,
-                padding: EdgeInsets.all(0),
-                shrinkWrap: true,
-                physics: ClampingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: Padding(
-                      padding: EdgeInsets.all(8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  query.docs[index]['demand_title'],
-                                  style: TextStyle(fontWeight: FontWeight.bold),
+            ? query!.docs.isNotEmpty
+                ? ListView.builder(
+                    itemCount: query.docs.length,
+                    padding: EdgeInsets.all(0),
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      query.docs[index]['demand_title'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      query.docs[index]['demand_description'],
+                                      style: TextStyle(
+                                          fontStyle: FontStyle.italic),
+                                    ),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(query.docs[index]['demand_location']),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(query.docs[index]['demand_price']
+                                        .toString()),
+                                  ],
                                 ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  query.docs[index]['demand_description'],
-                                  style: TextStyle(fontStyle: FontStyle.italic),
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text(query.docs[index]['demand_location']),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text(query.docs[index]['demand_price']
-                                    .toString()),
-                              ],
-                            ),
-                          ),
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(children: [
-                              MaterialButton(
-                                  color: Colors.blue,
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (ctx) => EditDemandSetup(
-                                                query.docs[index])));
-                                  },
-                                  child: Text(
-                                    "Edit",
-                                    style: TextStyle(color: Colors.white),
-                                  )),
-                              SizedBox(
-                                width: 10,
                               ),
-                              MaterialButton(
-                                  color: Colors.red,
-                                  onPressed: () async {
-                                    await FirebaseFirestore.instance
-                                        .collection('demands')
-                                        .doc(_currentUser.getCurrentUser.uid)
-                                        .collection('demand')
-                                        .doc(query.docs[index].id)
-                                        .delete();
-                                  },
-                                  child: Text(
-                                    "Delete",
-                                    style: TextStyle(color: Colors.white),
-                                  )),
-                            ]),
-                          )
-                        ],
-                      ),
-                    ),
-                  );
-                })
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(children: [
+                                  MaterialButton(
+                                      color: Colors.blue,
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (ctx) =>
+                                                    EditDemandSetup(
+                                                        query.docs[index])));
+                                      },
+                                      child: Text(
+                                        "Edit",
+                                        style: TextStyle(color: Colors.white),
+                                      )),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  MaterialButton(
+                                      color: Colors.red,
+                                      onPressed: () async {
+                                        await FirebaseFirestore.instance
+                                            .collection('demands')
+                                            .doc(
+                                                _currentUser.getCurrentUser.uid)
+                                            .collection('demand')
+                                            .doc(query.docs[index].id)
+                                            .delete();
+                                      },
+                                      child: Text(
+                                        "Delete",
+                                        style: TextStyle(color: Colors.white),
+                                      )),
+                                ]),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    })
+                : Column(
+                    children: [
+                      SizedBox(height: 100),
+                      Center(child: Text("No demands to show")),
+                    ],
+                  )
             : Container();
       },
     );

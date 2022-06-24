@@ -191,6 +191,7 @@ class UserController with ChangeNotifier {
         _currentUser.bannerImage = snapshotData["bannerImage"];
         _currentUser.occupation = snapshotData["occupation"];
         _currentUser.lastActive = snapshotData["lastActive"];
+        _currentUser.ratings = snapshotData["ratings"];
         notifyListeners();
         return _currentUser;
       } else {
@@ -219,6 +220,7 @@ class UserController with ChangeNotifier {
       usr.userType = snapshotData["userType"];
       usr.occupation = snapshotData["occupation"];
       usr.lastActive = snapshotData["lastActive"];
+      usr.ratings = snapshotData["ratings"];
       return usr;
     } catch (e) {
       return usr;

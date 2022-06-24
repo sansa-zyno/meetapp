@@ -31,6 +31,7 @@ class About extends StatelessWidget {
     _currentUser = Provider.of<UserController>(context);
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Align(
             alignment: Alignment.centerLeft,
@@ -57,6 +58,13 @@ class About extends StatelessWidget {
                     trimExpandedText: 'Show less',
                     moreStyle: TextStyle(
                         fontSize: 12,
+                        color: clr,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "poppins",
+                        letterSpacing: 1),
+                    lessStyle: TextStyle(
+                        fontSize: 12,
+                        color: clr,
                         fontWeight: FontWeight.bold,
                         fontFamily: "poppins",
                         letterSpacing: 1),
@@ -245,20 +253,25 @@ class About extends StatelessWidget {
                     ),
                   );
                 } else {
-                  return Container();
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 10),
+                    child: Text("N/A"),
+                  );
                 }
               }),
           SizedBox(height: 20),
-          Container(
-            width: 250,
-            height: 50,
-            child: GradientButton(
-              title: "Edit Profile",
-              clrs: [clr, clr],
-              onpressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (ctx) => EditProfileSetup()));
-              },
+          Center(
+            child: Container(
+              width: 250,
+              height: 50,
+              child: GradientButton(
+                title: "Edit Profile",
+                clrs: [clr, clr],
+                onpressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (ctx) => EditProfileSetup()));
+                },
+              ),
             ),
           ),
           SizedBox(height: 50),

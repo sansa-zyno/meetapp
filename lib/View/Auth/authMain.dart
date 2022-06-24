@@ -140,7 +140,8 @@ class _AuthMainState extends State<AuthMain> {
               "token": fcmToken,
               "userType": _user.userType,
               "verified": _user.verified,
-              "lastActive": "Online"
+              "lastActive": "Online",
+              "ratings": []
             });
             log("in new user before navigation");
             Navigator.pushAndRemoveUntil(
@@ -318,7 +319,8 @@ class _AuthMainState extends State<AuthMain> {
               "token": fcmToken,
               "userType": _user.userType,
               "verified": _user.verified,
-              "lastActive": "Online"
+              "lastActive": "Online",
+              "ratings": []
             });
             log("in new user before navigation");
             Navigator.pushAndRemoveUntil(

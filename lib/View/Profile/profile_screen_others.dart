@@ -53,7 +53,8 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
         .where("meeters", arrayContains: widget.id)
         .orderBy("ts", descending: true)
         .get();
-    recentMeetingDate = q.docs.isNotEmpty ? q.docs[0]["date"] : null;
+    recentMeetingDate =
+        q.docs.isNotEmpty ? q.docs[0]["recentMeetingDate"] : null;
     setState(() {});
   }
 
@@ -67,6 +68,17 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
 
   @override
   Widget build(BuildContext context) {
+    int avg = 0;
+    if (userDoc != null) {
+      List ratings = userDoc!["ratings"];
+      if (ratings.isNotEmpty) {
+        int totalVal = 0;
+        for (int rating in ratings) {
+          totalVal += rating;
+        }
+        avg = (totalVal / ratings.length).round();
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 230,
@@ -125,6 +137,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
       ),
       body: userDoc != null
           ? SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
               child: Column(
                 children: [
                   Container(
@@ -138,7 +151,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                   Container(
                     alignment: Alignment.center,
                     child: Text(
-                      'Positive',
+                      "${avg == 0 ? "Not rated" : avg == 1 ? "Negative" : avg == 2 ? "Neutral" : "Positive"}",
                       style: TextStyle(color: Colors.orange),
                     ),
                   ),
@@ -300,7 +313,8 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                       ? About(userDoc!, widget.id, recentMeetingDate)
                       : Container(),
                   service == true ? Services(widget.id) : Container(),
-                  review == true ? Review() : Container(),
+                  review == true ? Review(widget.id) : Container(),
+                  SizedBox(height: 50)
                 ],
               ),
             )

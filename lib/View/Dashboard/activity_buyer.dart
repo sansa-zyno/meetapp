@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/Services/database.dart';
 import 'package:meeter/Widgets/HWidgets/upcoming_data.dart';
@@ -26,7 +27,10 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
         .where("type", isEqualTo: "demand")
         .snapshots()
         .listen((event) {
-      requestDoc = event.docs;
+      requestDoc = event.docs.where((element) {
+        return element["seller_id"] == FirebaseAuth.instance.currentUser!.uid ||
+            element["buyer_id"] == FirebaseAuth.instance.currentUser!.uid;
+      }).toList();
       setState(() {});
     });
     Database().getChatRooms().listen((event) {
@@ -156,14 +160,14 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
                       ),
                       recent
                           ? Expanded(
-                              child: ListView.builder(
-                                  itemCount: combinedDoc.length,
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.all(0),
-                                  physics: ClampingScrollPhysics(),
-                                  itemBuilder: (context, index) {
-                                    return combinedDoc.isNotEmpty
-                                        ? combinedDoc[index]["type"] ==
+                              child: combinedDoc.isNotEmpty
+                                  ? ListView.builder(
+                                      itemCount: combinedDoc.length,
+                                      shrinkWrap: true,
+                                      padding: EdgeInsets.all(0),
+                                      physics: ClampingScrollPhysics(),
+                                      itemBuilder: (context, index) {
+                                        return combinedDoc[index]["type"] ==
                                                     "text" ||
                                                 combinedDoc[index]["type"] ==
                                                     "image"
@@ -213,9 +217,11 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
                                                                 text:
                                                                     "declined",
                                                               )
-                                                            : Container()
-                                        : Container();
-                                  }),
+                                                            : Container();
+                                      })
+                                  : Center(
+                                      child:
+                                          Text("No recent activities to show")),
                             )
                           : Container(),
                       upcomming

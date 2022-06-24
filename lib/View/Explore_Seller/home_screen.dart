@@ -86,7 +86,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ? requests!
             .where((element) {
               List meeters = element["meeters"];
-              if (element["accepted"] == false) {
+              if (element["accepted"] == false &&
+                  (element["buyer_id"] ==
+                          FirebaseAuth.instance.currentUser!.uid ||
+                      element["seller_id"] ==
+                          FirebaseAuth.instance.currentUser!.uid)) {
                 return meeters.isEmpty;
               } else {
                 return meeters.contains(FirebaseAuth.instance.currentUser!.uid);

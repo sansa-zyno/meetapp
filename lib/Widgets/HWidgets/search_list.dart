@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/View/Explore_Seller/detail_screen.dart';
 import 'package:meeter/View/Explore_Buyer/detail_buyer_screen.dart';
@@ -67,6 +68,8 @@ class SearchList extends StatelessWidget {
                                   ),
                                   child: clr == Colors.blue
                                       ? ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           child: Image.network(
                                             ldoc[index].meetup_seller_image,
                                             width: 80,
@@ -75,6 +78,8 @@ class SearchList extends StatelessWidget {
                                           ),
                                         )
                                       : ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                           child: Image.network(
                                             ldoc[index].demand_person_image,
                                             width: 80,
@@ -120,7 +125,7 @@ class SearchList extends StatelessWidget {
                                       alignment: Alignment.centerLeft,
                                       child: clr == Colors.blue
                                           ? Text(
-                                              ldoc[index].meetup_description,
+                                              ldoc[index].meetup_title,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 14,
@@ -129,7 +134,7 @@ class SearchList extends StatelessWidget {
                                               textAlign: TextAlign.start,
                                             )
                                           : Text(
-                                              ldoc[index].demand_description,
+                                              ldoc[index].demand_title,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 14,
@@ -156,97 +161,46 @@ class SearchList extends StatelessWidget {
                                             textAlign: TextAlign.start,
                                           ),
                                         ),
-                                        clr == Colors.blue
-                                            ? ldoc[index].meetup_likes <= 10
-                                                ? Expanded(
-                                                    child: Text(
-                                                      'Positive',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 12,
-                                                        color: Colors.black,
+                                        StreamBuilder<DocumentSnapshot>(
+                                            stream: FirebaseFirestore.instance
+                                                .collection("users")
+                                                .doc(clr == Colors.blue
+                                                    ? ldoc[index]
+                                                        .meetup_seller_uid
+                                                    : ldoc[index]
+                                                        .demand_person_uid)
+                                                .snapshots(),
+                                            builder: (context, snapshot) {
+                                              int avg = 0;
+                                              if (snapshot.hasData) {
+                                                List ratings = [];
+                                                ratings =
+                                                    snapshot.data!["ratings"];
+                                                if (ratings.isNotEmpty) {
+                                                  int sumOfVal = 0;
+                                                  for (int rating in ratings) {
+                                                    sumOfVal += rating;
+                                                  }
+                                                  avg = (sumOfVal /
+                                                          ratings.length)
+                                                      .round();
+                                                }
+                                              }
+                                              return snapshot.hasData
+                                                  ? Expanded(
+                                                      child: Text(
+                                                        "${avg == 0 ? "N/A" : avg == 1 ? "Negative" : avg == 2 ? "Neutral" : "Positive"}",
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.start,
                                                       ),
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                    ),
-                                                  )
-                                                : ldoc[index].meetup_likes >
-                                                            10 &&
-                                                        ldoc[index]
-                                                                .meetup_likes <=
-                                                            100
-                                                    ? Expanded(
-                                                        child: Text(
-                                                          'Very Positive',
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 12,
-                                                            color: Colors.black,
-                                                          ),
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        ),
-                                                      )
-                                                    : Expanded(
-                                                        child: Text(
-                                                          'Overwhelmingly Positive',
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 12,
-                                                            color: Colors.black,
-                                                          ),
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        ),
-                                                      )
-                                            : ldoc[index].demand_likes <= 10
-                                                ? Expanded(
-                                                    child: Text(
-                                                      'Positive',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 12,
-                                                        color: Colors.black,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                    ),
-                                                  )
-                                                : ldoc[index].demand_likes >
-                                                            10 &&
-                                                        ldoc[index]
-                                                                .demand_likes <=
-                                                            100
-                                                    ? Expanded(
-                                                        child: Text(
-                                                          'Very Positive',
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 12,
-                                                            color: Colors.black,
-                                                          ),
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        ),
-                                                      )
-                                                    : Expanded(
-                                                        child: Text(
-                                                          'Overwhelmingly Positive',
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 12,
-                                                            color: Colors.black,
-                                                          ),
-                                                          textAlign:
-                                                              TextAlign.start,
-                                                        ),
-                                                      ),
+                                                    )
+                                                  : Container();
+                                            })
                                       ],
                                     ),
                                   ],

@@ -37,7 +37,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .where("meeters", arrayContains: FirebaseAuth.instance.currentUser!.uid)
         .orderBy("ts", descending: true)
         .get();
-    recentMeetingDate = q.docs.isNotEmpty ? q.docs[0]["date"] : null;
+    recentMeetingDate =
+        q.docs.isNotEmpty ? q.docs[0]["recentMeetingDate"] : null;
     setState(() {});
   }
 
@@ -56,6 +57,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     _currentUser = Provider.of<UserController>(context);
+    List ratings = _currentUser.getCurrentUser.ratings!;
+    int avg = 0;
+    if (ratings.isNotEmpty) {
+      int totalVal = 0;
+      for (int rating in ratings) {
+        totalVal += rating;
+      }
+      avg = (totalVal / ratings.length).round();
+    }
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 230,
@@ -135,6 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         foregroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
         child: Column(
           children: [
             Container(
@@ -148,7 +159,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               alignment: Alignment.center,
               child: Text(
-                'Positive',
+                "${avg == 0 ? "Not rated" : avg == 1 ? "Negative" : avg == 2 ? "Neutral" : "Positive"}",
                 style: TextStyle(color: Colors.orange),
               ),
             ),
@@ -344,6 +355,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             service == true ? Services() : Container(),
             demand == true ? Demands() : Container(),
             review == true ? Review() : Container(),
+            SizedBox(height: 50)
           ],
         ),
       ),
