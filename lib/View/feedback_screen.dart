@@ -280,7 +280,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   DocumentSnapshot doc = await docRef.get();
                   List ratings = doc["ratings"];
                   ratings.add(ratedValue);
-                  docRef.update({"ratings": ratings});
+                  await docRef.update({"ratings": ratings});
                   await FirebaseFirestore.instance
                       .collection("reviews")
                       .doc(widget.id)
