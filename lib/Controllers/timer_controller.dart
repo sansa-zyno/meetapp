@@ -338,7 +338,7 @@ class TimerController extends GetxController {
                   if (snap.docs.isNotEmpty) {
                     DateTime dt = DateTime.now();
                     String dte =
-                        "${dt.year}-${dt.month.floor() < 10 ? "0" : ""}${dt.month.floor()}-${dt.day.floor() < 10 ? "0" : ""}${dt.day.floor()}";
+                        "${dt.day.floor() < 10 ? "0" : ""}${dt.day.floor()}-${dt.month.floor() < 10 ? "0" : ""}${dt.month.floor()}-${dt.year}";
                     DocumentSnapshot doc = snap.docs[0];
                     List items = doc["Items"];
                     items.add({"item": request["title"], "date": dte});
@@ -354,7 +354,7 @@ class TimerController extends GetxController {
                   } else {
                     DateTime dt = DateTime.now();
                     String dte =
-                        "${dt.year}-${dt.month.floor() < 10 ? "0" : ""}${dt.month.floor()}-${dt.day.floor() < 10 ? "0" : ""}${dt.day.floor()}";
+                        "${dt.day.floor() < 10 ? "0" : ""}${dt.day.floor()}-${dt.month.floor() < 10 ? "0" : ""}${dt.month.floor()}-${dt.year}";
                     await FirebaseFirestore.instance
                         .collection("connections")
                         .add({
