@@ -1,7 +1,10 @@
+import 'package:achievement_view/achievement_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:meeter/Providers/user_controller.dart';
 import 'package:meeter/Widgets/GradientButton/GradientButton.dart';
+import 'package:meeter/Widgets/HWidgets/nav_main_seller.dart';
 import 'package:provider/provider.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -130,16 +133,16 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             ),
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            positive = false;
-                            negative = false;
-                            neutral = true;
-                            ratedValue = 2;
-                            ratedValueString = "Neutral";
-                            setState(() {});
-                          },
-                          child: Expanded(
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              positive = false;
+                              negative = false;
+                              neutral = true;
+                              ratedValue = 2;
+                              ratedValueString = "Neutral";
+                              setState(() {});
+                            },
                             child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 15),
@@ -156,16 +159,16 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             ),
                           ),
                         ),
-                        InkWell(
-                          onTap: () {
-                            positive = false;
-                            negative = true;
-                            neutral = false;
-                            ratedValue = 1;
-                            ratedValueString = "Negative";
-                            setState(() {});
-                          },
-                          child: Expanded(
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              positive = false;
+                              negative = true;
+                              neutral = false;
+                              ratedValue = 1;
+                              ratedValueString = "Negative";
+                              setState(() {});
+                            },
                             child: Container(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 15),
@@ -284,6 +287,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   await FirebaseFirestore.instance
                       .collection("reviews")
                       .doc(widget.id)
+                      .set({"r": "r"});
+                  await FirebaseFirestore.instance
+                      .collection("reviews")
+                      .doc(widget.id)
                       .collection("review")
                       .add({
                     "ts": DateTime.now(),
@@ -295,7 +302,22 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                     "raterId": _currentUser.getCurrentUser.uid,
                     "raterCountry": _currentUser.getCurrentUser.country
                   });
-                  Navigator.pop(context);
+                  AchievementView(
+                    context,
+                    color: Colors.green,
+                    icon: Icon(
+                      FontAwesomeIcons.check,
+                      color: Colors.white,
+                    ),
+                    title: "Thank you!",
+                    elevation: 20,
+                    subTitle: "Your feedback was sent successfully",
+                    isCircle: true,
+                  ).show();
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (ctx) => BottomNavBar()),
+                      (route) => false);
                 },
               ),
             ),

@@ -796,7 +796,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                         if (dateTime
                                                 .difference(DateTime.now()) <
                                             Duration(hours: 1)) {
-                                          Navigator.of(context).push(
+                                          Navigator.of(context).pushReplacement(
                                             MaterialPageRoute(
                                               builder: (ctx) =>
                                                   Timer(snapshot.data!),

@@ -27,10 +27,27 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
         .where("type", isEqualTo: "demand")
         .snapshots()
         .listen((event) {
-      requestDoc = event.docs.where((element) {
-        return element["seller_id"] == FirebaseAuth.instance.currentUser!.uid ||
-            element["buyer_id"] == FirebaseAuth.instance.currentUser!.uid;
-      }).toList();
+      requestDoc = event.docs
+          .where((element) {
+            return element["seller_id"] ==
+                    FirebaseAuth.instance.currentUser!.uid ||
+                element["buyer_id"] == FirebaseAuth.instance.currentUser!.uid;
+          })
+          .where((element) {
+            if (element["accepted"] == null && element["modified"] == null) {
+              return element["seller_id"] ==
+                  FirebaseAuth.instance.currentUser!.uid;
+            } else {
+              return true;
+            }
+          })
+          .where((element) =>
+              element["acceptedBy"] != FirebaseAuth.instance.currentUser!.uid)
+          .where((element) =>
+              element["declinedBy"] != FirebaseAuth.instance.currentUser!.uid)
+          .where((element) =>
+              element["modifiedBy"] != FirebaseAuth.instance.currentUser!.uid)
+          .toList();
       setState(() {});
     });
     Database().getChatRooms().listen((event) {

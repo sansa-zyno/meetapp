@@ -1,18 +1,12 @@
 import 'dart:developer';
-
-import 'package:achievement_view/achievement_view.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:meeter/Controllers/timer_controller.dart';
 import 'package:meeter/View/common_problems.dart';
 import 'package:meeter/View/emergency.dart';
-import 'package:permission_handler/permission_handler.dart';
-
 import '../Constants/controllers.dart';
-import '../Constants/get_token.dart';
 import '../Providers/user_controller.dart';
 
 class Timer extends StatefulWidget {
@@ -31,10 +25,10 @@ class _TimerState extends State<Timer> {
   int extraMinutes = 0;
   int extraSeconds = 0;
   double totalCharge = 0.0;
-  late DatabaseReference ref;
+  // late DatabaseReference ref;
   late DocumentReference ref2;
   var directory;
-  bool endDialogAnswer = false;
+  //bool endDialogAnswer = false;
 
   getChatRoomIdByUsernames(String a, String b) {
     if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
@@ -48,19 +42,20 @@ class _TimerState extends State<Timer> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    currentCharge = widget.request["price"] / widget.request["duration"];
-    extraCharge = currentCharge + (currentCharge * 0.3);
-    log("currentCharge is: $currentCharge and extraCharge is: $extraCharge");
+    currentCharge = widget.request["price"] / 30;
+    extraCharge = currentCharge;
     timerController.request = widget.request;
-    if(!timerController.isStreamCalled){
+    if (!timerController.isStreamCalled) {
       timerController.startStream();
-    }else{
+    } else {
       log("\n\n\n\n\n\n\n\n\n\n\nseems like stream called again\n\n\n\n\n\n\n\n");
     }
-    directory = getChatRoomIdByUsernames(widget.request['seller_id'], widget.request['buyer_id']);
+    directory = getChatRoomIdByUsernames(
+        widget.request['seller_id'], widget.request['buyer_id']);
 
-    ref = FirebaseDatabase.instance.ref().child('$directory/');
-    ref2 = FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
+    //ref = FirebaseDatabase.instance.ref().child('$directory/');
+    ref2 =
+        FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
   }
 
   callEndDialog() {
@@ -69,7 +64,15 @@ class _TimerState extends State<Timer> {
       middleText: "Please end the meeting before going out.",
     );
   }
-  bool answer = true;
+
+  @override
+  void dispose() {
+    // TODO: implement dispose  
+    TimerController.timer.cancel();
+    super.dispose();
+  }
+
+  //bool answer = true;
 
   @override
   Widget build(BuildContext context) {
@@ -77,12 +80,9 @@ class _TimerState extends State<Timer> {
     var h = MediaQuery.of(context).size.height / 100;
     return WillPopScope(
       onWillPop: () async {
-        log("in will pop scope and answer $answer and endDialogAnswer $endDialogAnswer");
-        if(timerController.isMeetingRunning.value){
-          log("inside if meeting is running");
+        if (timerController.isMeetingRunning.value) {
           callEndDialog();
         }
-        log("in will pop scope after if and answer $answer and endDialogAnswer $endDialogAnswer");
         return true;
       },
       child: Scaffold(
@@ -92,7 +92,8 @@ class _TimerState extends State<Timer> {
               physics: const BouncingScrollPhysics(),
               child: Center(
                 child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: h * 3.3, horizontal: w * 7.3),
+                    padding: EdgeInsets.symmetric(
+                        vertical: h * 3.3, horizontal: w * 7.3),
                     child: Column(
                       children: [
                         SizedBox(
@@ -127,10 +128,13 @@ class _TimerState extends State<Timer> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(500),
                                 image: const DecorationImage(
-                                    image: AssetImage('assets/images/data/clock.png'), fit: BoxFit.cover),
+                                    image: AssetImage(
+                                        'assets/images/data/clock.png'),
+                                    fit: BoxFit.cover),
                               ),
                             ),
                             onTap: () async {
+                              timerController.isPauseAnswered.value = false;
                               //+ onTap is for Pause and Resume
                               if (timerController.isMeetingRunning.value) {
                                 ref2.set({
@@ -138,7 +142,8 @@ class _TimerState extends State<Timer> {
                                   "meetId": directory,
                                   "seconds": 2,
                                   "start_requester_id": "",
-                                  "pause_requester_id": UserController().auth.currentUser?.uid,
+                                  "pause_requester_id":
+                                      UserController().auth.currentUser?.uid,
                                   "finished_at_minutes": "",
                                   "finished_at_seconds": "",
                                 }, SetOptions(merge: true)).then((value) {
@@ -158,30 +163,20 @@ class _TimerState extends State<Timer> {
                               }
                             },
                             onLongPress: () {
-                              //+onLongPress is for meeting Start or Stop.
-
-                              //+------------------------------------------------
-                              //+start the timer here.
-                              log("current user id is: ${UserController().auth.currentUser}");
-                              log("current user id is: ${UserController().auth.currentUser?.uid}");
                               timerController.isStartAnswered.value = false;
-                              timerController.isPauseAnswered.value = false;
                               //+ the above line is working and fetching the user alright
                               try {
-                                // if (!timerController.isMeetingRunning.value
-                                // && UserController().auth.currentUser?.uid == widget.request["seller_id"]
-                                // ) {
-                                log("\n\n started the timerController.timer in then after "
-                                    "joining the channel.\n\n");
-                                //+onLongPress requesting meeting start or stop.
                                 ref2.set({
                                   // "startAt": FieldValue.serverTimestamp(),
                                   "meetId": directory,
                                   "seconds": -2,
-                                  "start_requester_id": UserController().auth.currentUser?.uid,
+                                  "start_requester_id":
+                                      UserController().auth.currentUser?.uid,
                                   "pause_requester_id": "",
-                                  "finished_at_minutes": timerController.minutes.value,
-                                  "finished_at_seconds": timerController.seconds.value,
+                                  "finished_at_minutes":
+                                      timerController.minutes.value,
+                                  "finished_at_seconds":
+                                      timerController.seconds.value,
                                 }, SetOptions(merge: true)).then((value) {
                                   // ref.set({
                                   //   "meetId": directory,
@@ -192,13 +187,12 @@ class _TimerState extends State<Timer> {
                                   //   "finished_at_minutes": timerController.minutes.value,
                                   //   "finished_at_seconds": timerController.seconds.value,
                                   // });
-                                  log("in on Tap passed a start/stop request");
-                                  // timerController.meetingMode();
                                 });
                               } catch (e) {
                                 Get.defaultDialog(
                                     title: "Error!",
-                                    middleText: "Following error was thrown while "
+                                    middleText:
+                                        "Following error was thrown while "
                                         "starting the meeting timerController.timer: ${e.toString()}");
                               }
                               //+------------------------------------------------
@@ -208,116 +202,13 @@ class _TimerState extends State<Timer> {
                         SizedBox(
                           height: h * 0.1,
                         ),
-                        // if (timerController.isMeetingRunning.value)
-                        //   Row(
-                        //     mainAxisAlignment: MainAxisAlignment.center,
-                        //     children: [
-                        //       FloatingActionButton(
-                        //         heroTag: "endCallButton",
-                        //         onPressed: () async {
-                        //           log("before refreshing minutes: ${timerController.minutes}"
-                        //               " seconds: ${timerController.seconds}");
-                        //           timerController.meetingMode();
-                        //           String minutes = timerController.minutes.value;
-                        //           String seconds = timerController.seconds.value;
-                        //           log("local values are: minutes: $minutes and "
-                        //               "seconds: $seconds");
-                        //           totalCharge = 0;
-                        //           extraMinutes = 0;
-                        //           extraSeconds = 0;
-                        //           extraTimeCharge = 0;
-                        //           if (int.parse(minutes) >
-                        //               widget.request["duration"] ||
-                        //               (int.parse(minutes) ==
-                        //                   widget.request["duration"])) {
-                        //             totalCharge = widget.request["duration"] *
-                        //                 currentCharge;
-                        //             extraMinutes = (int.parse(minutes) -
-                        //                 widget.request["duration"])
-                        //                 .toInt();
-                        //             extraSeconds = int.parse(seconds);
-                        //             extraTimeCharge = extraMinutes * extraCharge;
-                        //             extraTimeCharge +=
-                        //                 extraSeconds * (extraCharge / 60);
-                        //             totalCharge += extraTimeCharge;
-                        //           } else {
-                        //             totalCharge =
-                        //                 int.parse(minutes) * currentCharge;
-                        //             totalCharge += ((int.parse(seconds) *
-                        //                 (currentCharge / 60))
-                        //                 .toPrecision(3)).toPrecision(2);
-                        //           }
-                        //           timerController.resetTimer();
-                        //           log("after refreshing minutes: ${timerController.minutes}"
-                        //               " seconds: ${timerController.seconds}");
-                        //           log("returnVValue of leaveChannel is:");
-                        //           log("\n\n\n"
-                        //               "You were in the meeting for "
-                        //               "$minutes minutes and $seconds seconds. "
-                        //               "You are being charged \$$totalCharge for "
-                        //               "this meeting."
-                        //               "\n\n\n");
-                        //           showDialog(
-                        //               context: context,
-                        //               builder: (BuildContext context) =>
-                        //                   AlertDialog(
-                        //                     title: Text(
-                        //                         "${widget.request["buyer_name"]} "
-                        //                             "was in the meeting for "
-                        //                             "$minutes minutes and $seconds seconds. "
-                        //                             "He is being charged \$$totalCharge for "
-                        //                             "this meeting."),
-                        //                     actions: [
-                        //                       TextButton(
-                        //                         child: const Text("Ok"),
-                        //                         onPressed: () async {
-                        //                           // AchievementView(
-                        //                           //   context,
-                        //                           //   color: Colors
-                        //                           //       .green,
-                        //                           //   icon: const Icon(
-                        //                           //     FontAwesomeIcons
-                        //                           //         .check,
-                        //                           //     color: Colors
-                        //                           //         .white,
-                        //                           //   ),
-                        //                           //   title:
-                        //                           //   "Succesfull!",
-                        //                           //   elevation:
-                        //                           //   20,
-                        //                           //   subTitle:
-                        //                           //   "Request Cancelled succesfully",
-                        //                           //   isCircle:
-                        //                           //   true,
-                        //                           // ).show();
-                        //                           Navigator.pop(context);
-                        //                         },
-                        //                       ),
-                        //                       // FlatButton(
-                        //                       //   child:
-                        //                       //   const Text("No"),
-                        //                       //   onPressed: () {
-                        //                       //     Navigator.pop(
-                        //                       //         context);
-                        //                       //   },
-                        //                       // )
-                        //                     ],
-                        //                   ));
-                        //         },
-                        //         child: const Icon(
-                        //           Icons.local_phone_rounded,
-                        //           color: Colors.white,
-                        //         ),
-                        //         backgroundColor: Colors.red,
-                        //       ),
-                        //     ],
-                        //   ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                             Expanded(
-                              child: Text("Long-Press to Start or End the meeting & "
-                                  "Touch to Pause or Resume the meeting.",
+                            Expanded(
+                              child: Text(
+                                "Long-Press to Start or End the meeting & "
+                                "Touch to Pause or Resume the meeting.",
                                 style: TextStyle(
                                   fontSize: w * 3.8,
                                   fontWeight: FontWeight.w400,
@@ -367,7 +258,8 @@ class _TimerState extends State<Timer> {
                           height: h * 6.7,
                           width: w * 80.4,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 30.0),
                             child: Row(
                               children: [
                                 Text(
@@ -380,7 +272,7 @@ class _TimerState extends State<Timer> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    '${widget.request["duration"]} min/\$${widget.request["price"]}',
+                                    '${widget.request["duration"]} min/\$${((widget.request["price"] * widget.request["duration"]) / 30).round()}',
                                     style: TextStyle(
                                       fontSize: w * 4.8,
                                       color: Colors.grey,
@@ -421,7 +313,7 @@ class _TimerState extends State<Timer> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    '\$${extraCharge.toPrecision(2)}/1 min',
+                                    '\$${(extraCharge * 5).toPrecision(2)}/5 min',
                                     style: TextStyle(
                                       fontSize: w * 4.8,
                                       color: Colors.grey,
@@ -482,7 +374,10 @@ class _TimerState extends State<Timer> {
                         ),
                         Text(
                           'Having a issue?',
-                          style: TextStyle(fontSize: w * 4.8, fontWeight: FontWeight.w500, color: Colors.black),
+                          style: TextStyle(
+                              fontSize: w * 4.8,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black),
                         ),
                         SizedBox(
                           height: h * 2.2,
@@ -493,12 +388,15 @@ class _TimerState extends State<Timer> {
                               alignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 ConstrainedBox(
-                                  constraints: BoxConstraints.tightFor(width: w * 38.0, height: h * 5.0),
+                                  constraints: BoxConstraints.tightFor(
+                                      width: w * 38.0, height: h * 5.0),
                                   child: ElevatedButton(
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => CommonProblems()),
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                CommonProblems()),
                                       );
                                     },
                                     child: Text(
@@ -518,12 +416,14 @@ class _TimerState extends State<Timer> {
                                   ),
                                 ),
                                 ConstrainedBox(
-                                  constraints: BoxConstraints.tightFor(width: w * 38.0, height: h * 5.0),
+                                  constraints: BoxConstraints.tightFor(
+                                      width: w * 38.0, height: h * 5.0),
                                   child: ElevatedButton(
                                     onPressed: () {
                                       Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (context) => Emergency()),
+                                        MaterialPageRoute(
+                                            builder: (context) => Emergency()),
                                       );
                                     },
                                     child: Text(
@@ -556,23 +456,24 @@ class _TimerState extends State<Timer> {
   }
 
   getCurrentCharge() {
-    currentCharge = widget.request["price"] / widget.request["duration"];
-
+    currentCharge = widget.request["price"] / 30;
     if (int.parse(timerController.minutes.value) > widget.request["duration"] ||
-        (int.parse(timerController.minutes.value) == widget.request["duration"])) {
-      log("inside minutes less if request['duration']: ${widget.request["duration"]} \n\n "
-          " int.parse(minutes): ${int.parse(timerController.minutes.value)}");
+        (int.parse(timerController.minutes.value) ==
+            widget.request["duration"])) {
       totalCharge = widget.request["duration"] * currentCharge;
-      extraMinutes = (int.parse(timerController.minutes.value) - widget.request["duration"]).toInt();
+      extraMinutes = (int.parse(timerController.minutes.value) -
+              widget.request["duration"])
+          .toInt();
       extraSeconds = int.parse(timerController.seconds.value);
-      log("total charge is: $totalCharge");
       extraTimeCharge = extraMinutes * extraCharge;
       extraTimeCharge += extraSeconds * (extraCharge / 60);
       totalCharge += extraTimeCharge;
     } else {
-      log("inside else less if");
       totalCharge = int.parse(timerController.minutes.value) * currentCharge;
-      totalCharge += ((int.parse(timerController.seconds.value) * (currentCharge / 60)).toPrecision(3)).toPrecision(2);
+      totalCharge +=
+          ((int.parse(timerController.seconds.value) * (currentCharge / 60))
+                  .toPrecision(3))
+              .toPrecision(2);
     }
     return totalCharge.toPrecision(2);
   }
