@@ -163,7 +163,7 @@ class _ConnectionState extends State<Connection> {
                                                     }),
                                               ]),
                                           trailing: Text(
-                                            "${qdocs.docs[index]['meetingCount']}X",
+                                            "X${qdocs.docs[index]['meetingCount']}",
                                             style: TextStyle(
                                               color: Color(0xff00AEFF),
                                             ),
@@ -248,7 +248,7 @@ class _ConnectionState extends State<Connection> {
                                                     }),
                                               ]),
                                           trailing: Text(
-                                            "${qdocs.docs[index]['meetingCount']}X",
+                                            "X${qdocs.docs[index]['meetingCount']}",
                                             style: TextStyle(
                                               color: Color(0xff00AEFF),
                                             ),

@@ -22,12 +22,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   bool positive = false;
   bool neutral = true;
   bool negative = false;
-  int ratedValue = 2;
+  int ratedValue = 0;
   String ratedValueString = "Neutral";
+  bool submitted = false;
 
-  bool greatBuyer = false;
-  bool friendly = false;
-  String option = "";
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width / 100;
@@ -92,7 +90,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
               backgroundColor: Colors.blue,
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(30),
-                  child: Image.network(widget.image)),
+                  child: Image.network(widget.image, fit: BoxFit.cover)),
             ),
             SizedBox(height: 20),
             Container(
@@ -110,7 +108,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               positive = true;
                               negative = false;
                               neutral = false;
-                              ratedValue = 3;
+                              ratedValue = 1;
                               ratedValueString = "Positive";
                               setState(() {});
                             },
@@ -139,7 +137,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               positive = false;
                               negative = false;
                               neutral = true;
-                              ratedValue = 2;
+                              ratedValue = 0;
                               ratedValueString = "Neutral";
                               setState(() {});
                             },
@@ -165,7 +163,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               positive = false;
                               negative = true;
                               neutral = false;
-                              ratedValue = 1;
+                              ratedValue = -1;
                               ratedValueString = "Negative";
                               setState(() {});
                             },
@@ -221,7 +219,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            /*SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Row(children: [
@@ -268,7 +266,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       )),
                 ))
               ]),
-            ),
+            ),*/
             SizedBox(height: 30),
             Container(
               width: 220,
@@ -277,47 +275,49 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 title: "Submit",
                 clrs: [Colors.blue, Colors.blue],
                 onpressed: () async {
-                  DocumentReference docRef = FirebaseFirestore.instance
-                      .collection("users")
-                      .doc(widget.id);
-                  DocumentSnapshot doc = await docRef.get();
-                  List ratings = doc["ratings"];
-                  ratings.add(ratedValue);
-                  await docRef.update({"ratings": ratings});
-                  await FirebaseFirestore.instance
-                      .collection("reviews")
-                      .doc(widget.id)
-                      .set({"r": "r"});
-                  await FirebaseFirestore.instance
-                      .collection("reviews")
-                      .doc(widget.id)
-                      .collection("review")
-                      .add({
-                    "ts": DateTime.now(),
-                    "rating": ratedValueString,
-                    "comment": commentController.text,
-                    "extra": option,
-                    "raterName": _currentUser.getCurrentUser.displayName,
-                    "raterImage": _currentUser.getCurrentUser.avatarUrl,
-                    "raterId": _currentUser.getCurrentUser.uid,
-                    "raterCountry": _currentUser.getCurrentUser.country
-                  });
-                  AchievementView(
-                    context,
-                    color: Colors.green,
-                    icon: Icon(
-                      FontAwesomeIcons.check,
-                      color: Colors.white,
-                    ),
-                    title: "Thank you!",
-                    elevation: 20,
-                    subTitle: "Your feedback was sent successfully",
-                    isCircle: true,
-                  ).show();
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (ctx) => BottomNavBar()),
-                      (route) => false);
+                  if (submitted == false) {
+                    submitted = true;
+                    DocumentReference docRef = FirebaseFirestore.instance
+                        .collection("users")
+                        .doc(widget.id);
+                    DocumentSnapshot doc = await docRef.get();
+                    List ratings = doc["ratings"];
+                    ratings.add(ratedValue);
+                    await docRef.update({"ratings": ratings});
+
+                    await FirebaseFirestore.instance
+                        .collection("reviews")
+                        .doc(widget.id)
+                        .set({"r": "r"});
+                    await FirebaseFirestore.instance
+                        .collection("reviews")
+                        .doc(widget.id)
+                        .collection("review")
+                        .add({
+                      "ts": DateTime.now(),
+                      "rating": ratedValueString,
+                      "comment": commentController.text,
+                      "raterName": _currentUser.getCurrentUser.displayName,
+                      "raterImage": _currentUser.getCurrentUser.avatarUrl,
+                      "raterId": _currentUser.getCurrentUser.uid,
+                      "raterCountry": _currentUser.getCurrentUser.country
+                    });
+                    AchievementView(
+                      color: Colors.green,
+                      icon: Icon(
+                        FontAwesomeIcons.check,
+                        color: Colors.white,
+                      ),
+                      title: "Thank you!",
+                      elevation: 20,
+                      subTitle: "Your feedback was sent successfully",
+                      isCircle: true,
+                    ).show(context);
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (ctx) => BottomNavBar()),
+                        (route) => false);
+                  } else {}
                 },
               ),
             ),

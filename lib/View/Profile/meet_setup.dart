@@ -591,7 +591,8 @@ class _MeetSetupState extends State<MeetSetup> {
                           ),
                         );
                       } else {
-                        _scacffoldKey.currentState!.showSnackBar(const SnackBar(
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
                           backgroundColor: Colors.red,
                           content: Text(
                               'All fields are compulsory except the tags field which is optional'),
@@ -611,7 +612,7 @@ class _MeetSetupState extends State<MeetSetup> {
     );
   }
 
-  Widget fieldColorBox(Gradient gradient, String title, String text,
+  /*Widget fieldColorBox(Gradient gradient, String title, String text,
       TextEditingController controller, List<TextInputFormatter> input) {
     final w = MediaQuery.of(context).size.width / 100;
     final h = MediaQuery.of(context).size.height / 100;
@@ -677,7 +678,7 @@ class _MeetSetupState extends State<MeetSetup> {
         ),
       ),
     );
-  }
+  }*/
 
   uploadDataToDb() async {
     await FirebaseFirestore.instance
@@ -713,7 +714,7 @@ class _MeetSetupState extends State<MeetSetup> {
     });
   }
 
-  Widget nexButton(String text, BuildContext context) {
+  /*Widget nexButton(String text, BuildContext context) {
     final w = MediaQuery.of(context).size.width / 100;
     final h = MediaQuery.of(context).size.height / 100;
 
@@ -742,5 +743,5 @@ class _MeetSetupState extends State<MeetSetup> {
         },
       ),
     );
-  }
+  }*/
 }

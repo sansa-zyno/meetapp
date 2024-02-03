@@ -105,7 +105,6 @@ class _LoveConfirmState extends State<LoveConfirm> {
                                     "uid": _currentUser.getCurrentUser.uid,
                                   }, SetOptions(merge: true));
                                   AchievementView(
-                                    context,
                                     color: Colors.green,
                                     icon: Icon(
                                       FontAwesomeIcons.check,
@@ -116,7 +115,7 @@ class _LoveConfirmState extends State<LoveConfirm> {
                                     subTitle:
                                         "Your choices have been confirmed",
                                     isCircle: true,
-                                  )..show();
+                                  )..show(context);
 
                                   Navigator.push(
                                     context,

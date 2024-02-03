@@ -591,7 +591,7 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
                         await updateDataToDb();
                         Navigator.pop(context);
                       } else {
-                        _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           backgroundColor: Colors.red,
                           content: Text(
                               'Please enter appropriate values for the fields'),
@@ -611,7 +611,7 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
     );
   }
 
-  Widget fieldColorBox(Gradient gradient, String title, String text,
+  /*Widget fieldColorBox(Gradient gradient, String title, String text,
       TextEditingController controller, List<TextInputFormatter> input) {
     final w = MediaQuery.of(context).size.width / 100;
     final h = MediaQuery.of(context).size.height / 100;
@@ -677,7 +677,7 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
         ),
       ),
     );
-  }
+  }*/
 
   updateDataToDb() async {
     await FirebaseFirestore.instance
@@ -706,7 +706,7 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
     });
   }
 
-  Widget nexButton(String text, BuildContext context) {
+  /*Widget nexButton(String text, BuildContext context) {
     final w = MediaQuery.of(context).size.width / 100;
     final h = MediaQuery.of(context).size.height / 100;
 
@@ -735,5 +735,5 @@ class _EditMeetSetupState extends State<EditMeetSetup> {
         },
       ),
     );
-  }
+  }*/
 }

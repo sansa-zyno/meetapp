@@ -228,10 +228,12 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                 horizontal: w * 3.6,
                                 vertical: h * 2.2,
                               ),
-                              child: RaisedButton(
-                                color: isButtonPressed && idx == index
-                                    ? widget.clr
-                                    : Colors.grey[200],
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        isButtonPressed && idx == index
+                                            ? widget.clr
+                                            : Colors.grey[200])),
                                 child: Text(
                                   _duration[index] + "min",
                                   style: TextStyle(
@@ -351,7 +353,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                       //print(placemarks.toString());
                                       _locationController.text =
                                           "${placemarks[0].street}, ${placemarks[0].locality}, ${placemarks[0].country}";
-                                      _scacffoldKey.currentState!
+                                      ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
                                         backgroundColor: widget.clr,
                                         content: Text(
@@ -462,7 +464,6 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                   .doc(widget.doc.id)
                                   .update(map);
                               AchievementView(
-                                context,
                                 color: Colors.green,
                                 icon: Icon(
                                   FontAwesomeIcons.check,
@@ -472,7 +473,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                 elevation: 20,
                                 subTitle: "Update sent successfully",
                                 isCircle: true,
-                              ).show();
+                              ).show(context);
                               DocumentSnapshot doc = await FirebaseFirestore
                                   .instance
                                   .collection('requests')
@@ -486,7 +487,8 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                       builder: (ctx) =>
                                           MeetUpDetails(doc, widget.clr)));
                             } else {
-                              _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
                                 backgroundColor: Colors.red,
                                 content: Text(
                                   'Please pin a location from map',
@@ -502,7 +504,6 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                 .doc(widget.doc.id)
                                 .update(map);
                             AchievementView(
-                              context,
                               color: Colors.green,
                               icon: Icon(
                                 FontAwesomeIcons.check,
@@ -512,7 +513,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                               elevation: 20,
                               subTitle: "Update sent successfully",
                               isCircle: true,
-                            ).show();
+                            ).show(context);
                             DocumentSnapshot doc = await FirebaseFirestore
                                 .instance
                                 .collection('requests')
@@ -527,7 +528,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                                         MeetUpDetails(doc, widget.clr)));
                           }
                         } else {
-                          _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             backgroundColor: Colors.red,
                             content: Text(
                               'Choose duration',
@@ -536,7 +537,7 @@ class _EditRequestOfferState extends State<EditRequestOffer> {
                           ));
                         }
                       } else {
-                        _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           backgroundColor: Colors.red,
                           content: Text(
                             'Invalid time',

@@ -14,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/Providers/application_bloc.dart';
+import 'package:meeter/Providers/timer_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,6 +49,7 @@ class _MeeterState extends State<Meeter> {
       providers: [
         ChangeNotifierProvider(create: (_) => UserController()),
         ChangeNotifierProvider(create: (_) => ApplicationBloc(), lazy: false),
+        //ChangeNotifierProvider(create: (_) => TimerController())
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
@@ -110,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         .where((element) => element['accepted'] == true)
         .toList();
     if (requests != null) {
-      requests!.forEach((element) {
+      requests!.forEach((element) async {
         /* String date = element['date'];
         int duration = element['duration'];
         int startHour = element['startTime']['hour'];
@@ -122,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         DateTime dateTime = DateTime.parse(formattedString);*/
         DateTime endDateTime = element['endDateTime'].toDate();
         if (endDateTime.compareTo(DateTime.now()) <= 0) {
-          Future.delayed(const Duration(hours: 1), () async {
+          await Future.delayed(const Duration(hours: 1), () async {
             await FirebaseFirestore.instance
                 .collection("requests")
                 .doc(element['seller_id'])

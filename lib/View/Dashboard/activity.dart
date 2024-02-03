@@ -42,8 +42,6 @@ class _ActivityScreenState extends State<ActivityScreen> {
             }
           })
           .where((element) =>
-              element["acceptedBy"] != FirebaseAuth.instance.currentUser!.uid)
-          .where((element) =>
               element["declinedBy"] != FirebaseAuth.instance.currentUser!.uid)
           .where((element) =>
               element["modifiedBy"] != FirebaseAuth.instance.currentUser!.uid)
@@ -178,7 +176,18 @@ class _ActivityScreenState extends State<ActivityScreen> {
                       ),
                       recent
                           ? Expanded(
-                              child: combinedDoc.isNotEmpty
+                              child: combinedDoc
+                                      .where((element) {
+                                        if (element["type"] == "service") {
+                                          return element["acceptedBy"] !=
+                                              FirebaseAuth
+                                                  .instance.currentUser!.uid;
+                                        } else {
+                                          return true;
+                                        }
+                                      })
+                                      .toList()
+                                      .isNotEmpty
                                   ? ListView.builder(
                                       itemCount: combinedDoc.length,
                                       shrinkWrap: true,

@@ -216,7 +216,7 @@ class _DetailBarBuyerState extends State<DetailBarBuyer> {
                       snap.docs.length > 0 ? snap.docs[0]["meeters"] : [];
                   if (meeters
                       .contains(FirebaseAuth.instance.currentUser!.uid)) {
-                    Scaffold.of(context).showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       backgroundColor: Colors.red,
                       content: Text(
                         'You already requested for this service',

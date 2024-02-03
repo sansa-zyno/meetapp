@@ -116,7 +116,6 @@ class _AboutYouConfirmState extends State<AboutYouConfirm> {
                                   );
 
                                   AchievementView(
-                                    context,
                                     color: Colors.green,
                                     icon: Icon(
                                       FontAwesomeIcons.check,
@@ -127,7 +126,7 @@ class _AboutYouConfirmState extends State<AboutYouConfirm> {
                                     subTitle:
                                         "Your choices have been confirmed",
                                     isCircle: true,
-                                  ).show();
+                                  ).show(context);
                                 },
                               ),
                             ),

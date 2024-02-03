@@ -77,7 +77,6 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
         List meeters = event["meeters"];
         if (meeters.isEmpty) {
           AchievementView(
-            context,
             color: Colors.green,
             icon: Icon(
               FontAwesomeIcons.cancel,
@@ -87,7 +86,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
             elevation: 20,
             subTitle: "This meetup request was declined",
             isCircle: true,
-          ).show();
+          ).show(context);
         }
       }
     });
@@ -404,7 +403,6 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                             widget.request.id,
                                             widget.request['buyer_id']);
                                         AchievementView(
-                                          context,
                                           color: Colors.green,
                                           icon: Icon(
                                             FontAwesomeIcons.check,
@@ -415,7 +413,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                           subTitle:
                                               "Meetup request accepted succesfully",
                                           isCircle: true,
-                                        ).show();
+                                        ).show(context);
                                       },
                                       child: Container(
                                         width: 120,
@@ -461,7 +459,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                                   title: const Text(
                                                       'Are you sure to decline meeting ?'),
                                                   actions: [
-                                                    FlatButton(
+                                                    MaterialButton(
                                                       child: Text("Yes"),
                                                       onPressed: () async {
                                                         await Database()
@@ -474,7 +472,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                                         Navigator.pop(context);
                                                       },
                                                     ),
-                                                    FlatButton(
+                                                    MaterialButton(
                                                       child: Text("No"),
                                                       onPressed: () {
                                                         Navigator.pop(context);
@@ -540,7 +538,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                                           doc: snapshot.data!,
                                                           clr: widget.clr)));
                                         } else {
-                                          _scacffoldKey.currentState!
+                                          ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                             backgroundColor: Colors.red,
                                             content: Text(
@@ -803,7 +801,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                             ),
                                           );
                                         } else {
-                                          _scacffoldKey.currentState!
+                                          ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                             backgroundColor: Colors.red,
                                             content: Text(
@@ -853,7 +851,6 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                 child: GestureDetector(
                                   onTap: () async {
                                     AchievementView(
-                                      context,
                                       color: Colors.green,
                                       icon: Icon(
                                         FontAwesomeIcons.check,
@@ -864,7 +861,7 @@ class _MeetUpDetailsState extends State<MeetUpDetails> {
                                       subTitle:
                                           "This meetup request was deleted successfully",
                                       isCircle: true,
-                                    ).show();
+                                    ).show(context);
                                     Navigator.pop(context);
                                     await FirebaseFirestore.instance
                                         .collection('requests')

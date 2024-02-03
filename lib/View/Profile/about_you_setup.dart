@@ -11,13 +11,13 @@ class YouSetup extends StatefulWidget {
 }
 
 class _YouSetupState extends State<YouSetup> {
-  bool parent = false;
-  bool scholar = false;
-  bool student = false;
-  bool entrepreneur = false;
-  bool job = false;
-  bool freelancer = false;
-  bool employeer = false;
+  //bool parent = false;
+  //bool scholar = false;
+  //bool student = false;
+  // bool entrepreneur = false;
+  //bool job = false;
+  //bool freelancer = false;
+  //bool employeer = false;
 
   List<dynamic> values = [];
   late int val;

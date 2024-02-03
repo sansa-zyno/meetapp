@@ -376,7 +376,7 @@ class _ProfileSetupState extends State<ProfileSetup> {
                                   child: YouSetup()),
                             );
                           } else {
-                            _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               backgroundColor: Colors.red,
                               content: Text(
                                   'Your name and profile picture cannot be empty!'),

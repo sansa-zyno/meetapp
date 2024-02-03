@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -544,7 +543,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
                         await uploadDataToDb();
                         Navigator.pop(context);
                       } else {
-                        _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           backgroundColor: Colors.red,
                           content: Text(
                               'All fields are compulsory except the tags field which is optional'),
@@ -564,7 +563,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
     );
   }
 
-  Widget fieldColorBox(Gradient gradient, String title, String text,
+  /*Widget fieldColorBox(Gradient gradient, String title, String text,
       TextEditingController controller, List<TextInputFormatter> input) {
     final w = MediaQuery.of(context).size.width / 100;
     final h = MediaQuery.of(context).size.height / 100;
@@ -630,7 +629,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
         ),
       ),
     );
-  }
+  }*/
 
   uploadDataToDb() async {
     await FirebaseFirestore.instance
@@ -666,7 +665,7 @@ class _DemandSetupSetupState extends State<DemandSetup> {
     });
   }
 
-  Widget nexButton(String text, BuildContext context) {
+  /*Widget nexButton(String text, BuildContext context) {
     final w = MediaQuery.of(context).size.width / 100;
     final h = MediaQuery.of(context).size.height / 100;
 
@@ -695,5 +694,5 @@ class _DemandSetupSetupState extends State<DemandSetup> {
         },
       ),
     );
-  }
+  }*/
 }

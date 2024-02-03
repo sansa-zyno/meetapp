@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/double_extensions.dart';
 import 'package:meeter/Model/meetup_data.dart';
 import 'package:meeter/View/Explore_Seller/detail_screen.dart';
 import 'package:meeter/Widgets/TextWidgets/poppins_text.dart';
@@ -37,6 +38,7 @@ class _InterestedSellersState extends State<InterestedSellers> {
   @override
   Widget build(BuildContext context) {
     final w = MediaQuery.of(context).size.width / 100;
+    String ratingString = "";
 
     return Scaffold(
       appBar: AppBar(
@@ -205,29 +207,68 @@ class _InterestedSellersState extends State<InterestedSellers> {
                                                           .snapshots(),
                                                       builder:
                                                           (context, snapshot) {
-                                                        int avg = 0;
+                                                        double avg = 0;
                                                         if (snapshot.hasData) {
                                                           List ratings = [];
                                                           ratings = snapshot
                                                               .data!["ratings"];
                                                           if (ratings
                                                               .isNotEmpty) {
-                                                            int sumOfVal = 0;
+                                                            int totalVal = 0;
                                                             for (int rating
                                                                 in ratings) {
-                                                              sumOfVal +=
-                                                                  rating;
+                                                              totalVal +=
+                                                                  (rating);
                                                             }
-                                                            avg = (sumOfVal /
+                                                            avg = (totalVal /
                                                                     ratings
                                                                         .length)
-                                                                .round();
+                                                                .toPrecision(1);
+
+                                                            if (avg >= 0.8 &&
+                                                                avg <= 1.0) {
+                                                              ratingString =
+                                                                  "Overwhelmingly Positive";
+                                                            } else if (avg >=
+                                                                    0.6 &&
+                                                                avg < 0.8) {
+                                                              ratingString =
+                                                                  "Mostly Positive";
+                                                            } else if (avg >=
+                                                                    0.3 &&
+                                                                avg < 0.6) {
+                                                              ratingString =
+                                                                  "Somewhat Positive";
+                                                            } else if (avg >=
+                                                                    -0.3 &&
+                                                                avg < 0.3) {
+                                                              ratingString =
+                                                                  "Mixed Reviews";
+                                                            } else if (avg >=
+                                                                    -0.6 &&
+                                                                avg < -0.3) {
+                                                              ratingString =
+                                                                  "Somewhat Negative";
+                                                            } else if (avg >=
+                                                                    -0.8 &&
+                                                                avg < -0.6) {
+                                                              ratingString =
+                                                                  "Mostly Negative";
+                                                            } else if (avg >=
+                                                                    -1.0 &&
+                                                                avg < -0.8) {
+                                                              ratingString =
+                                                                  "Overwhelmingly Negative";
+                                                            } else {}
+                                                          } else {
+                                                            ratingString =
+                                                                "N/A";
                                                           }
                                                         }
                                                         return snapshot.hasData
                                                             ? Expanded(
                                                                 child: Text(
-                                                                  "${avg == 0 ? "N/A" : avg == 1 ? "Negative" : avg == 2 ? "Neutral" : "Positive"}",
+                                                                  "$ratingString",
                                                                   style:
                                                                       TextStyle(
                                                                     fontWeight:

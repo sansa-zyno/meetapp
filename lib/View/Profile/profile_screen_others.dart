@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:circular_profile_avatar/circular_profile_avatar.dart';
+import 'package:get/get_utils/src/extensions/double_extensions.dart';
 import 'package:meeter/View/Profile/profile_screen_others_widgets/about.dart';
 import 'package:meeter/View/Profile/profile_screen_others_widgets/achievement.dart';
 import 'package:meeter/View/Profile/profile_screen_others_widgets/connection.dart';
@@ -18,7 +19,7 @@ class ProfileScreenOther extends StatefulWidget {
 }
 
 class _ProfileScreenOtherState extends State<ProfileScreenOther> {
-  final controller = PageController();
+  //final controller = PageController();
   DocumentSnapshot? userDoc;
 
   List<String> count = [
@@ -68,15 +69,35 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
 
   @override
   Widget build(BuildContext context) {
-    int avg = 0;
+    double avg = 0;
+    String ratingString = "";
+
     if (userDoc != null) {
       List ratings = userDoc!["ratings"];
       if (ratings.isNotEmpty) {
         int totalVal = 0;
         for (int rating in ratings) {
-          totalVal += rating;
+          totalVal += (rating);
         }
-        avg = (totalVal / ratings.length).round();
+        avg = (totalVal / ratings.length).toPrecision(1);
+
+        if (avg >= 0.8 && avg <= 1.0) {
+          ratingString = "Overwhelmingly Positive";
+        } else if (avg >= 0.6 && avg < 0.8) {
+          ratingString = "Mostly Positive";
+        } else if (avg >= 0.3 && avg < 0.6) {
+          ratingString = "Somewhat Positive";
+        } else if (avg >= -0.3 && avg < 0.3) {
+          ratingString = "Mixed Reviews";
+        } else if (avg >= -0.6 && avg < -0.3) {
+          ratingString = "Somewhat Negative";
+        } else if (avg >= -0.8 && avg < -0.6) {
+          ratingString = "Mostly Negative";
+        } else if (avg >= -1.0 && avg < -0.8) {
+          ratingString = "Overwhelmingly Negative";
+        } else {}
+      } else {
+        ratingString = "Not Rated";
       }
     }
     return Scaffold(
@@ -151,7 +172,7 @@ class _ProfileScreenOtherState extends State<ProfileScreenOther> {
                   Container(
                     alignment: Alignment.center,
                     child: Text(
-                      "${avg == 0 ? "Not rated" : avg == 1 ? "Negative" : avg == 2 ? "Neutral" : "Positive"}",
+                      "$ratingString",
                       style: TextStyle(color: Colors.orange),
                     ),
                   ),

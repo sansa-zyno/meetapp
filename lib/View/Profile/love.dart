@@ -11,13 +11,13 @@ class LoveSetup extends StatefulWidget {
 }
 
 class _LoveSetupState extends State<LoveSetup> {
-  bool fitness = false;
-  bool startup = false;
-  bool lifeskills = false;
-  bool dating = false;
-  bool academic = false;
-  bool employement = false;
-  bool advice = false;
+  //bool fitness = false;
+  //bool startup = false;
+  //bool lifeskills = false;
+  //bool dating = false;
+  //bool academic = false;
+  //bool employement = false;
+  //bool advice = false;
 
   List<String> pop = [];
 

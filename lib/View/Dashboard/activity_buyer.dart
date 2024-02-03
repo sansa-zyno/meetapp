@@ -42,8 +42,6 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
             }
           })
           .where((element) =>
-              element["acceptedBy"] != FirebaseAuth.instance.currentUser!.uid)
-          .where((element) =>
               element["declinedBy"] != FirebaseAuth.instance.currentUser!.uid)
           .where((element) =>
               element["modifiedBy"] != FirebaseAuth.instance.currentUser!.uid)
@@ -177,7 +175,18 @@ class _BuyerActivityScreenState extends State<BuyerActivityScreen> {
                       ),
                       recent
                           ? Expanded(
-                              child: combinedDoc.isNotEmpty
+                              child: combinedDoc
+                                      .where((element) {
+                                        if (element["type"] == "demand") {
+                                          return element["acceptedBy"] !=
+                                              FirebaseAuth
+                                                  .instance.currentUser!.uid;
+                                        } else {
+                                          return true;
+                                        }
+                                      })
+                                      .toList()
+                                      .isNotEmpty
                                   ? ListView.builder(
                                       itemCount: combinedDoc.length,
                                       shrinkWrap: true,

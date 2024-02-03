@@ -277,7 +277,7 @@ class _SearchFilterState extends State<SearchFilter> {
                                                         ldoc: col),
                                               ),
                                             )
-                                          : Scaffold.of(context)
+                                          : ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                               content: Text(
                                                   'There is no item that matches your search'),
@@ -304,7 +304,7 @@ class _SearchFilterState extends State<SearchFilter> {
                                                         ldoc: col),
                                               ),
                                             )
-                                          : Scaffold.of(context)
+                                          : ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                               content: Text(
                                                   'There is no item that matches your search'),
@@ -334,7 +334,7 @@ class _SearchFilterState extends State<SearchFilter> {
                                                         ldoc: col),
                                               ),
                                             )
-                                          : Scaffold.of(context)
+                                          : ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                               content: Text(
                                                   'There is no item that matches your search'),
@@ -361,7 +361,7 @@ class _SearchFilterState extends State<SearchFilter> {
                                                         ldoc: col),
                                               ),
                                             )
-                                          : Scaffold.of(context)
+                                          : ScaffoldMessenger.of(context)
                                               .showSnackBar(SnackBar(
                                               content: Text(
                                                   'There is no item that matches your search'),

@@ -22,9 +22,11 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(80.0)),
-      padding: const EdgeInsets.all(0.0),
+    return ElevatedButton(
+      style: ButtonStyle(
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(80.0))),
+          padding: MaterialStateProperty.all(const EdgeInsets.all(0.0))),
       child: Ink(
         decoration: BoxDecoration(
           border: border != null

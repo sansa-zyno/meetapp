@@ -234,7 +234,7 @@ class _DetailBarState extends State<DetailBar> {
 
                   if (meeters
                       .contains(FirebaseAuth.instance.currentUser!.uid)) {
-                    Scaffold.of(context).showSnackBar(SnackBar(
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       backgroundColor: Colors.red,
                       content: Text(
                         'You already requested for this service',

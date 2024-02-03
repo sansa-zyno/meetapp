@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
@@ -30,6 +29,8 @@ class _TimerState extends State<Timer> {
   var directory;
   //bool endDialogAnswer = false;
 
+  late Stream ref2DocSnap;
+
   getChatRoomIdByUsernames(String a, String b) {
     if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
       return "$b\_$a";
@@ -42,6 +43,8 @@ class _TimerState extends State<Timer> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    /*TimerController _timerController =
+        Provider.of<TimerController>(context, listen: false);*/
     currentCharge = widget.request["price"] / 30;
     extraCharge = currentCharge;
     timerController.request = widget.request;
@@ -54,6 +57,7 @@ class _TimerState extends State<Timer> {
         widget.request['seller_id'], widget.request['buyer_id']);
 
     //ref = FirebaseDatabase.instance.ref().child('$directory/');
+
     ref2 =
         FirebaseFirestore.instance.collection("InMeetingRecord").doc(directory);
   }
@@ -67,12 +71,11 @@ class _TimerState extends State<Timer> {
 
   @override
   void dispose() {
-    // TODO: implement dispose  
-    TimerController.timer.cancel();
+    // TODO: implement dispose
+    TimerController.timer?.cancel();
+    TimerController.timer = null;
     super.dispose();
   }
-
-  //bool answer = true;
 
   @override
   Widget build(BuildContext context) {
@@ -133,37 +136,45 @@ class _TimerState extends State<Timer> {
                                     fit: BoxFit.cover),
                               ),
                             ),
-                            onTap: () async {
-                              timerController.isPauseAnswered.value = false;
+                            onTap: () {
+                              //timerController.isPauseAnswered.value = false;
                               //+ onTap is for Pause and Resume
-                              if (timerController.isMeetingRunning.value) {
-                                ref2.set({
-                                  // "startAt": FieldValue.serverTimestamp(),
-                                  "meetId": directory,
-                                  "seconds": 2,
-                                  "start_requester_id": "",
-                                  "pause_requester_id":
-                                      UserController().auth.currentUser?.uid,
-                                  "finished_at_minutes": "",
-                                  "finished_at_seconds": "",
-                                }, SetOptions(merge: true)).then((value) {
-                                  // ref.set({
-                                  //   "meetId": directory,
-                                  //   "startAt": ServerValue.timestamp,
-                                  //   "seconds": 2,
-                                  //   "start_requester_id": "",
-                                  //   "pause_requester_id": UserController().auth.currentUser?.uid,
-                                  //   "finished_at_minutes": "",
-                                  //   "finished_at_seconds": "",
-                                  // });
-                                  log("in on long press passing a pause request");
-                                });
-                              } else {
-                                log("onLongPress meeting not running and not not paused ");
+                              try {
+                                if (timerController.isMeetingRunning.value) {
+                                  ref2.set({
+                                    // "startAt": FieldValue.serverTimestamp(),
+                                    "meetId": directory,
+                                    "seconds": 2,
+                                    "start_requester_id": "",
+                                    "pause_requester_id":
+                                        UserController().auth.currentUser?.uid,
+                                    "finished_at_minutes": "",
+                                    "finished_at_seconds": "",
+                                  }, SetOptions(merge: true)).then((value) {
+                                    // ref.set({
+                                    //   "meetId": directory,
+                                    //   "startAt": ServerValue.timestamp,
+                                    //   "seconds": 2,
+                                    //   "start_requester_id": "",
+                                    //   "pause_requester_id": UserController().auth.currentUser?.uid,
+                                    //   "finished_at_minutes": "",
+                                    //   "finished_at_seconds": "",
+                                    // });
+                                    log("in onTap passing a pause request");
+                                  });
+                                } else {
+                                  log("meeting not running before. doesnt make any sense pausing");
+                                }
+                              } catch (e) {
+                                Get.defaultDialog(
+                                    title: "Error!",
+                                    middleText:
+                                        "Following error was thrown while "
+                                        "pausing the meeting : ${e.toString()}");
                               }
                             },
                             onLongPress: () {
-                              timerController.isStartAnswered.value = false;
+                              //timerController.isStartAnswered.value = false;
                               //+ the above line is working and fetching the user alright
                               try {
                                 ref2.set({

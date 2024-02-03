@@ -1,4 +1,4 @@
-part of flutter_progress_button;
+/*part of flutter_progress_button;
 
 enum ProgressButtonState {
   Default,
@@ -39,8 +39,7 @@ class ProgressButton extends StatefulWidget {
   _ProgressButtonState createState() => _ProgressButtonState();
 }
 
-class _ProgressButtonState extends State<ProgressButton>
-    with TickerProviderStateMixin {
+class _ProgressButtonState extends State<ProgressButton> with TickerProviderStateMixin {
   GlobalKey _globalKey = GlobalKey();
   late Animation _anim;
   late AnimationController _animController;
@@ -147,7 +146,7 @@ class _ProgressButtonState extends State<ProgressButton>
       }
 
       // The result of widget.onPressed() will be called as VoidCallback after button status is back to default.
-      late VoidCallback onDefault;
+      VoidCallback? onDefault;
       if (widget.animate!) {
         _toProcessing();
         _forward((status) {
@@ -210,4 +209,4 @@ class _ProgressButtonState extends State<ProgressButton>
   void _reverse() {
     _animController.reverse();
   }
-}
+}*/

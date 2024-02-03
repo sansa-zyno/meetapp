@@ -106,13 +106,6 @@ class Review extends StatelessWidget {
                                 textAlign: TextAlign.start,
                               ),
                               SizedBox(height: 8),
-                              qdocs.docs[index]['extra'] != ""
-                                  ? Text(
-                                      "${qdocs.docs[index]['extra']}",
-                                      textAlign: TextAlign.start,
-                                    )
-                                  : Container(),
-                              SizedBox(height: 8),
                               Text("Published $timesAgo",
                                   style: TextStyle(
                                       color: Colors.grey,

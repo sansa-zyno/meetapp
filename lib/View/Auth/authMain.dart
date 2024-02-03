@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -55,7 +54,6 @@ class _AuthMainState extends State<AuthMain> {
         });
       } else {
         AchievementView(
-          context,
           color: Colors.red,
           icon: const Icon(
             FontAwesomeIcons.bug,
@@ -65,7 +63,7 @@ class _AuthMainState extends State<AuthMain> {
           elevation: 20,
           subTitle: "Your Entered OTP is Incorrect",
           isCircle: true,
-        ).show();
+        ).show(context);
       }
     } catch (e) {
       log("Following error was thrown while trying to authenticate the OTP : ${e.toString()}.");
@@ -175,7 +173,6 @@ class _AuthMainState extends State<AuthMain> {
     });
 
     AchievementView(
-      context,
       color: Colors.green,
       icon: Icon(
         FontAwesomeIcons.check,
@@ -185,7 +182,7 @@ class _AuthMainState extends State<AuthMain> {
       elevation: 20,
       subTitle: "Type in your OTP",
       isCircle: true,
-    ).show();
+    ).show(context);
   }
 
   void codeAutoRetrievalTimeout(String verificationId) {
@@ -204,7 +201,6 @@ class _AuthMainState extends State<AuthMain> {
 
   void verificationFailed(FirebaseAuthException exception) {
     AchievementView(
-      context,
       color: Colors.red,
       icon: Icon(
         FontAwesomeIcons.bug,
@@ -214,7 +210,7 @@ class _AuthMainState extends State<AuthMain> {
       elevation: 20,
       subTitle: "There is an issue verifying this number: ${exception.message}",
       isCircle: true,
-    ).show();
+    ).show(context);
     setState(() {
       isLoggedIn = false;
       otpSent = false;
@@ -235,7 +231,6 @@ class _AuthMainState extends State<AuthMain> {
         });
       } else {
         AchievementView(
-          context,
           color: Colors.red,
           icon: const Icon(
             FontAwesomeIcons.bug,
@@ -245,7 +240,7 @@ class _AuthMainState extends State<AuthMain> {
           elevation: 20,
           subTitle: "Could not fetch the OTP",
           isCircle: true,
-        ).show();
+        ).show(context);
       }
     } catch (e) {
       log("Following error was thrown while trying to authenticate the OTP : ${e.toString()}.");

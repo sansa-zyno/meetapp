@@ -402,7 +402,7 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                               Navigator.pop(context);
                             });
                           } else {
-                            _scacffoldKey.currentState!.showSnackBar(SnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                               backgroundColor: Colors.red,
                               content: Text('Your name cannot be empty!'),
                             ));
@@ -427,7 +427,7 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                   title: Text(
                                       'Are you sure to continue this process ?'),
                                   actions: [
-                                    FlatButton(
+                                    MaterialButton(
                                       child: Text("Yes"),
                                       onPressed: () async {
                                         await FirebaseFirestore.instance
@@ -548,7 +548,6 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                         await FirebaseAuth.instance.signOut();
 
                                         AchievementView(
-                                          context,
                                           color: Colors.green,
                                           icon: Icon(
                                             FontAwesomeIcons.check,
@@ -559,7 +558,7 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                           subTitle:
                                               "Your account has been deleted successfully",
                                           isCircle: true,
-                                        )..show();
+                                        )..show(context);
 
                                         Navigator.pushAndRemoveUntil(
                                             context,
@@ -569,7 +568,7 @@ class _EditProfileSetupState extends State<EditProfileSetup> {
                                             (route) => false);
                                       },
                                     ),
-                                    FlatButton(
+                                    MaterialButton(
                                       child: Text("No"),
                                       onPressed: () {
                                         Navigator.pop(context);

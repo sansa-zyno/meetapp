@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meeter/Model/user.dart';
 import 'package:meeter/Services/database.dart';
-
 import 'chat_screen.dart';
 
 class Messages extends StatefulWidget {
